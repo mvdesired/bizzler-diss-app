@@ -6,6 +6,10 @@ var config = {
     storageBucket: "test-bizzler-app.appspot.com",
     messagingSenderId: "71450108131"
   };
+  console.log(typeof(window.Invoke_params));
+if(typeof(window.Invoke_params) !== "undefined"){
+  navigator.notification.alert('Seed is ' + window.Invoke_params.action);
+}
 firebase.initializeApp(config);
 const lcl = window.localStorage;
 const messaging = firebase.messaging();
@@ -60,17 +64,16 @@ jQuery(document).ready(function($){
       var oldHtml = current.html();
       current.html(globals.spinner);
       current.prop('disabled',true);
-      //notiMsg('A temparory message');
       showLoader();
-      var newElem = appendNewScreen();
-      $.get('screen-04.html',
-      function(data){
-        newElem.html(data);
-        setTimeout(function(){
-          newElem.removeClass('next-screen');
-          AppWrapper.find('.select-country').material_select();
-          hideLoader();
-        },1500);
+      var params = '?action=register_user&rg_name='+rg_name+'&rg_email='+rg_email+'&rg_pass='+rg_pass+'&rg_device=Android&rg_from=Normal';
+      $.ajax({type:'POST',url:'http://dissdemo.biz/bizzler'+params}).done(function(r){
+        console.log(r);
+          notiMsg(r.message);
+          current.html(oldHtml);
+          if(r.code == 404){
+            hideLoader(true);
+            current.prop('disabled',false);
+          }
       });
     });
     AppWrapper.on('click','.pro-save',function(){
@@ -104,12 +107,15 @@ jQuery(document).ready(function($){
       $('.content-changer').addClass('active');
       $('.main-loader').addClass('active');
     }
-    function hideLoader(){
-      $('.content-changer.active').remove();
+    function hideLoader(onlyremove){
+      if(!onlyremove){
+        $('.content-changer.active').remove();
+      }
       $('.main-loader').removeClass('active');
     }
     function notiMsg(message){
-      navigator.notification.alert(message);
-      navigator.notification.beep(1);
+      Materialize.toast(message, 4000);
+      //navigator.notification.alert(message);
+      //navigator.notification.beep(1);
     }
 });
