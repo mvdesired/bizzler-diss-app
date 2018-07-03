@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="">
+
+    <title>Bizzler</title>
+
+    <!-- Bootstrap core CSS -->
+     <link href="assets/css/roundslider.min.css" rel="stylesheet">
+    <link href="assets/icons/icons.css" rel="stylesheet">
+    <link href="assets/css/materialize.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+
+</head>
+
+<body>
+
+    <section class="screen-06">
+    <div class="scr06-inner">
+         <div class="uplddata-body">
+         <h2>You are at : <span>Frankfurt Airpot</span></h2>
+             <p>Be the first one to create an meet up here. Enter a an inviting message and you might meet very intersting people.</p>
+             
+            <div class="select-kmrange">
+             
+                   <div id="handle1"></div>
+            <div class="range-set">
+                <button class="waves-effect waves-light btn z-depth-3 rs-btn">Set</button>
+                </div><!--/range-set-->
+             </div><!--/select-kmrange-->
+        </div><!--/uplddata-body-->
+        </div><!--/scr05-inner-->
+    </section><!--/screen-05-->
+    <!--/screen-01-->
+
+
+    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/materialize.min.js"></script>
+   
+    <script>
+        $(document).ready(function() {
+            
+           //Select option
+            $('select').formSelect();
+
+            //push option for GPS and notication
+            $('.modal').modal({
+                dismissible: false,
+                startingTop: '5%',
+                endingTop: '35%',
+
+            });
+
+            // Change label color
+
+
+        });
+    </script>
+    <script src="assets/js/roundslider.min.js"></script>
+    <script>
+    $("#handle1").roundSlider({
+    sliderType: "min-range",
+    editableTooltip: false,
+    radius: 105,
+    width: 16,
+    value: 10,
+    handleSize: 0,
+    handleShape: "square",
+    circleShape: "pie",
+    startAngle: 315,
+    tooltipFormat: "changeTooltip"
+});
+
+function changeTooltip(e) {
+    var val = e.value, speed;
+    return val*10 + " km";
+}
+    </script>
+</body>
+
+</html>
