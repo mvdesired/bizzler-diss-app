@@ -6,10 +6,7 @@ var config = {
     storageBucket: "test-bizzler-app.appspot.com",
     messagingSenderId: "71450108131"
   };
-  console.log(typeof(window.Invoke_params));
-if(typeof(window.Invoke_params) !== "undefined"){
-  navigator.notification.alert('Seed is ' + window.Invoke_params.action);
-}
+
 firebase.initializeApp(config);
 const lcl = window.localStorage;
 const messaging = firebase.messaging();
@@ -84,6 +81,14 @@ jQuery(document).ready(function($){
       });
       elem.modal('open');
     });
+    AppWrapper.on('click','.login-linkedin',function(e){
+      e.preventDefault();
+      showLoader(true);
+      var scopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
+      window.plugins.LinkedIn.login(scopes, true, function() {
+        window.plugins.LinkedIn.getRequest('people/~', function(r) { console.log('LinkedIn Response: ', r); }, function(e) { console.error('LinkedIn Error: ', e); });
+      }, function(e) { console.error('LinkedIn Error: ', e); });
+    });
     /*AppWrapper.on('click','',function(){
       navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
           destinationType: Camera.DestinationType.FILE_URI });
@@ -97,14 +102,17 @@ jQuery(document).ready(function($){
       }
     });*/
     //AppWrapper.on('click','.')
+
     /*Functions*/
     function appendNewScreen(){
       var elem = $('<div class="content-changer next-screen" />');
       AppWrapper.append(elem);
       return elem;
     }
-    function showLoader(){
-      $('.content-changer').addClass('active');
+    function showLoader(onlyshow){
+      if(!onlyshow){
+        $('.content-changer').addClass('active');
+      }
       $('.main-loader').addClass('active');
     }
     function hideLoader(onlyremove){
@@ -113,9 +121,36 @@ jQuery(document).ready(function($){
       }
       $('.main-loader').removeClass('active');
     }
-    function notiMsg(message){
-      Materialize.toast(message, 4000);
-      //navigator.notification.alert(message);
-      //navigator.notification.beep(1);
-    }
+    var onError = function(e) { console.error('LinkedIn Error: ', e); }
+    var onSuccesss = function(r) { console.log('LinkedIn Response: ', r); }
 });
+function notiMsg(message){
+  Materialize.toast(message, 4000);
+  //navigator.notification.alert(message);
+  //navigator.notification.beep(1);
+}
+var successCallback = function(keyHashes) {
+    console.log(keyHashes) // ['NoeLNrq33NiEm2sfQRTnS+clCx4=']
+    notiMsg(keyHashes);
+}
+var errorCallback = function(err) {
+    notiMsg(err);
+}
+window.handleOpenURL = function(url) {
+  console.log(">>>>>>>>>>>>>>>>>>>");
+  // do stuff, for example
+  // document.getElementById("url").value = url;
+  notiMsg(url);
+  console.log(url);
+};
+document.addEventListener("deviceready", function(){
+  setTimeout(function(){
+    handleOpenURL();
+    window.plugins.getKeyHashes(function(keyHashes) {
+        console.log(keyHashes) // ['NoeLNrq33NiEm2sfQRTnS+clCx4=']
+        notiMsg(keyHashes);
+    }, function(err) {
+        notiMsg(err);
+    });
+  },0);
+}, false);
