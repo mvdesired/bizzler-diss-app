@@ -6,17 +6,15 @@ var config = {
     storageBucket: "test-bizzler-app.appspot.com",
     messagingSenderId: "71450108131"
   };
-
+const dbURL = 'http://dissdemo.biz/bizzler';
 firebase.initializeApp(config);
 const lcl = window.localStorage;
 const messaging = firebase.messaging();
+var currentUserId = '';
+var userData = {};
 var backScreen = '';
 jQuery(document).ready(function($){
   var AppWrapper = $('.main-app-wrapper');
-    $.get('screen-01.html',
-    function(data){
-      $('.content-changer').html(data);
-    });
     AppWrapper.on('click','.next-screen-action',function(e){
       e.preventDefault();
       showLoader();
@@ -63,7 +61,7 @@ jQuery(document).ready(function($){
       current.prop('disabled',true);
       showLoader();
       var params = '?action=register_user&rg_name='+rg_name+'&rg_email='+rg_email+'&rg_pass='+rg_pass+'&rg_device=Android&rg_from=Normal';
-      $.ajax({type:'POST',url:'http://dissdemo.biz/bizzler'+params}).done(function(r){
+      $.ajax({type:'POST',url:dbURL+params}).done(function(r){
         console.log(r);
           notiMsg(r.message);
           current.html(oldHtml);
@@ -85,7 +83,7 @@ jQuery(document).ready(function($){
       e.preventDefault();
       var uri = 'https://www.linkedin.com/uas/oauth2/authorization?' + $.param({
           client_id: '81fcixszrwwavz',
-          redirect_uri: 'http://com.bizzler.chatapp',
+          redirect_uri: 'bizzler://',
           response_type: 'code',
           state : _gRs(),
           //scope: 'r_basicprofile,r_emailaddress'
@@ -103,7 +101,7 @@ jQuery(document).ready(function($){
             code: code[1],
             client_id: '81fcixszrwwavz',
             client_secret: 'm3sWUS3DpPoHZdZk',
-            redirect_uri: 'http://com.bizzler.chatapp',
+            redirect_uri: 'bizzler://',
             grant_type: 'authorization_code'
           }).done(function(data) {
             console.log(data);
@@ -133,6 +131,34 @@ jQuery(document).ready(function($){
       });
       /**/
     });
+    AppWrapper.on('click','.scrthnk-btn',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      showLoader();
+      var newElem = appendNewScreen();
+      var params = '?action=get_user_data&user_id='+currentUserId;
+      $.ajax({type:'POST',url:dbURL+params}).done(function(r){
+          console.log(r);
+          userData = r.body;
+          lcl.userData = userData;
+          $.get('screen-04.html',
+          function(data){
+            data = data.replace('{{first_name}}',userData.first_name);
+            data = data.replace('{{last_name}}',userData.first_name);
+            data = data.replace('{{email}}',userData.user_email);
+            data = data.replace('{{headline}}',userData.headline);
+            data = data.replace('{{curpos}}',userData.current_position);
+            data = data.replace('{{interests}}',userData.interests);
+            newElem.html(data);
+            newElem.find('.select-country').val(userData.country);
+            setTimeout(function(){
+              newElem.removeClass('next-screen');
+              hideLoader();
+            },1500);
+          });
+      });
+
+    });
     /*AppWrapper.on('click','',function(){
       navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
           destinationType: Camera.DestinationType.FILE_URI });
@@ -146,7 +172,6 @@ jQuery(document).ready(function($){
       }
     });*/
     //AppWrapper.on('click','.')
-
     /*Functions*/
     function appendNewScreen(){
       var elem = $('<div class="content-changer next-screen" />');
@@ -169,14 +194,43 @@ jQuery(document).ready(function($){
     var onSuccesss = function(r) { console.log('LinkedIn Response: ', r); }
 });
 function notiMsg(message){
-  Materialize.toast(message, 4000);
+  Materialize.toast(message, 7000);
 }
 window.handleOpenURL = function(url) {
-  console.log(">>>>>>>>>>>>>>>>>>>");
   // do stuff, for example
   // document.getElementById("url").value = url;
-  notiMsg(url);
-  console.log(url);
+  if(url.indexOf('check-mail') !== -1){
+    var getToken = url.split('/check-mail/')[1];
+    getToken = getToken.replace('token=','');
+    notiMsg(getToken);
+    console.log(url);
+    showLoader(true);
+    notiMsg('Verifying your email ID');
+    var params = '?action=check-token&token='+getToken;
+    jQuery.ajax({type:'POST',url:dbURL+params}).done(function(r){
+      console.log(r);
+        notiMsg(r.message);
+        if(r.code == 404){
+          jQuery.get('screen-01.html',function(data){
+          jQuery('.content-changer').html(data);
+            hideLoader(true);
+          });
+        }
+        else{
+          currentUserId = r.user_id;
+          lcl.currentUserId = currentUserId;
+          jQuery.get('screen-03-01.html',function(data){
+            jQuery('.content-changer').html(data);
+            hideLoader(true);
+          });
+        }
+    });
+  }
+  else{
+    jQuery.get('screen-01.html',function(data){
+      jQuery('.content-changer').html(data);
+    });
+  }
 };
 document.addEventListener("deviceready", function(){
   setTimeout(function(){
