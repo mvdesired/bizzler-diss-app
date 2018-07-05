@@ -85,7 +85,7 @@ jQuery(document).ready(function($){
       e.preventDefault();
       var uri = 'https://www.linkedin.com/uas/oauth2/authorization?' + $.param({
           client_id: '81fcixszrwwavz',
-          redirect_uri: 'http://localhost',
+          redirect_uri: 'http://com.bizzler.chatapp',
           response_type: 'code',
           state : _gRs(),
           //scope: 'r_basicprofile,r_emailaddress'
@@ -103,7 +103,7 @@ jQuery(document).ready(function($){
             code: code[1],
             client_id: '81fcixszrwwavz',
             client_secret: 'm3sWUS3DpPoHZdZk',
-            redirect_uri: 'http://localhost/',
+            redirect_uri: 'http://com.bizzler.chatapp',
             grant_type: 'authorization_code'
           }).done(function(data) {
             console.log(data);
@@ -126,7 +126,7 @@ jQuery(document).ready(function($){
             notiMsg("Sorry we couldn't open that page. Message from the server is : '"+params.message+"'");
          }
         });
-        //ref.close();
+        ref.close();
       });
       ref.addEventListener('exit',function(){
         hideLoader(true);
@@ -170,15 +170,6 @@ jQuery(document).ready(function($){
 });
 function notiMsg(message){
   Materialize.toast(message, 4000);
-  //navigator.notification.alert(message);
-  //navigator.notification.beep(1);
-}
-var successCallback = function(keyHashes) {
-    console.log(keyHashes) // ['NoeLNrq33NiEm2sfQRTnS+clCx4=']
-    notiMsg(keyHashes);
-}
-var errorCallback = function(err) {
-    notiMsg(err);
 }
 window.handleOpenURL = function(url) {
   console.log(">>>>>>>>>>>>>>>>>>>");
@@ -190,12 +181,6 @@ window.handleOpenURL = function(url) {
 document.addEventListener("deviceready", function(){
   setTimeout(function(){
     handleOpenURL();
-    window.plugins.getKeyHashes(function(keyHashes) {
-        console.log(keyHashes) // ['NoeLNrq33NiEm2sfQRTnS+clCx4=']
-        notiMsg(keyHashes);
-    }, function(err) {
-        notiMsg(err);
-    });
   },0);
 }, false);
 function _gRs() {
