@@ -83,11 +83,55 @@ jQuery(document).ready(function($){
     });
     AppWrapper.on('click','.login-linkedin',function(e){
       e.preventDefault();
-      showLoader(true);
-      var scopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
-      window.plugins.LinkedIn.login(scopes, true, function() {
-        window.plugins.LinkedIn.getRequest('people/~', function(r) { console.log('LinkedIn Response: ', r); }, function(e) { console.error('LinkedIn Error: ', e); });
-      }, function(e) { console.error('LinkedIn Error: ', e); });
+      var uri = 'https://www.linkedin.com/uas/oauth2/authorization?' + $.param({
+          client_id: '81fcixszrwwavz',
+          redirect_uri: 'http://localhost',
+          response_type: 'code',
+          state : _gRs(),
+          //scope: 'r_basicprofile,r_emailaddress'
+      });
+      var ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes,clearsessioncache=yes,clearcache=yes');
+      ref.addEventListener('loadstart', function(e){
+        showLoader(true);
+        console.log(e.originalEvent);
+        var url = e.originalEvent.url;
+        var code = /\?code=(.+)$/.exec(url);
+        var error = /\?error=(.+)$/.exec(url);
+        console.log(e.originalEvent,url);
+        if (code) {
+          $.post('https://www.linkedin.com/uas/oauth2/accessToken', {
+            code: code[1],
+            client_id: '81fcixszrwwavz',
+            client_secret: 'm3sWUS3DpPoHZdZk',
+            redirect_uri: 'http://localhost/',
+            grant_type: 'authorization_code'
+          }).done(function(data) {
+            console.log(data);
+          }).fail(function(response) {
+            console.log(response.responseJSON);
+          });
+        } else if (error) {
+          console.log(error[1]);
+        }
+      });
+      ref.addEventListener('loadstop', function(){
+        ref.show();
+      });
+      ref.addEventListener('loaderror', function(params){
+        var scriptErrorMesssage =
+       "alert('Sorry we cannot open that page. Message from the server is : "
+       + params.message + "');"
+        ref.executeScript({ code: scriptErrorMesssage }, function(params){
+          if (params[0] == null) {
+            notiMsg("Sorry we couldn't open that page. Message from the server is : '"+params.message+"'");
+         }
+        });
+        //ref.close();
+      });
+      ref.addEventListener('exit',function(){
+        hideLoader(true);
+      });
+      /**/
     });
     /*AppWrapper.on('click','',function(){
       navigator.camera.getPicture(onSuccess, onFail, { quality: 50,
@@ -154,3 +198,12 @@ document.addEventListener("deviceready", function(){
     });
   },0);
 }, false);
+function _gRs() {
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (var i = 0; i < 10; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}

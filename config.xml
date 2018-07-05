@@ -39,9 +39,6 @@
     <plugin name="phonegap-plugin-push" source="npm" spec="~1.11.1">
         <variable name="SENDER_ID" value="528490677826" />
     </plugin>
-    <plugin name="cordova-plugin-linkedin" source="npm" spec="~1.2.1">
-        <variable name="APP_ID" value="5282345" />
-    </plugin>
     <platform name="android">
         <icon density="ldpi" src="www/res/icon/android/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="www/res/icon/android/drawable-mdpi-icon.png" />
