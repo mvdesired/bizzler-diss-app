@@ -199,7 +199,8 @@ function notiMsg(message){
 window.handleOpenURL = function(url) {
   // do stuff, for example
   // document.getElementById("url").value = url;
-  if(url.indexOf('check-mail') !== -1){
+  console.log('checkingmail',url);
+  if(typeof(url) !== 'undefined' && url.indexOf('check-mail') !== -1){
     var getToken = url.split('/check-mail/')[1];
     getToken = getToken.replace('token=','');
     notiMsg(getToken);
@@ -227,6 +228,8 @@ window.handleOpenURL = function(url) {
     });
   }
   else{
+    console.log(url);
+    console.log('checkingmail');
     jQuery.get('screen-01.html',function(data){
       jQuery('.content-changer').html(data);
     });
