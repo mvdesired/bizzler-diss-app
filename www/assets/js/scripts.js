@@ -13,8 +13,8 @@ const messaging = firebase.messaging();
 var currentUserId = '';
 var userData = {};
 var backScreen = '';
+var AppWrapper = jQuery('.main-app-wrapper');
 jQuery(document).ready(function($){
-    var AppWrapper = $('.main-app-wrapper');
     AppWrapper.on('click','.next-screen-action',function(e){
       e.preventDefault();
       showLoader();
@@ -83,7 +83,7 @@ jQuery(document).ready(function($){
       e.preventDefault();
       var uri = 'https://www.linkedin.com/uas/oauth2/authorization?' + $.param({
           client_id: '81fcixszrwwavz',
-          redirect_uri: 'bizzler://',
+          redirect_uri: 'http://localhost',
           response_type: 'code',
           state : _gRs(),
           //scope: 'r_basicprofile,r_emailaddress'
@@ -101,7 +101,7 @@ jQuery(document).ready(function($){
             code: code[1],
             client_id: '81fcixszrwwavz',
             client_secret: 'm3sWUS3DpPoHZdZk',
-            redirect_uri: 'bizzler://',
+            redirect_uri: 'http://localhost',
             grant_type: 'authorization_code'
           }).done(function(data) {
             console.log(data);
@@ -144,7 +144,7 @@ jQuery(document).ready(function($){
           $.get('screen-04.html',
           function(data){
             data = data.replace('{{first_name}}',userData.first_name);
-            data = data.replace('{{last_name}}',userData.first_name);
+            data = data.replace('{{last_name}}',userData.last_name);
             data = data.replace('{{email}}',userData.user_email);
             data = data.replace('{{headline}}',userData.headline);
             data = data.replace('{{curpos}}',userData.current_position);
