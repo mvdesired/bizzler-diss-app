@@ -14,7 +14,7 @@ var currentUserId = '';
 var userData = {};
 var backScreen = '';
 jQuery(document).ready(function($){
-  var AppWrapper = $('.main-app-wrapper');
+    var AppWrapper = $('.main-app-wrapper');
     AppWrapper.on('click','.next-screen-action',function(e){
       e.preventDefault();
       showLoader();
@@ -173,28 +173,26 @@ jQuery(document).ready(function($){
     });*/
     //AppWrapper.on('click','.')
     /*Functions*/
-    function appendNewScreen(){
-      var elem = $('<div class="content-changer next-screen" />');
-      AppWrapper.append(elem);
-      return elem;
-    }
-    function showLoader(onlyshow){
-      if(!onlyshow){
-        $('.content-changer').addClass('active');
-      }
-      $('.main-loader').addClass('active');
-    }
-    function hideLoader(onlyremove){
-      if(!onlyremove){
-        $('.content-changer.active').remove();
-      }
-      $('.main-loader').removeClass('active');
-    }
-    var onError = function(e) { console.error('LinkedIn Error: ', e); }
-    var onSuccesss = function(r) { console.log('LinkedIn Response: ', r); }
 });
 function notiMsg(message){
   Materialize.toast(message, 7000);
+}
+function appendNewScreen(){
+  var elem = jQuery('<div class="content-changer next-screen" />');
+  AppWrapper.append(elem);
+  return elem;
+}
+function showLoader(onlyshow){
+  if(!onlyshow){
+    jQuery('.content-changer').addClass('active');
+  }
+  jQuery('.main-loader').addClass('active');
+}
+function hideLoader(onlyremove){
+  if(!onlyremove){
+    jQuery('.content-changer.active').remove();
+  }
+  jQuery('.main-loader').removeClass('active');
 }
 window.handleOpenURL = function(url) {
   // do stuff, for example
