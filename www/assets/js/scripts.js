@@ -92,10 +92,10 @@ jQuery(document).ready(function($){
       ref.addEventListener('loadstart', function(e){
         showLoader(true);
         console.log(e);
-        /*var url = e.originalEvent.url;
+        var url = e.url;
         var code = /\?code=(.+)$/.exec(url);
         var error = /\?error=(.+)$/.exec(url);
-        console.log(e.originalEvent,url);
+        console.log(e,url);
         if (code) {
           $.post('https://www.linkedin.com/uas/oauth2/accessToken', {
             code: code[1],
@@ -110,12 +110,13 @@ jQuery(document).ready(function($){
           });
         } else if (error) {
           console.log(error[1]);
-        }*/
+        }
       });
       ref.addEventListener('loadstop', function(){
         ref.show();
       });
       ref.addEventListener('loaderror', function(params){
+        console.log(params);
         var scriptErrorMesssage =
        "alert('Sorry we cannot open that page. Message from the server is : "
        + params.message + "');"
