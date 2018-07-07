@@ -91,8 +91,8 @@ jQuery(document).ready(function($){
       var ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes,clearsessioncache=yes,clearcache=yes');
       ref.addEventListener('loadstart', function(e){
         showLoader(true);
-        console.log(e.originalEvent);
-        var url = e.originalEvent.url;
+        console.log(e);
+        /*var url = e.originalEvent.url;
         var code = /\?code=(.+)$/.exec(url);
         var error = /\?error=(.+)$/.exec(url);
         console.log(e.originalEvent,url);
@@ -110,7 +110,7 @@ jQuery(document).ready(function($){
           });
         } else if (error) {
           console.log(error[1]);
-        }
+        }*/
       });
       ref.addEventListener('loadstop', function(){
         ref.show();
