@@ -95,7 +95,7 @@ jQuery(document).ready(function($){
         var url = e.url;
         var code = /\?code=(.+)$/.exec(url);
         var error = /\?error=(.+)$/.exec(url);
-        console.log(e,url);
+        console.log(e,url,code,error);
         if (code) {
           $.post('https://www.linkedin.com/uas/oauth2/accessToken', {
             code: code[1],
