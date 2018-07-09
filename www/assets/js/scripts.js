@@ -91,11 +91,10 @@ jQuery(document).ready(function($){
       var ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes,clearsessioncache=yes,clearcache=yes');
       ref.addEventListener('loadstart', function(e){
         showLoader(true);
-        console.log(e);
         var url = e.url;
         var code = /\?code=(.+)$/.exec(url);
         var error = /\?error=(.+)$/.exec(url);
-        console.log(e,url,code,error);
+        console.log(code);
         if (code) {
           $.post('https://www.linkedin.com/uas/oauth2/accessToken', {
             code: code[1],
@@ -106,6 +105,7 @@ jQuery(document).ready(function($){
           }).done(function(data) {
             console.log(data);
           }).fail(function(response) {
+            console.log(response);
             console.log(response.responseJSON);
           });
         } else if (error) {
