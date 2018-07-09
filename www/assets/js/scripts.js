@@ -104,13 +104,26 @@ jQuery(document).ready(function($){
               client_secret: 'm3sWUS3DpPoHZdZk',
               redirect_uri: 'http://10.0.2.2:3000',
               grant_type: 'authorization_code'
-            })
+            }),
+            data:{
+              code: code[1],
+              client_id: '81fcixszrwwavz',
+              client_secret: 'm3sWUS3DpPoHZdZk',
+              redirect_uri: 'http://10.0.2.2:3000',
+              grant_type: 'authorization_code'
+            }
           }).done(function(data) {
             console.log(data);
           }).fail(function(response) {
             console.log(response);
             console.log(response.responseJSON);
+            var scriptErrorMesssage =
+           "alert('Sorry we cannot open that page. Message from the server is : "
+           + response.responseJSON.error_description + "');"
+            ref.executeScript({ code: scriptErrorMesssage }, function(params){
+                notiMsg("Sorry we couldn't open that page. Message from the server is : '"+response.responseJSON.error_description+"'");
           });
+          hideLoader(true);
         } else if (error) {
           console.log(error[1]);
         }
