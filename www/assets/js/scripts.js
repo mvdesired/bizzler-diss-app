@@ -96,12 +96,15 @@ jQuery(document).ready(function($){
         var error = /\?error=(.+)$/.exec(url);
         console.log(code);
         if (code) {
-          $.post('https://www.linkedin.com/uas/oauth2/accessToken', {
-            code: code[1],
-            client_id: '81fcixszrwwavz',
-            client_secret: 'm3sWUS3DpPoHZdZk',
-            redirect_uri: 'http://10.0.2.2:3000',
-            grant_type: 'authorization_code'
+          $.ajax({
+            type:'POST',
+            url : 'https://www.linkedin.com/uas/oauth2/accessToken?' + $.param({
+              code: code[1],
+              client_id: '81fcixszrwwavz',
+              client_secret: 'm3sWUS3DpPoHZdZk',
+              redirect_uri: 'http://10.0.2.2:3000',
+              grant_type: 'authorization_code'
+            })
           }).done(function(data) {
             console.log(data);
           }).fail(function(response) {
