@@ -83,7 +83,7 @@ jQuery(document).ready(function($){
       e.preventDefault();
       var uri = 'https://www.linkedin.com/uas/oauth2/authorization?' + $.param({
           client_id: '81fcixszrwwavz',
-          redirect_uri: 'http://localhost',
+          redirect_uri: 'http://10.0.2.2:3000',
           response_type: 'code',
           state : _gRs(),
           //scope: 'r_basicprofile,r_emailaddress'
@@ -101,7 +101,7 @@ jQuery(document).ready(function($){
             code: code[1],
             client_id: '81fcixszrwwavz',
             client_secret: 'm3sWUS3DpPoHZdZk',
-            redirect_uri: 'http://localhost',
+            redirect_uri: 'http://10.0.2.2:3000',
             grant_type: 'authorization_code'
           }).done(function(data) {
             console.log(data);
