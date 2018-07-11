@@ -1,13 +1,14 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast',function($scope,$route,$window,$location,$http,$mdToast){
+  '$scope','$route','$window','$location','$http','$mdToast','$localStorage',function($scope,$route,$window,$location,$http,$mdToast,$localStorage){
     /*Variables Define*/
-    $scope.lcl = lcl;
+    $scope.lcl = $localStorage;
     $scope.user = {};
+    $scope.userData = $scope.lcl.user;
     $scope.jsonValue = {};
     /*Functiona Creations*/
     $scope.init = function(){
       $scope.ngLoaderShow();
-      console.log($scope.lcl.user);
+      console.log($scope.userData);
       if($scope.lcl.isLoggedin){
         $location.path('/profile');
       }
@@ -59,12 +60,13 @@ bizzlerApp.controller('bizzlerController',[
           '&scope=r_basicprofile r_emailaddress';
       $scope.ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes,clearsessioncache=yes,clearcache=yes');
       $scope.ref.addEventListener('loadstart', function(e){
-
-        console.log(JSON.stringify(e));
+        var url = e.url;
+        if(/\?action=(.+)$/.exec(url)){
+          $scope.ref.hide();
+        }
       });
       $scope.ref.addEventListener('loadstop', function(e,result){
         var url = e.url;
-        console.log(JSON.stringify(result));
         if(/\?action=(.+)$/.exec(url)){
           var scriptErrorMesssage = "alert(params)";
           $scope.ref.executeScript(
@@ -74,18 +76,13 @@ bizzlerApp.controller('bizzlerController',[
                   $scope.ref.close();
                   $scope.ngLoaderHide();
                   if($scope.jsonValue.code == 200 || $scope.jsonValue.code == 300){
+                    $scope.userData = $scope.jsonValue.body;
                     $scope.lcl.user = $scope.jsonValue.body;
+                    $location.path('/profile-confirm');
                   }
                   $scope.notiMsg($scope.jsonValue.message);
               }
-          );/*.executeScript({ code: scriptErrorMesssage }, function(params){
-            console.log(params);
-            if (params[0] == null) {
-
-              $scope.notiMsg("Sorry we couldn't open that page. Message from the server is : '"+params.message+"'");
-           }
-         });*/
-          //
+          );
         }
         else{
           $scope.ref.show();

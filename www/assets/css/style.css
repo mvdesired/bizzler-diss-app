@@ -1,3 +1,10 @@
+*{
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  box-sizing: border-box;
+}
 body
 {
     margin: 0;
@@ -344,12 +351,13 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
   font-size: 22px;
   color: #fff;
   font-family: 'josefin_sansregular';
+  text-decoration: none;
 }
 .screen-02 .scr02-inner .profile-body
 {
     display: block;
     margin: 0;
-    padding: 0;
+    padding: 0 10px;
 }
 .screen-02 .scr02-inner .profile-body .proimg
 {
@@ -475,15 +483,18 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
     height: auto;
     width: auto;
     border-radius: 100px;
+    color: #fff;
     background-color: #2bbbad;
     border-color: #2bbbad;
 }
-.screen-02 .scr02-inner .profile-body .probtn-con .pb-ok i {
+.screen-02 .scr02-inner .profile-body .probtn-con .pb-ok md-icon {
     font-size: 24px;
     display: inline-block;
     margin: 0 8px 0 0;
     position: relative;
     top: 3px;
+    line-height: 14px;
+    color: #FFF;
 }
 .screen-02 .scr02-inner .profile-body .probtn-con .pb-edit
 {
@@ -498,12 +509,14 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
     border-color: #ff6e41;
 
 }
-.screen-02 .scr02-inner .profile-body .probtn-con .pb-edit i
+.screen-02 .scr02-inner .profile-body .probtn-con .pb-edit md-icon
 {
     font-size: 24px;
     display: inline-block;
     margin: 0 3px 0 0;
     position: relative;
+    line-height: 14px;
+    color: #FFF;
 }
 
 /* Screen-04 */

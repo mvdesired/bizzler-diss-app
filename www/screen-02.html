@@ -1,97 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="">
+<section class="screen-02">
+  <div class="scr02-inner">
+    <div class="profile-head">
+      <p><a href="javascript:;">Profile</a></p>
+    </div>
+    <!--/profile-head-->
+    <div class="profile-body">
+      <div class="proimg">
+        <span><img src="" ng-src="{{userData.user_pic_thumb}}"></span>
+      </div>
+      <!--/proimg-->
+      <p class="name">John McClane</p>
+      <ul class="pb-ul">
+        <li>
+          <b><i class="icon-user"></i><small>First Name</small></b>
+          <span>{{userData.first_name}}</span>
+          <em class="clearfix"></em>
+        </li>
+        <li>
+          <b><i class="icon-user"></i> <small>Last Name</small></b>
+          <span>{{userData.last_name}}</span>
+          <em class="clearfix"></em>
+        </li>
+        <li>
+          <b><i class="icon-envelope-open"></i> <small>Email</small></b>
+          <span>{{userData.user_email}}</span>
+          <em class="clearfix"></em>
+        </li>
+        <li>
+          <b><i class="icon-globe"></i><small>Country</small></b>
+          <span>{{userData.country}}</span>
+          <em class="clearfix"></em>
+        </li>
+        <li>
+          <b><i class=" icon-pin"></i><small>Headline</small></b>
+          <span>{{userData.headline}}</span>
+          <em class="clearfix"></em>
+        </li>
+        <li>
+          <b><i class="icon-briefcase"></i><small>Current Position</small></b>
+          <span>{{userData.current_position}}</span>
+          <em class="clearfix"></em>
+        </li>
+        <li>
+          <b><i class="icon-trophy"></i><small>Interests</small></b>
+          <span>{{userData.interests}}</span>
+          <em class="clearfix"></em>
+        </li>
 
-    <title>Bizzler</title>
-
-    <!-- Bootstrap core CSS -->
-    
-    <link href="assets/icons/icons.css" rel="stylesheet">
-    <link href="assets/css/materialize.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
-    
-      <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-      <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-    
-  </head>
-
-  <body>
-      
-      <section class="screen-02">
-          <div class="scr02-inner">
-       <div class="profile-head">
-          <p>Profile</p>
-          </div><!--/profile-head-->
-          <div class="profile-body">
-          <div class="proimg">
-              <span><img src="assets/image/avatar-10.jpg"></span>
-              </div><!--/proimg-->
-              <p class="name">John McClane</p>
-          <ul class="pb-ul">
-              <li>
-              <b><i class="icon-user"></i><small>First Name</small></b>
-                  <span>John</span>
-                  <em class="clearfix"></em>
-              </li>
-              <li>
-              <b><i class="icon-user"></i> <small>Last Name</small></b>
-                  <span>McClane</span>
-                  <em class="clearfix"></em>
-              </li>
-              <li>
-              <b><i class="icon-envelope-open"></i> <small>Email</small></b>
-                  <span>johnmcmlane@gmail.com</span>
-                  <em class="clearfix"></em>
-              </li>
-              <li>
-              <b><i class="icon-globe"></i><small>Country</small></b>
-                  <span>India</span>
-                  <em class="clearfix"></em>
-              </li>
-              <li>
-              <b><i class=" icon-pin"></i><small>Headline</small></b>
-                  <span>johnmcmlane@gmail.com</span>
-                  <em class="clearfix"></em>
-              </li>
-              <li>
-              <b><i class="icon-briefcase"></i><small>Current Position</small></b>
-                  <span>UI/UX Designer</span>
-                  <em class="clearfix"></em>
-              </li>
-              <li>
-              <b><i class="icon-trophy"></i><small>Interests</small></b>
-                  <span></span>
-                  <em class="clearfix"></em>
-              </li>
-              
-              </ul>
-              <div class="probtn-con">
-              <div class="pbc-6">
-                  <button class="waves-effect waves-light btn z-depth-3 pb-ok"><i class="icon-check"></i>ok</button>
-                  </div><!--/pbc-6-->
-                  <div class="pbc-6">
-                    <button class="waves-effect waves-light btn z-depth-3 pb-edit"><i class="icon-note"></i> Edit</button>
-                  </div><!--/pbc-6-->
-                  <div class="clearfix"></div>
-             </div><!--/probtn-con-->
-          </div><!--/profile-body-->
-              </div><!--/scr02-inner-->
-      </section><!--/screen-01-->
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    
-    <script src="assets/js/jquery.min.js"></script>
-   <script src="assets/js/materialize.min.js" ></script>
-    
-  </body>
-</html>
+      </ul>
+      <div class="probtn-con">
+        <div class="pbc-6">
+          <div layout-gt-sm="row" class="text-center">
+            <md-button class="md-raised pro-reg-btn rb-btn pb-ok">
+              <md-icon class="icon-check"></md-icon>
+              ok
+            </md-button>
+          </div>
+          <!-- <button class="waves-effect waves-light btn z-depth-3 pb-ok"><i class="icon-check"></i>ok</button> -->
+        </div>
+        <!--/pbc-6-->
+        <div class="pbc-6">
+          <div layout-gt-sm="row" class="text-center">
+            <md-button class="md-raised pro-reg-btn rb-btn pb-edit">
+              <md-icon class="icon-note"></md-icon>
+              Edit
+            </md-button>
+          </div>
+          <!-- <button class="waves-effect waves-light btn z-depth-3 pb-edit"><i class="icon-note"></i> Edit</button> -->
+        </div>
+        <!--/pbc-6-->
+        <div class="clearfix"></div>
+      </div>
+      <!--/probtn-con-->
+    </div>
+    <!--/profile-body-->
+  </div>
+  <!--/scr02-inner-->
+</section>
+<!--/screen-01-->
