@@ -4,7 +4,14 @@ body
     padding: 0;
     box-sizing: border-box;
     font-family: 'josefin_sansregular';
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e36c48+0,f06a40+100 */
+    background: #e36c48; /* Old browsers */
+    background: -moz-linear-gradient(top, #e36c48 0%, #f06a40 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #e36c48 0%,#f06a40 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #e36c48 0%,#f06a40 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e36c48', endColorstr='#f06a40',GradientType=0 ); /* IE6-9 */
 }
+md-progress-circular svg path { stroke: white; }
 button .preloader-wrapper{
   width: 25px;
   height: 25px;
@@ -16,16 +23,20 @@ button .preloader-wrapper .spinner-layer .circle-clipper .circle{border-width: 3
   width: 100%;
   height: 100%;
   background-color: rgba(255, 110, 65, 0.4);
-  opacity: 0;
+  -webkit-transition: right ease-in-out .2s, opacity ease-in-out .2s;
+  -moz-transition: right ease-in-out .2s, opacity ease-in-out .2s;
+  -ms-transition: right ease-in-out .2s, opacity ease-in-out .2s;
+  -o-transition: right ease-in-out .2s, opacity ease-in-out .2s;
   transition: right ease-in-out .2s, opacity ease-in-out .2s;
-  right:-100%;
+  opacity: 1;
+  right: 0;
   top: 0;
 }
-.main-loader.active{
-  right: 0;
-  opacity: 1;
+.main-loader.ng-hide{
+  right:-100%;
+  opacity: 0;
 }
-.main-loader .preloader-wrapper{
+.main-loader .preloader-wrapper, .main-loader md-progress-circular{
   width: 40px;
   height: 40px;
   position: absolute;
@@ -40,12 +51,19 @@ button .preloader-wrapper .spinner-layer .circle-clipper .circle{border-width: 3
 }
 .main-loader .preloader-wrapper .circle-clipper .circle{border-width: 4px;}
 body.ml-open{overflow: hidden;}
+md-input-container:not(.md-input-invalid).md-input-focused label{
+  color: #ff6e41;
+}
+md-input-container:not(.md-input-invalid).md-input-focused .md-input{
+  border-color: #ff6e41;
+}
+.text-center{text-align: center;}
 .content-changer{
   position: relative;
   transition: left ease-in-out .2s;
   width: 100%;
   height: 100vh;
-  background-color:#333333;
+  /* background-color:#333333; */
   left: 0;
 }
 .content-changer > section .scr01-inner{
@@ -543,19 +561,16 @@ body.ml-open{overflow: hidden;}
     margin-top: 1rem;
     margin-bottom: 0;
 }
-.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .input-field .prefix {
+.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds md-input-container md-icon {
     position: absolute;
     width: 31px;
     font-size: 25px;
     -webkit-transition: color .2s;
     transition: color .2s;
-    top: 16px;
+    top: 7px;
     color: #ff6e41;
 }
-
-
-
-.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .input-field label
+.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds md-input-container label
 {
     font-size: 16px;
 
@@ -627,7 +642,7 @@ body.ml-open{overflow: hidden;}
     padding: 0;
     display: inline-block;
 }
-.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .input-field h6 .pro-reg {
+.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .pro-reg-btn {
     display: inline-block;
     margin: 25px 0 0;
     padding: 10px 10px;
@@ -636,19 +651,20 @@ body.ml-open{overflow: hidden;}
     border: 1px solid #ff6e41;
     background-color: #ff6e41;
     border-radius: 100px;
-    line-height: 20px;
+    line-height: 28px;
     letter-spacing: 0px;
     height: auto;
     width: auto;
     min-width: 100px;
 }
-.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .input-field h6 .pro-reg i {
+.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .pro-reg-btn md-icon {
     font-size: 22px;
     position: relative;
-    top: 3px;
+    /* top: 3px; */
     margin-right: 3px;
     display: inline-block;
-    line-height: 16px;
+    line-height: 15px;
+    color: #FFFFFF;
 }
 
 /* Thank you for regsitration */

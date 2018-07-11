@@ -5,56 +5,60 @@
         <a href="#" class="backScreen" backScreen="screen-01.html"><i class="icon-arrow-left "></i> Back</a>
       </p>
     </div>
+    
     <!--/profile-head-->
     <div class="profile-body">
       <div class="pro-heading">
+
         <h2>Create an Account</h2>
       </div>
       <!--/pro-heading-->
       <br/>
       <div class="pro-fileds">
-        <form>
-          <div class="row">
-            <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-user prefix"></i>
-                <input id="name" type="text" class="validate" name="rg_name">
-                <label for="name">Name</label>
+        <form name="regForm">
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Name</label>
+              <md-icon class="rg_name icon-user"></md-icon>
+              <input required name="rg_name" ng-model="user.rg_name" />
+              <div ng-messages="regForm.rg_name.$error">
+                <div ng-message="required">Name is required.</div>
               </div>
-              <!--/input-field-->
+            </md-input-container>
+            <div flex="5" hide-xs hide-sm>
+              <!-- Spacer //-->
             </div>
-            <!--/m12-->
-            <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-envelope-open prefix"></i>
-                <input id="emialid" type="email" class="validate" name="rg_email">
-                <label for="emialid">Email </label>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Email</label>
+              <md-icon class="rg_email icon-envelope-open"></md-icon>
+              <input name="rg_email" ng-model="user.rg_email" required minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" />
+              <div ng-messages="regForm.rg_email.$error">
+                <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                  Your email must be between 10 and 100 characters long and look like an e-mail address.
+                </div>
               </div>
-              <!--/input-field-->
+            </md-input-container>
+            <div flex="5" hide-xs hide-sm>
+              <!-- Spacer //-->
             </div>
-            <!--/m12-->
-            <div class="col s12 m12">
-              <div class="input-field">
-                <i class=" icon-lock  prefix"></i>
-                <input id="password" type="password" class="validate" name="rg_pass">
-                <label for="password">Password</label>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Password</label>
+              <md-icon class="rg_pass icon-lock"></md-icon>
+              <input name="rg_pass" required ng-model="user.rg_pass" />
+              <div ng-messages="regForm.rg_pass.$error">
+                <div ng-message="required">Password not Empty</div>
               </div>
-              <!--/input-field-->
+            </md-input-container>
+            <div flex="5" hide-xs hide-sm>
+              <!-- Spacer //-->
             </div>
-            <!--/m12-->
-            <div class="col s12 m12">
-              <div class="input-field">
-                <h6>
-                   <button type="submit" class="waves-effect waves-light btn z-depth-3 pro-reg rb-btn">
-                       <i class="icon-login"></i> Sign up
-                   </button>
-                 </h6>
-              </div>
-              <!--/input-field-->
-            </div>
-            <!--/m12-->
           </div>
-          <!--/row-->
+          <div layout-gt-sm="row" class="text-center">
+            <md-button ng-click="registrationForm()" class="md-raised pro-reg-btn rb-btn" ng-disabled="regForm.$invalid" ng-click-options="{preventDoubleClick: true}">
+              <md-icon class="icon-login"></md-icon>
+              Sign up
+            </md-button>
+          </div>
         </form>
       </div>
       <!--/pro-fileds-->
