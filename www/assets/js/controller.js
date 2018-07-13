@@ -53,7 +53,32 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.loginLinkedin = function(){
       $scope.ngLoaderShow();
-      var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
+      console.log(JSON.stringify(cordova.plugins.LinkedIn));
+      var onError = function(e) { console.error('LinkedIn Error: ', JSON.stringify(r)); }
+      var onSuccesss = function(r) { console.log('LinkedIn Response: ', JSON.stringify(r)); }
+      // logging in with all scopes
+      // you should just ask for what you need
+      var scopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
+      // login before doing anything
+      // this is needed, unless if we just logged in recently
+      cordova.plugins.LinkedIn.login(scopes, true, function() {
+        // get connections
+        cordova.plugins.LinkedIn.getRequest('people/~', onSuccess, onError);
+        // share something on profile
+        // see more info at https://developer.linkedin.com/docs/share-on-linkedin
+        cordova.plugins.LinkedIn.postRequest('~/shares', payload, onSuccess, onError);
+      }, onError);
+      // check for existing session
+      cordova.plugin.LinkedIn.getActiveSession(function(session) {
+        if (session) {
+          console.log('We have an active session');
+          console.log('Access token is: ', session.accessToken);
+          console.log('Expires on: ', session.expiresOn);
+        } else {
+          console.log('There is no active session, we need to call the login method');
+        }
+      });
+      /*var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
           '&redirect_uri='+encodeURIComponent('http://dissdemo.biz/bizzler?action=linked_access_token')+
           '&response_type=code'+
           '&state='+$scope._gRs()+
@@ -78,6 +103,7 @@ bizzlerApp.controller('bizzlerController',[
                   if($scope.jsonValue.code == 200 || $scope.jsonValue.code == 300){
                     $scope.userData = $scope.jsonValue.body;
                     $scope.lcl.user = $scope.jsonValue.body;
+                    $scope.lcl.isLoggedin = true;
                     $location.path('/profile-confirm');
                   }
                   $scope.notiMsg($scope.jsonValue.message);
@@ -102,7 +128,7 @@ bizzlerApp.controller('bizzlerController',[
       });
       $scope.ref.addEventListener('exit',function(){
         $scope.ngLoaderHide(true);
-      });
+      });*/
     }
     $scope._gRs = function() {
       var text = "";
