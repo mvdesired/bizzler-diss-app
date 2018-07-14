@@ -60,9 +60,11 @@ bizzlerApp.controller('bizzlerController',[
       var scopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
       // login before doing anything
       // this is needed, unless if we just logged in recently
-      cordova.plugins.LinkedIn.login(scopes, true, function() {
+      cordova.plugins.LinkedIn.login(scopes, true, function(response) {
         // get connections
+        console.log("Got in Login " + response);
         cordova.plugins.LinkedIn.getRequest('people/~', onSuccess, onError);
+        console.error("after request " + response);
         // share something on profile
       }, onError);
       // check for existing session
