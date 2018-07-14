@@ -69,7 +69,7 @@ bizzlerApp.controller('bizzlerController',[
         cordova.plugins.LinkedIn.postRequest('~/shares', payload, onSuccess, onError);
       }, onError);
       // check for existing session
-      cordova.plugin.LinkedIn.getActiveSession(function(session) {
+      cordova.plugins.LinkedIn.getActiveSession(function(session) {
         if (session) {
           console.log('We have an active session');
           console.log('Access token is: ', session.accessToken);
