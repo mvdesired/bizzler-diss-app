@@ -70,7 +70,7 @@ bizzlerApp.controller('bizzlerController',[
         console.error("after request " + response);
         // share something on profile
       }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});*/
-      cordova.plugin.LinkedIn.getActiveSession(function(session) {
+      cordova.plugins.LinkedIn.getActiveSession(function(session) {
         if (session) {
           console.log('We have an active session');
           console.log('Access token is: ', session.accessToken);
