@@ -8,7 +8,6 @@ bizzlerApp.controller('bizzlerController',[
     /*Functiona Creations*/
     $scope.init = function(){
       $scope.ngLoaderShow();
-      console.log($scope.userData);
       if($scope.lcl.isLoggedin){
         $location.path('/profile');
       }
@@ -53,8 +52,6 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.loginLinkedin = function(){
       $scope.ngLoaderShow();
-      var onError = function(e) { console.error('LinkedIn Error: ', JSON.stringify(r)); }
-      var onSuccesss = function(r) { console.log('LinkedIn Response: ', JSON.stringify(r)); }
       // logging in with all scopes
       // you should just ask for what you need
       var scopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
@@ -63,10 +60,15 @@ bizzlerApp.controller('bizzlerController',[
       cordova.plugins.LinkedIn.login(scopes, true, function(response) {
         // get connections
         console.log("Got in Login " + response);
-        cordova.plugins.LinkedIn.getRequest('people/~', onSuccess, onError);
+        cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
+          console.log('LinkedIn Response: ', JSON.stringify(r));
+          },
+          function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));
+        });
         console.error("after request " + response);
         // share something on profile
       }, onError);
+      $scope.ngLoaderHide();
       // check for existing session
       /*cordova.plugins.LinkedIn.getActiveSession(function(session) {
         if (session) {
