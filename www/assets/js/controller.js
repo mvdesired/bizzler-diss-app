@@ -77,7 +77,7 @@ bizzlerApp.controller('bizzlerController',[
           console.log('Expires on: ', session.expiresOn);
         } else {
           console.log('There is no active session, we need to call the login method');
-          cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
+          cordova.plugins.LinkedIn.login($scope.linkedScopes, true).then(function(response) {
             // get connections
             console.log("Got in Login " + response);
             cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
@@ -87,7 +87,7 @@ bizzlerApp.controller('bizzlerController',[
             });
             console.error("after request " + response);
             // share something on profile
-          }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});
+          }).catch(function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});
         }
       });
       //$scope.ngLoaderHide();
