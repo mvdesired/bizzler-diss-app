@@ -5,6 +5,7 @@ bizzlerApp.controller('bizzlerController',[
     $scope.user = {};
     $scope.userData = $scope.lcl.user;
     $scope.jsonValue = {};
+    $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     /*Functiona Creations*/
     $scope.init = function(){
       $scope.ngLoaderShow();
@@ -54,10 +55,11 @@ bizzlerApp.controller('bizzlerController',[
       $scope.ngLoaderShow();
       // logging in with all scopes
       // you should just ask for what you need
-      var scopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
+
       // login before doing anything
       // this is needed, unless if we just logged in recently
-      cordova.plugins.LinkedIn.login(scopes, true, function(response) {
+      console.log(linkedScopes);
+      cordova.plugins.LinkedIn.login(linkedScopes, true, function(response) {
         // get connections
         console.log("Got in Login " + response);
         cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
