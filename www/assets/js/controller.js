@@ -59,7 +59,7 @@ bizzlerApp.controller('bizzlerController',[
       // login before doing anything
       // this is needed, unless if we just logged in recently
       console.log($scope.linkedScopes);
-      cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
+      /*cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
         // get connections
         console.log("Got in Login " + response);
         cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
@@ -69,8 +69,28 @@ bizzlerApp.controller('bizzlerController',[
         });
         console.error("after request " + response);
         // share something on profile
-      }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});
-      $scope.ngLoaderHide();
+      }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});*/
+      cordova.plugin.LinkedIn.getActiveSession(function(session) {
+        if (session) {
+          console.log('We have an active session');
+          console.log('Access token is: ', session.accessToken);
+          console.log('Expires on: ', session.expiresOn);
+        } else {
+          console.log('There is no active session, we need to call the login method');
+          cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
+            // get connections
+            console.log("Got in Login " + response);
+            cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
+              console.log('LinkedIn Response: ', JSON.stringify(r));
+              },
+              function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));
+            });
+            console.error("after request " + response);
+            // share something on profile
+          }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});
+        }
+      });
+      //$scope.ngLoaderHide();
       // check for existing session
       /*cordova.plugins.LinkedIn.getActiveSession(function(session) {
         if (session) {

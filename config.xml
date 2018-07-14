@@ -16,7 +16,7 @@
     <preference name="FadeSplashScreenDuration" value="750" />
     <!-- <preference name="StatusBarBackgroundColor" value="#ff6e41" /> -->
     <plugin name="cordova-plugin-camera" source="npm" spec="~4.0.3" />
-    <plugin name="cordova-plugin-media-capture" source="npm" spec="~3.0.2" />
+    <!-- <plugin name="cordova-plugin-media-capture" source="npm" spec="~3.0.2" /> -->
     <!-- <plugin name="cordova-plugin-customurlscheme" source="npm" spec="~4.3.0">
         <variable name="URL_SCHEME" value="bizzler" />
     </plugin> -->
