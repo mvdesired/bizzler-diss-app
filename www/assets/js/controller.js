@@ -67,7 +67,7 @@ bizzlerApp.controller('bizzlerController',[
         });
         console.error("after request " + response);
         // share something on profile
-      }, onError);
+      }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r)););
       $scope.ngLoaderHide();
       // check for existing session
       /*cordova.plugins.LinkedIn.getActiveSession(function(session) {
