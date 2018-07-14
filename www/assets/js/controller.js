@@ -59,7 +59,7 @@ bizzlerApp.controller('bizzlerController',[
       // login before doing anything
       // this is needed, unless if we just logged in recently
       console.log($scope.linkedScopes);
-      cordova.plugins.LinkedIn.login(linkedScopes, true, function(response) {
+      cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
         // get connections
         console.log("Got in Login " + response);
         cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
