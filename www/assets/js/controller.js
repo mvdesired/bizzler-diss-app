@@ -53,7 +53,6 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.loginLinkedin = function(){
       $scope.ngLoaderShow();
-      console.log(JSON.stringify(cordova.plugins.LinkedIn));
       var onError = function(e) { console.error('LinkedIn Error: ', JSON.stringify(r)); }
       var onSuccesss = function(r) { console.log('LinkedIn Response: ', JSON.stringify(r)); }
       // logging in with all scopes
@@ -65,11 +64,9 @@ bizzlerApp.controller('bizzlerController',[
         // get connections
         cordova.plugins.LinkedIn.getRequest('people/~', onSuccess, onError);
         // share something on profile
-        // see more info at https://developer.linkedin.com/docs/share-on-linkedin
-        cordova.plugins.LinkedIn.postRequest('~/shares', payload, onSuccess, onError);
       }, onError);
       // check for existing session
-      cordova.plugins.LinkedIn.getActiveSession(function(session) {
+      /*cordova.plugins.LinkedIn.getActiveSession(function(session) {
         if (session) {
           console.log('We have an active session');
           console.log('Access token is: ', session.accessToken);
@@ -77,7 +74,7 @@ bizzlerApp.controller('bizzlerController',[
         } else {
           console.log('There is no active session, we need to call the login method');
         }
-      });
+      });*/
       /*var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
           '&redirect_uri='+encodeURIComponent('http://dissdemo.biz/bizzler?action=linked_access_token')+
           '&response_type=code'+
