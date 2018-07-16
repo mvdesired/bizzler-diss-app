@@ -66,7 +66,7 @@ bizzlerApp.controller('bizzlerController',[
           '&response_type=code'+
           '&state='+$scope._gRs()+
           '&scope=r_basicprofile r_emailaddress';
-      $scope.ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes,clearsessioncache=yes,clearcache=yes');
+      $scope.ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes');
       $scope.ref.addEventListener('loadstart', function(e){
         var url = e.url;
         if(/\?action=(.+)$/.exec(url)){
