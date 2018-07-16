@@ -59,49 +59,9 @@ bizzlerApp.controller('bizzlerController',[
       // login before doing anything
       // this is needed, unless if we just logged in recently
       console.log($scope.linkedScopes);
-      /*cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
-        // get connections
-        console.log("Got in Login " + response);
-        cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
-          console.log('LinkedIn Response: ', JSON.stringify(r));
-          },
-          function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));
-        });
-        console.error("after request " + response);
-        // share something on profile
-      }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});*/
-      cordova.plugins.LinkedIn.getActiveSession(function(session) {
-        if (session) {
-          console.log('We have an active session');
-          console.log('Access token is: ', session.accessToken);
-          console.log('Expires on: ', session.expiresOn);
-        } else {
-          console.log('There is no active session, we need to call the login method');
-          cordova.plugins.LinkedIn.login($scope.linkedScopes, true, function(response) {
-            // get connections
-            console.log("Got in Login " + response);
-            cordova.plugins.LinkedIn.getRequest('people/~', function(r) {
-              console.log('LinkedIn Response: ', JSON.stringify(r));
-              },
-              function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));
-            });
-            console.error("after request " + response);
-            // share something on profile
-          }, function(e) { console.error('LinkedIn Error: ', JSON.stringify(r));});
-        }
-      });
-      //$scope.ngLoaderHide();
+      $scope.ngLoaderHide();
       // check for existing session
-      /*cordova.plugins.LinkedIn.getActiveSession(function(session) {
-        if (session) {
-          console.log('We have an active session');
-          console.log('Access token is: ', session.accessToken);
-          console.log('Expires on: ', session.expiresOn);
-        } else {
-          console.log('There is no active session, we need to call the login method');
-        }
-      });*/
-      /*var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
+      var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
           '&redirect_uri='+encodeURIComponent('http://dissdemo.biz/bizzler?action=linked_access_token')+
           '&response_type=code'+
           '&state='+$scope._gRs()+
@@ -151,7 +111,7 @@ bizzlerApp.controller('bizzlerController',[
       });
       $scope.ref.addEventListener('exit',function(){
         $scope.ngLoaderHide(true);
-      });*/
+      });
     }
     $scope._gRs = function() {
       var text = "";
