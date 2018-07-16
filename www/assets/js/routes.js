@@ -13,6 +13,9 @@ bizzlerApp.config(['$routeProvider',
       when('/profile', {
         templateUrl: 'screen-04.html'
       }).
+      when('/location-chat', {
+        templateUrl: 'screen-05.html'
+      }).
       otherwise({
         templateUrl: 'screen-01.html',
         //redirectTo: '/'

@@ -17,79 +17,80 @@
         <form method="post">
           <div class="row">
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-user prefix"></i>
-                <input id="fname" type="text" class="validate" value="{{first_name}}">
+              <md-input-container class="md-block" flex-gt-sm>
                 <label for="fname">First Name</label>
-              </div>
+                <md-icon class="icon-user prefix"></md-icon>
+                <input id="fname" type="text" class="validate" value="{{userData.first_name}}" ng-model="userData.first_name">
+              </md-input-container>
               <!--/input-field-->
             </div>
             <!--/m12-->
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-user prefix"></i>
-                <input id="lname" type="text" class="validate" value="{{last_name}}">
+              <md-input-container class="md-block" flex-gt-sm>
                 <label for="lname">Last Name</label>
-              </div>
+                <md-icon class="icon-user prefix"></md-icon>
+                <input id="lname" type="text" class="validate" value="{{userData.last_name}}" ng-model="userData.last_name">
+              </md-input-container>
               <!--/input-field-->
             </div>
             <!--/m12-->
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-envelope-open prefix"></i>
-                <input id="emialid" type="email" class="validate" value="{{email}}">
+              <md-input-container class="md-block" flex-gt-sm>
                 <label for="emialid">Email</label>
-              </div>
+                <md-icon class="icon-envelope-open prefix"></md-icon>
+                <input id="emialid" type="text" class="validate" value="{{userData.user_email}}" ng-model="userData.user_email">
+              </md-input-container>
               <!--/input-field-->
             </div>
             <!--/m12-->
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-globe prefix"></i>
-                <select class="validate select-country">
-                  <option value="" disabled selected>Choose your Country</option>
-                  <option value="1">Option 1</option>
-                  <option value="2">Option 2</option>
-                  <option value="3">Option 3</option>
-                </select>
-                <label>Country</label>
-              </div>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label for="curpos">Country</label>
+                <md-icon class="icon-globe prefix"></md-icon>
+                <md-select ng-model="userData.country" placeholder="Choose your Country" class="validate select-country">
+                  <md-option value="juice">Juice</md-option>
+                  <md-option value="milk">Milk</md-option>
+                  <md-option value="wine">Wine</md-option>
+                  <md-option value="mead">Mead</md-option>
+                </md-select>
+              </md-input-container>
             </div>
             <!--/m12-->
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-pin prefix"></i>
-                <input id="headline" type="text" class="validate" value="{{headline}}">
-                <label for="headline">Headline</label>
-              </div>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label for="curpos">Headline</label>
+                <md-icon class="icon-pin prefix"></md-icon>
+                <input id="headline" type="text" class="validate" value="{{userData.headline}}" ng-model="userData.headline">
+              </md-input-container>
               <!--/input-field-->
             </div>
             <!--/m12-->
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-briefcase prefix"></i>
-                <input id="curpos" type="text" class="validate" value="{{curpos}}">
+              <md-input-container class="md-block" flex-gt-sm>
                 <label for="curpos">Current Position</label>
-              </div>
+                <md-icon class="icon-briefcase prefix"></md-icon>
+                <input id="curpos" type="text" class="validate" value="{{userData.current_position}}" ng-model="userData.current_position">
+              </md-input-container>
               <!--/input-field-->
             </div>
             <!--/m12-->
             <div class="col s12 m12">
-              <div class="input-field">
-                <i class="icon-trophy prefix"></i>
-                <input id="interests" type="text" class="validate" value="{{interests}}">
+              <md-input-container class="md-block" flex-gt-sm>
                 <label for="interests">Interests</label>
-              </div>
+                <md-icon class="icon-trophy prefix"></md-icon>
+                <input id="interests" type="text" class="validate" value="{{userData.interests}}" ng-model="userData.interests">
+              </md-input-container>
               <!--/input-field-->
             </div>
             <!--/m12-->
             <div class="col s12 m12">
               <div class="input-field">
-                <h6>
-                  <button type="button" class="waves-effect waves-light btn z-depth-3 modal-trigger pro-save ">
-                     <i class="icon-cloud-upload"></i>Save Profile
-                   </button>
-                  </h6>
+                <div layout-gt-sm="row" class="text-center">
+                  <md-button class="md-raised pro-reg-btn rb-btn modal-trigger pro-save">
+                    <md-icon class="icon-cloud-upload"></md-icon>
+                    Save Profile
+                  </md-button>
+                </div>
               </div>
               <!--/input-field-->
             </div>
@@ -118,8 +119,8 @@
 <!--/***** Modal for GPS and notication *******/-->
 
 <!-- Modal Structure -->
-<div id="continue-modal" class="modal allow-modal">
-  <div class="modal-content">
+<div id="continue-modal" class="md-dialog-container">
+  <md-dialog layout-padding>
     <div class="allmod-inner">
       <span class="modal-close allmod-close"><i class="icon-close"></i></span>
       <h2>Allow</h2>
@@ -132,11 +133,12 @@
           <div class="col s6 m6">
             <div class="switch">
               <label>
-                                <em>No</em>
-                                <input type="checkbox" >
-                                <span class="lever"></span>
-                                <em>Yes</em>
-                            </label>
+                  <em>No</em>
+                  <md-switch ng-model="userData.notification_on"></md-switch>
+                  <!-- <input type="checkbox" >
+                  <span class="lever"></span> -->
+                  <em>Yes</em>
+              </label>
             </div>
           </div>
           <!--/m6-->
@@ -157,14 +159,81 @@
           </div>
           <!--/m6-->
           <div class="col s6 m6">
+              <div class="switch">
+                <label>
+                  <em>No</em>
+                  <md-switch ng-model="userData.gps_on"></md-switch>
+                  <!-- <input type="checkbox" checked>
+                  <span class="lever"></span> -->
+                  <em>Yes</em>
+                </label>
+              </div>
+          </div>
+          <!--/m6-->
+          <div class="clearfix"></div>
+          <div class="col s12 m12">
+            <p class="allmod-note">Note:- Its important your location, allow GPS location? Yes / No</p>
+          </div>
+          <!--/m12-->
+          <div class="clearfix"></div>
+        </div>
+        <!--/row-->
+      </div>
+      <!--/allmod-switch-->
+      <div class="allmod-btncon">
+        <button type="button" class="waves-effect waves-light btn z-depth-3 allmod-save">Continue</button>
+      </div>
+      <!--/allmod-btncon-->
+    </div>
+  </md-dialog>
+  <div class="modal-content">
+    <div class="allmod-inner">
+      <span class="modal-close allmod-close"><i class="icon-close"></i></span>
+      <h2>Allow</h2>
+      <div class="allmod-switch ams-divd">
+        <div class="row">
+          <div class="col s6 m6">
+            <h6>Push Notifications</h6>
+          </div>
+          <!--/m6-->
+          <div class="col s6 m6">
             <div class="switch">
               <label>
-                                <em>No</em>
-                                <input type="checkbox" checked>
-                                <span class="lever"></span>
-                                <em>Yes</em>
-                            </label>
+                  <em>No</em>
+                  <md-switch ng-model="userData.notification_on"></md-switch>
+                  <!-- <input type="checkbox" >
+                  <span class="lever"></span> -->
+                  <em>Yes</em>
+              </label>
             </div>
+          </div>
+          <!--/m6-->
+          <div class="clearfix"></div>
+          <div class="col s12 m12">
+            <p class="allmod-note"></p>
+          </div>
+          <!--/m12-->
+          <div class="clearfix"></div>
+        </div>
+        <!--/row-->
+      </div>
+      <!--/allmod-switch-->
+      <div class="allmod-switch">
+        <div class="row">
+          <div class="col s6 m6">
+            <h6>GPS</h6>
+          </div>
+          <!--/m6-->
+          <div class="col s6 m6">
+              <div class="switch">
+                <label>
+                  <em>No</em>
+                  <md-switch ng-model="userData.gps_on"></md-switch>
+                  <!-- <input type="checkbox" checked>
+                  <span class="lever"></span> -->
+                  <em>Yes</em>
+                </label>
+              </div>
           </div>
           <!--/m6-->
           <div class="clearfix"></div>

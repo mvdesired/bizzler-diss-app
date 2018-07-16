@@ -1,9 +1,11 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast','$localStorage',function($scope,$route,$window,$location,$http,$mdToast,$localStorage){
+  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog',
+  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.user = {};
     $scope.userData = $scope.lcl.user;
+    console.log(JSON.stringify($scope.userData));
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     /*Functiona Creations*/
@@ -55,11 +57,8 @@ bizzlerApp.controller('bizzlerController',[
       $scope.ngLoaderShow();
       // logging in with all scopes
       // you should just ask for what you need
-
       // login before doing anything
       // this is needed, unless if we just logged in recently
-      console.log($scope.linkedScopes);
-      $scope.ngLoaderHide();
       // check for existing session
       var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
           '&redirect_uri='+encodeURIComponent('http://dissdemo.biz/bizzler?action=linked_access_token')+
@@ -121,6 +120,20 @@ bizzlerApp.controller('bizzlerController',[
         text += possible.charAt(Math.floor(Math.random() * possible.length));
 
       return text;
+    }
+    $scope.goToProfile = function(){
+      $location.path('/profile');
+    }
+    $scope.gotTochat = function(){
+      $location.path('/location-chat');
+    }
+    $scope.showConfirmPpUp = function (ev){
+      $mdDialog.show({
+        contentElement: '#continue-modal',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        clickOutsideToClose: true
+      });
     }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
