@@ -134,7 +134,7 @@ bizzlerApp.controller('bizzlerController',[
         targetEvent: ev,
         clickOutsideToClose: true
       });
-    }
+    } 
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){$scope.ngLoaderHide();});
