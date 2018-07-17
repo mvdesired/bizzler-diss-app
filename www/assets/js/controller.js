@@ -134,7 +134,42 @@ bizzlerApp.controller('bizzlerController',[
         targetEvent: ev,
         clickOutsideToClose: true
       });
-    } 
+    }
+    $scope.saveProfile = function(){
+      $scope.ngLoaderShow();
+      var params = '?action=save_profile'+
+      '&first_name='+$scope.userData.first_name+
+      '&last_name='+$scope.userData.last_name+
+      '&user_email='+$scope.userData.user_email+
+      '&country='+$scope.userData.country+
+      '&headline='+$scope.userData.headline+
+      '&current_position='+$scope.userData.current_position+
+      '&interests='+$scope.userData.interests+
+      '&notification_on='+$scope.userData.notification_on+
+      '&gps_on='+$scope.userData.gps_on;
+      var req = {
+       method: 'POST',
+       url: dbURL+params,
+       headers:{'Content-Type':'application/x-www-form-urlencoded'},
+       /*data: {
+         action:'register_user',
+         rg_name:$scope.userData.rg_name,
+         rg_email:$scope.userData.rg_email,
+         rg_pass:$scope.userData.rg_pass,
+         rg_device:device.platform,
+         rg_from:'Normal'
+       }*/
+      }
+      $http(req).then(function(response){
+        console.log(response.data);
+        $scope.ngLoaderHide();
+        $scope.notiMsg(response.data.message);
+        $location.path('/location-chat');
+      },
+      function(response){
+        console.log(response);
+      });
+    }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){$scope.ngLoaderHide();});

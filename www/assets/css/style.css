@@ -19,7 +19,7 @@ body
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e36c48', endColorstr='#f06a40',GradientType=0 ); /* IE6-9 */
 }
 md-progress-circular svg path { stroke: white; }
-md-input-container{margin: 30px 0;}
+md-input-container{margin: 20px 0;}
 md-input-container .md-errors-spacer{display: none;}
 button .preloader-wrapper{
   width: 25px;

@@ -1,181 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
+<section class="screen-05">
+  <div class="scr05-inner">
+    <div class="chating-menu">
+      <div class="cm-inner">
+        <div class="mobile-bar">
+          <a href="#" data-activates="slide-out" id="menu"><i  class="icon-menu"></i></a>
+        </div>
+        <!--/mobile-bar-->
+        <div class="logo">
+          <img src="assets/image/logo-white.png" />
+        </div>
+        <!--/logo-->
+        <div class="user-pic">
+          <img ng-src="{{userData.user_pic_thumb}}" />
+        </div>
+        <!--/user-pic-->
+        <div class="clearfix"></div>
+        <div class="search-filed">
+          <div class="srcfld-inner">
+            <input type="text" class="form-control" placeholder="Write Here..." />
+            <span><i class="icon-close"></i></span>
+          </div>
+          <!--/srcfld-inner-->
+        </div>
+        <!--/search-filed-->
+      </div>
+      <!--/cm-inner-->
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="">
-
-    <title>Bizzler</title>
-
-    <!-- Bootstrap core CSS -->
-
-    <link href="assets/icons/icons.css" rel="stylesheet">
-    <link href="assets/css/materialize.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
-
-</head>
-
-<body>
-
-    <section class="screen-05">
-    <div class="scr05-inner">
-         <div class="chating-menu">
-             <div class="cm-inner">
-              <div class="mobile-bar">
-             <a href="#" data-activates="slide-out" id="menu"><i  class="icon-menu"></i></a>
-             </div><!--/mobile-bar-->
-             <div class="logo">
-             <img src="assets/image/logo-white.png"/>
-             </div><!--/logo-->
-             <div class="user-pic">
-             <img src="assets/image/avatar-10.jpg"/>
-             </div><!--/user-pic-->
-             <div class="clearfix"></div>
-                 <div class="search-filed">
-                 <div class="srcfld-inner">
-                     <input type="text" class="form-control" placeholder="Write Here..."/>
-                     <span><i class="icon-close"></i></span>
-                     </div><!--/srcfld-inner-->
-                 </div><!--/search-filed-->
-             </div><!--/cm-inner-->
-       
-        </div><!--/chating-menu-->
-        <div class="chating-group">
-        <h1>You are here : <span> Frankfurt Airpot</span></h1>
-        </div><!--/chating-group-->
-        <div class="chating-body">
-        <div class="cb-inner">
-            <div class="cbi-me">
-            <div class="cbime-inner">
-                <div class="cbimei-imgcon"><img class="z-depth-3" src="assets/image/avatar-10.jpg"/></div><!--/cbimei-imgcon-->
-                <div class="cbimei-name">
-                <h5>Ankit Solanki - <span>12:30</span></h5>
-                </div><!--/cbimei-name-->
-                <div class="cbimei-chat">
-                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.</p>
-                    <div class="cbimei-location">
-                    <img src="assets/image/airpot.jpg"/>
-                    </div><!--/cbimei-location-->
-                </div><!--/cbimei-chat-->
-                </div><!--/cbime-inner-->
-            </div><!--/cbi-me-->
-            <div class="cbi-user">
-            <div class="cbiuser-inner">
-                <div class="cbiuseri-imgcon"><img class="z-depth-3" src="assets/image/avatar-9.jpg"/></div><!--/cbimei-imgcon-->
-                <div class="waves-effect waves-light cbiuseri-pm z-depth-2"><i class="icon-bubble"></i></div><!--/cbiuseri-pm-->
-                <div class="cbiuseri-name">
-                <h5>Mustafa Vohra - <span>02:45</span></h5>
-                </div><!--/cbiuseri-name-->
-                <div class="cbiuseri-chat">
-                <p>Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur,</p>
-                    <div class="cbiuseri-location">
-                    <img src=""/>
-                    </div><!--/cbiuseri-location-->
-                </div><!--/cbiuseri-chat-->
-                </div><!--/cbiuser-inner-->
-            </div><!--/cbi-user-->
-            <div class="cbi-user">
-            <div class="cbiuser-inner">
-                <div class="cbiuseri-imgcon"><img class="z-depth-3" src="assets/image/avatar-9.jpg"/></div><!--/cbimei-imgcon-->
-                <div class="waves-effect waves-light cbiuseri-pm z-depth-2"><i class="icon-bubble"></i></div><!--/cbiuseri-pm-->
-                <div class="cbiuseri-name">
-                <h5>Adarsh Nair - <span>02:45</span></h5>
-                </div><!--/cbiuseri-name-->
-                <div class="cbiuseri-chat">
-                <p> from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
-                    <div class="cbiuseri-location">
-                    <img src=""/>
-                    </div><!--/cbiuseri-location-->
-                </div><!--/cbiuseri-chat-->
-                </div><!--/cbiuser-inner-->
-            </div><!--/cbi-user-->
-            </div><!--/cb-inner-->
-        </div><!--/chating-body-->
-        <div class="chating-footer">
-        <div class="cf-typebox">
-            <div class="cf-atchshow">
-            <ul>
-               <li>
-                <span class="icon-close "></span>
-                   <img src="assets/image/bg.jpg"/>
-                </li>
-                </ul>
-            </div><!--/cf-atchshow-->
-            <div class="cf-fileatch">
-            <label>
+    </div>
+    <!--/chating-menu-->
+    <div class="chating-group">
+      <h1>You are here : <span> Frankfurt Airpot</span></h1>
+    </div>
+    <!--/chating-group-->
+    <div class="chating-body">
+      <div class="cb-inner">
+        <!--/cbi-user-->
+      </div>
+      <!--/cb-inner-->
+    </div>
+    <!--/chating-body-->
+    <div class="chating-footer">
+      <div class="cf-typebox">
+        <div class="cf-atchshow">
+          <ul>
+            <li>
+              <span class="icon-close "></span>
+              <img src="assets/image/bg.jpg" />
+            </li>
+          </ul>
+        </div>
+        <!--/cf-atchshow-->
+        <div class="cf-fileatch">
+          <label>
                 <i class="z-depth-2 icon-paper-clip">
                  <input class="cffa-file"   multiple="" type="file">
                 </i>
-               
+
                 </label>
-            </div><!--/cf-fileatch-->
-            <textarea class="form-control main-msg-bx" placeholder="Write Here....." name="dsdMsg"></textarea>
-            <button class="waves-effect waves-light z-depth-2 cf-btn"><i class="icon-rocket"></i></button>
-            </div><!--/cf-typebox-->
-        </div><!--/chating-footer-->
-       
-        
-        </div><!--/scr05-inner-->
-    </section><!--/screen-05-->
-    <!--/screen-01-->
+        </div>
+        <!--/cf-fileatch-->
+        <textarea class="form-control main-msg-bx" placeholder="Write Here....." name="dsdMsg"></textarea>
+        <button class="waves-effect waves-light z-depth-2 cf-btn"><i class="icon-rocket"></i></button>
+      </div>
+      <!--/cf-typebox-->
+    </div>
+    <!--/chating-footer-->
 
-    
-    
-     <ul id="slide-out" class="side-nav main-menu">
-         <li><a href="#"><i class="icon-magnifier"></i>Search</a></li>
-         <li><a href="#"><i class="icon-note"></i>Edit Profile</a></li>
-         <li><a href="#"><i class="icon-speedometer"></i>KM Radius</a></li>
-         <li><a href="#"><i class="icon-bubble"></i>Private Messages</a></li>
-    
-  </ul>
-    
-   
-    
-    
 
-    
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/materialize.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            
-            // Menu
-              $('#menu').sideNav({
-      menuWidth: 250,
-      edge: 'left',
-      closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
-      draggable: true, // Choose whether you can drag to open on touch screens,
-      
-    }
-  );
-            //Select option
-            $('select').formSelect();
-
-            //push option for GPS and notication
-            $('.modal').modal({
-                dismissible: false,
-                startingTop: '5%',
-                endingTop: '35%',
-
-            });
-
-            
- 
-        });
-    </script>
-</body>
-
-</html>
+  </div>
+  <!--/scr05-inner-->
+</section>
+<!--/screen-05-->
+<!--/screen-01-->
+<ul id="slide-out" class="side-nav main-menu">
+  <li><a href="#"><i class="icon-magnifier"></i>Search</a></li>
+  <li><a href="#"><i class="icon-note"></i>Edit Profile</a></li>
+  <li><a href="#"><i class="icon-speedometer"></i>KM Radius</a></li>
+  <li><a href="#"><i class="icon-bubble"></i>Private Messages</a></li>
+</ul>
