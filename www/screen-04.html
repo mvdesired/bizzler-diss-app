@@ -58,11 +58,8 @@
               <md-input-container class="md-block" flex-gt-sm>
                 <label for="curpos">Country</label>
                 <md-icon class="icon-globe prefix"></md-icon>
-                <md-select name="country" ng-model="userData.country" required placeholder="Choose your Country" class="select-country">
-                  <md-option value="juice">Juice</md-option>
-                  <md-option value="milk">Milk</md-option>
-                  <md-option value="wine">Wine</md-option>
-                  <md-option value="mead">Mead</md-option>
+                <md-select name="country" ng-model="userData.country" required placeholder="Choose your Country" class="select-country" ng-repeat="c in countries">
+                  <md-option value="{{c.label}}" ng-selected="userData.country == c.label">{{c.label}}</md-option>
                 </md-select>
                 <div ng-messages="profile_form.country.$error">
                   <div ng-message="required">Country is required.</div>

@@ -1,6 +1,6 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog',
-  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog){
+  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries',
+  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.user = {};
@@ -9,10 +9,13 @@ bizzlerApp.controller('bizzlerController',[
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     /*Functiona Creations*/
+    countries.list(function(countries) {
+      $scope.countries = countries;
+    });
     $scope.init = function(){
       $scope.ngLoaderShow();
       if($scope.lcl.isLoggedin){
-        $location.path('/profile');
+        $location.path('/location-chat');
       }
     };
     $scope.ngLoaderShow = function(){
@@ -80,6 +83,7 @@ bizzlerApp.controller('bizzlerController',[
               { code: "document.body.textContent" },
               function(values){
                   $scope.jsonValue = JSON.parse(values);
+                  console.log($scope.jsonValue);
                   $scope.ref.close();
                   $scope.ngLoaderHide();
                   if($scope.jsonValue.code == 200 || $scope.jsonValue.code == 300){
@@ -137,7 +141,95 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.saveProfile = function(){
       $scope.ngLoaderShow();
+      if($scope.userData.gps_on){
+        cordova.plugins.diagnostic.isLocationAuthorized(function(authorized){
+          if(!authorized){
+            if(device.platform === 'Android'){
+              cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
+                  switch(status){
+                      case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+                          $scope.userData.gps_on = 0;
+                          console.log("Permission not requested");
+                          break;
+                      case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+                          $scope.userData.gps_on = 1;
+                          console.log("Permission granted");
+                          break;
+                      case cordova.plugins.diagnostic.permissionStatus.DENIED:
+                          $scope.userData.gps_on = 0;
+                          console.log("Permission denied");
+                          break;
+                      case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+                            $scope.userData.gps_on = 0;
+                            console.log("Permission permanently denied");
+                          break;
+                  }
+              }, function(error){
+                  console.error(error);
+              });
+            }
+            else if(device.platform === 'iOS'){
+              cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
+                  switch(status){
+                      case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+                          $scope.userData.gps_on = 0;
+                          console.log("Permission not requested");
+                          break;
+                      case cordova.plugins.diagnostic.permissionStatus.DENIED:
+                          console.log("Permission denied");
+                          $scope.userData.gps_on = 0;
+                          break;
+                      case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+                          console.log("Permission granted always");
+                          $scope.userData.gps_on = 1;
+                          break;
+                      case cordova.plugins.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
+                          console.log("Permission granted only when in use");
+                          $scope.userData.gps_on = 1;
+                          break;
+                  }
+              }, function(error){
+                  console.error(error);
+              }, cordova.plugins.diagnostic.locationAuthorizationMode.ALWAYS);
+            }
+          }
+            console.log("Location is " + (authorized ? "authorized" : "unauthorized"));
+        }, function(error){
+            console.error("The following error occurred: "+error);
+        });
+      }
+      if($scope.userData.notification_on){
+        cordova.plugins.diagnostic.isRemoteNotificationsEnabled(function(enabled){
+            console.log("Remote notifications are " + (enabled ? "enabled" : "disabled"));
+            if(!enabled){
+              if(device.platform === 'IOS'){
+                cordova.plugins.diagnostic.requestRemoteNotificationsAuthorization({
+                    successCallback: function(){
+                      $scope.userData.notification_on = 1;
+                        console.log("Successfully requested remote notifications authorization");
+                    },
+                    errorCallback: function(err){
+                      $scope.userData.notification_on = 0;
+                       console.error("Error requesting remote notifications authorization: " + err);
+                    },
+                    types: [
+                        cordova.plugins.diagnostic.remoteNotificationType.ALERT,
+                        cordova.plugins.diagnostic.remoteNotificationType.SOUND,
+                        cordova.plugins.diagnostic.remoteNotificationType.BADGE
+                    ],
+                    omitRegistration: false
+                });
+              }
+              else{
+                $scope.userData.notification_on = 1;
+              }
+            }
+        }, function(error){
+            console.error("The following error occurred: "+error);
+        });
+      }
       var params = '?action=save_profile'+
+      '&ID='+$scope.userData.ID+
       '&first_name='+$scope.userData.first_name+
       '&last_name='+$scope.userData.last_name+
       '&user_email='+$scope.userData.user_email+
@@ -151,24 +243,21 @@ bizzlerApp.controller('bizzlerController',[
        method: 'POST',
        url: dbURL+params,
        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-       /*data: {
-         action:'register_user',
-         rg_name:$scope.userData.rg_name,
-         rg_email:$scope.userData.rg_email,
-         rg_pass:$scope.userData.rg_pass,
-         rg_device:device.platform,
-         rg_from:'Normal'
-       }*/
       }
       $http(req).then(function(response){
         console.log(response.data);
         $scope.ngLoaderHide();
         $scope.notiMsg(response.data.message);
-        $location.path('/location-chat');
+        if(response.data.code==200){
+          $location.path('/location-chat');
+        }
       },
       function(response){
         console.log(response);
       });
+    }
+    $scope.locationChatPreLoad = function(){
+      
     }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
