@@ -5,18 +5,28 @@ bizzlerApp.controller('bizzlerController',[
     $scope.lcl = $localStorage;
     $scope.user = {};
     $scope.userData = $scope.lcl.user;
-    console.log(JSON.stringify($scope.userData));
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     /*Functiona Creations*/
     countries.list(function(countries) {
-      $scope.countries = countries;
+      $scope.countries = countries.data;
     });
     $scope.init = function(){
       $scope.ngLoaderShow();
-      if($scope.lcl.isLoggedin){
-        $location.path('/location-chat');
-      }
+      $scope.locationChatPreLoad();
+      /*if($scope.lcl.isLoggedin){
+        console.log(JSON.stringify($scope.lcl.user));
+        var req = {
+         method: 'POST',
+         url: dbURL+'?action=get_user_data&user_id='+$scope.lcl.user.ID,
+         headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        }
+        $http(req).then(function(response){
+          console.log(JSON.stringify(response.data));
+          $scope.userData = response.data.body;
+          $location.path('/profile');
+        });
+      }*/
     };
     $scope.ngLoaderShow = function(){
       $scope.loader = true;
@@ -142,7 +152,7 @@ bizzlerApp.controller('bizzlerController',[
     $scope.saveProfile = function(){
       $scope.ngLoaderShow();
       if($scope.userData.gps_on){
-        cordova.plugins.diagnostic.isLocationAuthorized(function(authorized){
+        cordova.plugins.diagnostic.isLocationEnabled(function(authorized){
           if(!authorized){
             if(device.platform === 'Android'){
               cordova.plugins.diagnostic.requestLocationAuthorization(function(status){
@@ -257,7 +267,45 @@ bizzlerApp.controller('bizzlerController',[
       });
     }
     $scope.locationChatPreLoad = function(){
-      
+      if (navigator.geolocation) {
+        cordova.plugins.diagnostic.isLocationEnabled(function(enabled){
+          if(enabled){
+            cordova.plugins.diagnostic.isGpsLocationEnabled(function(enabled){
+              if(enabled){
+                navigator.geolocation.getCurrentPosition(function(position){
+                    latitude = position.coords.latitude;
+                    longitude = position.coords.longitude;
+                    var pyrmont = new google.maps.LatLng(latitude,longitude);
+                    map = new google.maps.Map(document.getElementById('bizzler_map'), {
+                        center: pyrmont,
+                        zoom: 15
+                      });
+                    var request = {
+                      location: pyrmont,
+                      //radius: '500',
+                      //type: ['restaurant']
+                    };
+                    service = new google.maps.places.PlacesService(map);
+                    service.nearbySearch(request, function(results, status){
+                      console.log(JSON.stringify(results),JSON.stringify(status));
+                    });
+
+                },function(error){
+                  $scope.notiMsg('Error occurred. Error code: ' + error.message);
+                },{enableHighAccuracy: true, timeout: 10000, maximumAge: 3000});
+              }
+              else{
+                $scope.notiMsg("Please on your GPS");
+              }
+            });
+          }
+          else{
+            $scope.notiMsg("Please enable your location");
+          }
+        },function(error){
+          console.error(error);
+        });
+      }
     }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});

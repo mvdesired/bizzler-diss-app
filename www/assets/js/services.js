@@ -31,7 +31,9 @@
 bizzlerApp.factory('countries', function($http){
     return {
       list: function(callback){
-        $http.get('countries-list.json').success(callback);
+        $http.get(dbURL+'/countries-list.json').then(callback).catch(function(error){
+          console.error(JSON.stringify(error));
+        });
       }
     };
   });
