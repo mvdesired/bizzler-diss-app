@@ -44,11 +44,28 @@
             <md-input-container class="md-block" flex-gt-sm>
               <label>Password</label>
               <md-icon class="rg_pass icon-lock"></md-icon>
-              <input name="rg_pass" required ng-model="user.rg_pass" />
+              <input name="rg_pass" type="password" required ng-model="user.rg_pass" />
               <div ng-messages="regForm.rg_pass.$error">
                 <div ng-message="required">Password not Empty</div>
               </div>
             </md-input-container>
+            <div flex="5" hide-xs hide-sm>
+              <!-- Spacer //-->
+            </div>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Confirm Password</label>
+              <md-icon class="rg_cpass icon-lock"></md-icon>
+              <input name="rg_cpass" type="password" compare-to="user.rg_pass" required ng-model="user.rg_cpass" />
+              <div ng-messages="regForm.rg_cpass.$error">
+                <div ng-message="compare-to">Password not matched</div>
+              </div>
+            </md-input-container>
+            <div flex="5" hide-xs hide-sm>
+
+            </div>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<md-checkbox ng-model="user.data_save" aria-label="Save Data" class="md-warn">
+              Save Data
+            </md-checkbox>
             <div flex="5" hide-xs hide-sm>
               <!-- Spacer //-->
             </div>

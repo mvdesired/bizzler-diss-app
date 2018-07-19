@@ -51,7 +51,7 @@
       <![endif]-->
       <script type="text/javascript">
           var globals = {
-              mapKey : 'AIzaSyCMHVLUbgfV3tlsQnY4pBL8Kb5ck6o4fYA',
+              mapKey : 'AIzaSyBmJ9czcD75arR-hezXnEq2pvoMzFNATSc',
               spinner: '<div class="preloader-wrapper active">'+
                 '<div class="spinner-layer">'+
                   '<div class="circle-clipper left">'+
@@ -76,7 +76,48 @@
     <div class="main-loader" ng-show="loader">
       <md-progress-circular md-diameter="50"></md-progress-circular>
     </div>
-    <div style="width:100%;height:150px;" id="bizzler_map"></div>
+    <div style="visibility: hidden;">
+      <div id="places-modal" class="md-dialog-container">
+        <md-dialog layout-padding aria-label="Places near you">
+          <div class="allmod-inner">
+            <h2>Places near you</h2>
+            <md-dialog-content>
+              <div class="md-dialog-content">
+                <div class="placelist-wrapper">
+                  <ul>
+                    <li class="placelist-item" ng-repeat="pl in placesListLoaded">
+                        <div class="pli-imgcon">
+                          <img ng-src="{{pl.photoUrl}}" />
+                        </div>
+                        <!--/ulpm-imgcon-->
+                        <div class="pli-txtcon">
+                          <h3>{{pl.name}}</h3>
+                          <p>{{pl.address}}</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="placelist-item">
+                        <div class="pli-imgcon">
+                          <img ng-src="{{pl.photoUrl}}" />
+                        </div>
+                        <!--/ulpm-imgcon-->
+                        <div class="pli-txtcon">
+                          <h3>flsdjfsldjf</h3>
+                          <p>kjhf fhkd</p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="pl-loader" ng-show="plloader">
+                  <md-progress-circular class="md-warn" md-diameter="50px"></md-progress-circular>
+                </div>
+              </div>
+            </md-dialog-content>
+          </div>
+        </md-dialog>
+      </div>
+    </div>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="assets/js/firebase-app.js"></script>
     <script type="text/javascript" src="assets/js/firebase-messaging.js"></script>

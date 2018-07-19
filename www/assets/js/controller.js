@@ -7,6 +7,11 @@ bizzlerApp.controller('bizzlerController',[
     $scope.userData = $scope.lcl.user;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
+    $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
+    $scope.PlaceLimit = 5;
+    $scope.placePage = 1;
+    $scope.placesList = {};
+    $scope.placesListLoaded = [];
     /*Functiona Creations*/
     countries.list(function(countries) {
       $scope.countries = countries.data;
@@ -15,7 +20,9 @@ bizzlerApp.controller('bizzlerController',[
       $document[0].addEventListener("offline", $scope.onOffline, false);
       $document[0].addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
-      $scope.locationChatPreLoad();
+      console.log(JSON.stringify(device));
+
+      //$scope.locationChatPreLoad();
       /*if($scope.lcl.isLoggedin){
         console.log(JSON.stringify($scope.lcl.user));
         var req = {
@@ -277,28 +284,65 @@ bizzlerApp.controller('bizzlerController',[
       });
     }
     $scope.locationChatPreLoad = function(){
+      $scope.plloader = true;
+      $mdDialog.show({
+        contentElement: '#places-modal',
+        parent: angular.element(document.body),
+        clickOutsideToClose: true
+      }).catch((error)=>{
+        console.log(JSON.stringify(error));
+      });
       if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position){
+          navigator.geolocation.getCurrentPosition((position)=>{
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
-              var pyrmont = new google.maps.LatLng($scope.latitude,$scope.longitude);
+              $http.get("https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius=100&type="+$scope.placesTypes+"&key="+globals.mapKey).then((response)=>{
+                $scope.placesList = response.data.results;
+                if(response.data.status === "OK"){
+                  for(var i=0;i<$scope.PlaceLimit;i++){
+                    if(typeof $scope.placesList[i].place_id !== "undefined"){
+                      var placeNmaeUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+$scope.placesList[i].place_id+"&fields=name,photo,formatted_address&key="+globals.mapKey;
+                      $http.get(placeNmaeUrl).then((response)=>{
+                        var placePhotoUrl = '';
+                        if(typeof response.data.result.photos !=="undefined"){
+                          placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+response.data.result.photos[0].photo_reference+"&key="+globals.mapKey;
+                        }
+                        $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':response.data.result.name,'address':response.data.result.formatted_address});
+                        $scope.plloader = false;
+                      }).catch((error)=>{
+                        console.log('Error occurred. Error code: ' + error.message);
+                        //$scope.notiMsg('Error occurred. Error code: ' + error.message);
+                      });
+                    }
+                    else{break;}
+                    //console.log($scope.placesList[1+$scope.PlaceLimit*$scope.placesList]);
+                    if((i+1)==$scope.PlaceLimit){
+                      $scope.placePage++;
+                    }
+                  }
+                }
+              }).catch((error)=>{
+                console.log('Error occurred. Error code: ' + error.message);
+                $scope.notiMsg('Error occurred. Error code: ' + error.message);
+              });
+              /*var pyrmont = new google.maps.LatLng($scope.latitude,$scope.longitude);
               $scope.map = new google.maps.Map($document[0].getElementById('bizzler_map'), {
                   center: pyrmont,
                   zoom: 15
                 });
               $scope.placeRequest = {
                 location: pyrmont,
-                radius: '100',
-                //type: ['restaurant']
+                radius: '50',
+                type: $scope.placesTypes
               };
-              $scope.notiMsg(JSON.stringify($scope.placeRequest));
+              console.log(JSON.stringify($scope.placeRequest));
               $scope.placeService = new google.maps.places.PlacesService($scope.map);
               $scope.placeService.nearbySearch($scope.placeRequest, function(results, status){
                 console.log(results,status);
                 console.log(JSON.stringify(results),JSON.stringify(status));
-                $scope.notiMsg(results+' '+status);
-              });
-          },function(error){
+                $scope.notiMsg(status);
+              });*/
+          },(error)=>{
             console.log('Error occurred. Error code: ' + error.message);
             $scope.notiMsg('Error occurred. Error code: ' + error.message);
           },{enableHighAccuracy: true, timeout: 100000, maximumAge: 3000});
@@ -312,3 +356,21 @@ bizzlerApp.controller('bizzlerController',[
     }
   }
 ]);
+bizzlerApp.directive("compareTo", function() {
+      return {
+        require: "ngModel",
+        scope: {
+          confirmPassword: "=compareTo"
+        },
+        link: function(scope, element, attributes, modelVal) {
+
+          modelVal.$validators.compareTo = function(val) {
+            return val == scope.confirmPassword;
+          };
+
+          scope.$watch("confirmPassword", function() {
+            modelVal.$validate();
+          });
+        }
+      };
+    });
