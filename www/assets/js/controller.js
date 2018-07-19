@@ -1,6 +1,6 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries',
-  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries){
+  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout',
+  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.user = {};
@@ -12,6 +12,8 @@ bizzlerApp.controller('bizzlerController',[
       $scope.countries = countries.data;
     });
     $scope.init = function(){
+      document.addEventListener("offline", $scope.onOffline, false);
+      document.addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
       $scope.locationChatPreLoad();
       /*if($scope.lcl.isLoggedin){
@@ -25,9 +27,17 @@ bizzlerApp.controller('bizzlerController',[
           console.log(JSON.stringify(response.data));
           $scope.userData = response.data.body;
           $location.path('/profile');
-        });
+        });spec="~2.2.3"
       }*/
     };
+    $scope.onOffline = function(){
+      $scope.notiMsg('No internet Connection');
+    }
+    $scope.onOnline = function(){
+      $scope.notiMsg('Back Online');
+      var networkState = navigator.connection.type;
+      $scope.notiMsg('Connection type: ' + networkState);
+    }
     $scope.ngLoaderShow = function(){
       $scope.loader = true;
     };
@@ -268,43 +278,30 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.locationChatPreLoad = function(){
       if (navigator.geolocation) {
-        cordova.plugins.diagnostic.isLocationEnabled(function(enabled){
-          if(enabled){
-            cordova.plugins.diagnostic.isGpsLocationEnabled(function(enabled){
-              if(enabled){
-                navigator.geolocation.getCurrentPosition(function(position){
-                    latitude = position.coords.latitude;
-                    longitude = position.coords.longitude;
-                    var pyrmont = new google.maps.LatLng(latitude,longitude);
-                    map = new google.maps.Map(document.getElementById('bizzler_map'), {
-                        center: pyrmont,
-                        zoom: 15
-                      });
-                    var request = {
-                      location: pyrmont,
-                      //radius: '500',
-                      //type: ['restaurant']
-                    };
-                    service = new google.maps.places.PlacesService(map);
-                    service.nearbySearch(request, function(results, status){
-                      console.log(JSON.stringify(results),JSON.stringify(status));
-                    });
+          navigator.geolocation.getCurrentPosition(function(position){
+            console.log(JSON.stringify(position));
+            $scope.notiMsg(JSON.stringify(position));
+              $scope.latitude = position.coords.latitude;
+              $scope.longitude = position.coords.longitude;
+              /*var pyrmont = new google.maps.LatLng(latitude,longitude);
+              map = new google.maps.Map(document.getElementById('bizzler_map'), {
+                  center: pyrmont,
+                  zoom: 15
+                });
+              var request = {
+                location: pyrmont,
+                //radius: '500',
+                //type: ['restaurant']
+              };
+              service = new google.maps.places.PlacesService(map);
+              service.nearbySearch(request, function(results, status){
+                console.log(JSON.stringify(results),JSON.stringify(status));
+              });*/
 
-                },function(error){
-                  $scope.notiMsg('Error occurred. Error code: ' + error.message);
-                },{enableHighAccuracy: true, timeout: 10000, maximumAge: 3000});
-              }
-              else{
-                $scope.notiMsg("Please on your GPS");
-              }
-            });
-          }
-          else{
-            $scope.notiMsg("Please enable your location");
-          }
-        },function(error){
-          console.error(error);
-        });
+          },function(error){
+            console.log('Error occurred. Error code: ' + error.message);
+            $scope.notiMsg('Error occurred. Error code: ' + error.message);
+          },{enableHighAccuracy: true, timeout: 100000, maximumAge: 3000});
       }
     }
     /*Functions Calling*/
