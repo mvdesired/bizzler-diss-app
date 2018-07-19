@@ -1,6 +1,6 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout',
-  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout){
+  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document',
+  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.user = {};
@@ -12,8 +12,8 @@ bizzlerApp.controller('bizzlerController',[
       $scope.countries = countries.data;
     });
     $scope.init = function(){
-      document.addEventListener("offline", $scope.onOffline, false);
-      document.addEventListener("online", $scope.onOnline, false);
+      $document[0].addEventListener("offline", $scope.onOffline, false);
+      $document[0].addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
       $scope.locationChatPreLoad();
       /*if($scope.lcl.isLoggedin){
@@ -279,25 +279,24 @@ bizzlerApp.controller('bizzlerController',[
     $scope.locationChatPreLoad = function(){
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position){
-            console.log(JSON.stringify(position));
-            $scope.notiMsg(JSON.stringify(position));
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
-              /*var pyrmont = new google.maps.LatLng(latitude,longitude);
-              map = new google.maps.Map(document.getElementById('bizzler_map'), {
+              var pyrmont = new google.maps.LatLng($scope.latitude,$scope.longitude);
+              $scope.map = new google.maps.Map($document[0].getElementById('bizzler_map'), {
                   center: pyrmont,
                   zoom: 15
                 });
-              var request = {
+              $scope.placeRequest = {
                 location: pyrmont,
                 //radius: '500',
                 //type: ['restaurant']
               };
-              service = new google.maps.places.PlacesService(map);
-              service.nearbySearch(request, function(results, status){
+              $scope.notiMsg(JSON.stringify($scope.placeRequest));
+              $scope.placeService = new google.maps.places.PlacesService($scope.map);
+              $scope.placeService.nearbySearch($scope.placeRequest, function(results, status){
                 console.log(JSON.stringify(results),JSON.stringify(status));
-              });*/
-
+                $scope.notiMsg(results+' '+status);
+              });
           },function(error){
             console.log('Error occurred. Error code: ' + error.message);
             $scope.notiMsg('Error occurred. Error code: ' + error.message);
