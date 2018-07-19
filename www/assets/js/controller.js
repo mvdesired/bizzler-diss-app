@@ -288,12 +288,13 @@ bizzlerApp.controller('bizzlerController',[
                 });
               $scope.placeRequest = {
                 location: pyrmont,
-                //radius: '500',
+                radius: '100',
                 //type: ['restaurant']
               };
               $scope.notiMsg(JSON.stringify($scope.placeRequest));
               $scope.placeService = new google.maps.places.PlacesService($scope.map);
               $scope.placeService.nearbySearch($scope.placeRequest, function(results, status){
+                console.log(results,status);
                 console.log(JSON.stringify(results),JSON.stringify(status));
                 $scope.notiMsg(results+' '+status);
               });
