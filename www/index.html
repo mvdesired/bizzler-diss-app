@@ -66,7 +66,7 @@
           }
       </script>
   </head>
-  <body ng-controller="bizzlerController"  layout="vertical">
+  <body ng-controller="bizzlerController" class="bizzer-body" layout="vertical">
     <div class="main-app-wrapper">
       <div class="content-changer" ng-cloak ng-view>
 
@@ -85,9 +85,9 @@
               <div class="md-dialog-content">
                 <div class="placelist-wrapper">
                   <ul>
-                    <li class="placelist-item" ng-repeat="pl in placesListLoaded">
+                    <li class="placelist-item" ng-repeat="pl in placesListLoaded" ng-click="startLocationChatting($index)">
                         <div class="pli-imgcon">
-                          <img ng-src="{{pl.photoUrl}}" />
+                          <img ng-src="{{pl.photoUrl || defaultImage}}" />
                         </div>
                         <!--/ulpm-imgcon-->
                         <div class="pli-txtcon">
@@ -96,16 +96,11 @@
                         </div>
                         <div class="clearfix"></div>
                     </li>
-                    <li class="placelist-item">
-                        <div class="pli-imgcon">
-                          <img ng-src="{{pl.photoUrl}}" />
-                        </div>
-                        <!--/ulpm-imgcon-->
-                        <div class="pli-txtcon">
-                          <h3>flsdjfsldjf</h3>
-                          <p>kjhf fhkd</p>
-                        </div>
-                        <div class="clearfix"></div>
+                    <li class="pl-lm text-center" ng-hide="plFinish">
+                        <md-button class="md-raised bzl-btn" ng-disabled="plLoadMore" ng-click="plLoadMoreBtn()">
+                          <span ng-hide="plLoadMore">Load More</span>
+                          <md-progress-circular md-diameter="20px" ng-show="plLoadMore"></md-progress-circular>
+                        </md-button>
                     </li>
                   </ul>
                 </div>

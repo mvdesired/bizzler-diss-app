@@ -59,6 +59,7 @@ button .preloader-wrapper .spinner-layer .circle-clipper .circle{border-width: 3
   opacity: 1;
   right: 0;
   top: 0;
+  z-index: 90;
 }
 .main-loader.ng-hide{
   right:-100%;
@@ -687,7 +688,8 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
     padding: 0;
     display: inline-block;
 }
-.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .pro-reg-btn {
+.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .pro-reg-btn,
+.bizzer-body .md-button.md-raised.bzl-btn {
     display: inline-block;
     margin: 25px 0 25px 0;
     padding: 10px 10px;
@@ -702,7 +704,8 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
     width: auto;
     min-width: 100px;
 }
-.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .pro-reg-btn md-icon {
+.screen-02.scr-edit .scr02-inner .profile-body .pro-fileds .pro-reg-btn md-icon,
+.bizzer-body .md-button.md-raised.bzl-btn md-icon{
     font-size: 22px;
     position: relative;
     /* top: 3px; */
@@ -711,7 +714,7 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
     line-height: 15px;
     color: #FFFFFF;
 }
-
+.bizzer-body .md-button.md-raised.bzl-btn md-progress-circular{margin: auto;}
 /* Thank you for regsitration */
 
 .screen-thankyou
@@ -2075,14 +2078,23 @@ top: 5px;
   overflow: hidden;
   position: relative;
 }
-.placelist-wrapper ul .placelist-item .pli-imgcon img{height: 100%;position: absolute;margin:auto;}
+.placelist-wrapper ul .placelist-item .pli-imgcon img{
+  position: absolute;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+}
 .placelist-wrapper ul .placelist-item .pli-txtcon{
     float: left;
     margin-left: 20px;
         width: calc(100% - 90px);
 }
 .placelist-wrapper ul .placelist-item .pli-txtcon h3{
+    font-size: 13px;
     margin-bottom: 0;
-    margin-top: 5px;
+    margin-top: 0px;
 }
-.placelist-wrapper ul .placelist-item .pli-txtcon p{margin-bottom: 0;}
+.placelist-wrapper ul .placelist-item .pli-txtcon p{margin-top: 5px;margin-bottom: 0;font-size: 11px;}

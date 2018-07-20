@@ -3,14 +3,15 @@ bizzlerApp.controller('bizzlerController',[
   function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document){
     /*Variables Define*/
     $scope.lcl = $localStorage;
-    $scope.user = {};
+    $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
+    $scope.user = {'save_data':true};
     $scope.userData = $scope.lcl.user;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
     $scope.PlaceLimit = 5;
     $scope.placePage = 1;
-    $scope.placesList = {};
+    $scope.placesList = [];
     $scope.placesListLoaded = [];
     /*Functiona Creations*/
     countries.list(function(countries) {
@@ -20,9 +21,7 @@ bizzlerApp.controller('bizzlerController',[
       $document[0].addEventListener("offline", $scope.onOffline, false);
       $document[0].addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
-      console.log(JSON.stringify(device));
-
-      //$scope.locationChatPreLoad();
+      $scope.locationChatPreLoad();
       /*if($scope.lcl.isLoggedin){
         console.log(JSON.stringify($scope.lcl.user));
         var req = {
@@ -288,7 +287,7 @@ bizzlerApp.controller('bizzlerController',[
       $mdDialog.show({
         contentElement: '#places-modal',
         parent: angular.element(document.body),
-        clickOutsideToClose: true
+        clickOutsideToClose: false
       }).catch((error)=>{
         console.log(JSON.stringify(error));
       });
@@ -301,52 +300,78 @@ bizzlerApp.controller('bizzlerController',[
                 if(response.data.status === "OK"){
                   for(var i=0;i<$scope.PlaceLimit;i++){
                     if(typeof $scope.placesList[i].place_id !== "undefined"){
-                      var placeNmaeUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+$scope.placesList[i].place_id+"&fields=name,photo,formatted_address&key="+globals.mapKey;
-                      $http.get(placeNmaeUrl).then((response)=>{
-                        var placePhotoUrl = '';
-                        if(typeof response.data.result.photos !=="undefined"){
-                          placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+response.data.result.photos[0].photo_reference+"&key="+globals.mapKey;
-                        }
-                        $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':response.data.result.name,'address':response.data.result.formatted_address});
-                        $scope.plloader = false;
-                      }).catch((error)=>{
-                        console.log('Error occurred. Error code: ' + error.message);
-                        //$scope.notiMsg('Error occurred. Error code: ' + error.message);
-                      });
+                      var cur = $scope.placesList[i];
+                      $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
                     }
                     else{break;}
-                    //console.log($scope.placesList[1+$scope.PlaceLimit*$scope.placesList]);
-                    if((i+1)==$scope.PlaceLimit){
-                      $scope.placePage++;
-                    }
                   }
                 }
               }).catch((error)=>{
                 console.log('Error occurred. Error code: ' + error.message);
                 $scope.notiMsg('Error occurred. Error code: ' + error.message);
               });
-              /*var pyrmont = new google.maps.LatLng($scope.latitude,$scope.longitude);
-              $scope.map = new google.maps.Map($document[0].getElementById('bizzler_map'), {
-                  center: pyrmont,
-                  zoom: 15
-                });
-              $scope.placeRequest = {
-                location: pyrmont,
-                radius: '50',
-                type: $scope.placesTypes
-              };
-              console.log(JSON.stringify($scope.placeRequest));
-              $scope.placeService = new google.maps.places.PlacesService($scope.map);
-              $scope.placeService.nearbySearch($scope.placeRequest, function(results, status){
-                console.log(results,status);
-                console.log(JSON.stringify(results),JSON.stringify(status));
-                $scope.notiMsg(status);
-              });*/
           },(error)=>{
             console.log('Error occurred. Error code: ' + error.message);
             $scope.notiMsg('Error occurred. Error code: ' + error.message);
           },{enableHighAccuracy: true, timeout: 100000, maximumAge: 3000});
       }
+    }
+    $scope.plLoadMoreBtn = function(){
+      $scope.plLoadMore = true;
+      var newLoaded = $scope.pagination();
+      if(newLoaded.length < 5){
+        $scope.plFinish = true;
+      }
+      angular.forEach(newLoaded,function(val,key){
+        var cur = newLoaded[key];
+        $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
+      });
+    }
+    $scope.pagination = function(){
+      //$scope.placePage; // because pages logically start with 1, but technically with 0
+      $scope.plLoadMore = false;
+      $scope.placePage++;
+      return $scope.placesList.slice($scope.placePage * $scope.PlaceLimit, ($scope.placePage + 1) * $scope.PlaceLimit);
+    }
+    $scope.getPlaceDetailsFromPlaceId = function(placeId,lat,lng){
+        var placeNmaeUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+placeId+"&fields=name,photo,formatted_address&key="+globals.mapKey;
+        $http.get(placeNmaeUrl).then((response)=>{
+          var placePhotoUrl = '';
+          var resRes = response.data.result;
+          if(typeof resRes.photos !=="undefined"){
+            placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=150&photoreference="+resRes.photos[0].photo_reference+"&key="+globals.mapKey;
+          }
+          $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':resRes.name,'address':resRes.formatted_address,'lat':lat,'lng':lng});
+          $scope.plloader = false;
+        }).catch((error)=>{
+          console.log('Error occurred. Error code: ' + error.message);
+        });
+    }
+    $scope.startLocationChatting = function(location){
+      $scope.ngLoaderShow();
+      var locCick = $scope.placesListLoaded[location];
+      var tD = new Date();
+      var dateString = tD.getFullYear()+'-'+tD.getMonth()+'-'+tD.getDate()+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
+      console.log(locCick.photoUrl);
+      var req = {
+       method: 'POST',
+       url: dbURL+'?action=start_loc_chat&user_id='+$scope.user.ID+
+       '&loc_name='+encodeURIComponent(locCick.name)+
+       '&loc_add='+encodeURIComponent(locCick.address)+
+       '&loc_pic='+encodeURIComponent(locCick.photoUrl)+
+       '&loc_lat='+locCick.lat+
+       '&loc_lng='+locCick.lng+
+       '&creation_date='+dateString+
+       '&device='+device.platform,
+       headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      }
+      $http(req).then((response)=>{
+        var res = response.data;
+        console.log(JSON.stringify(res));
+      }).catch((error)=>{
+        console.log(JSON.stringify(error));
+        $scope.notiMsg("Error: "+JSON.stringify(error));
+      })
     }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});

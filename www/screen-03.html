@@ -42,7 +42,7 @@
               <!-- Spacer //-->
             </div>
             <md-input-container class="md-block" flex-gt-sm>
-              <label>Password</label>
+              <label>Create Password</label>
               <md-icon class="rg_pass icon-lock"></md-icon>
               <input name="rg_pass" type="password" required ng-model="user.rg_pass" />
               <div ng-messages="regForm.rg_pass.$error">
@@ -60,15 +60,11 @@
                 <div ng-message="compare-to">Password not matched</div>
               </div>
             </md-input-container>
-            <div flex="5" hide-xs hide-sm>
-
-            </div>
+            <div flex="5" hide-xs hide-sm></div>
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<md-checkbox ng-model="user.data_save" aria-label="Save Data" class="md-warn">
               Save Data
             </md-checkbox>
-            <div flex="5" hide-xs hide-sm>
-              <!-- Spacer //-->
-            </div>
+            <div flex="5" hide-xs hide-sm></div>
           </div>
           <div layout-gt-sm="row" class="text-center">
             <md-button ng-click="registrationForm()" class="md-raised pro-reg-btn rb-btn" ng-disabled="regForm.$invalid" ng-click-options="{preventDoubleClick: true}">
