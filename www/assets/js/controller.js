@@ -13,6 +13,10 @@ bizzlerApp.controller('bizzlerController',[
     $scope.placePage = 1;
     $scope.placesList = [];
     $scope.placesListLoaded = [];
+    $scope.plRetry = false;
+    $scope.groupChats = [];
+    $scope.groupMessages = [];
+    $scope.curGrpDetails = [];
     /*Functiona Creations*/
     countries.list(function(countries) {
       $scope.countries = countries.data;
@@ -21,7 +25,7 @@ bizzlerApp.controller('bizzlerController',[
       $document[0].addEventListener("offline", $scope.onOffline, false);
       $document[0].addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
-      $scope.locationChatPreLoad();
+      //$scope.locationChatPreLoad();
       /*if($scope.lcl.isLoggedin){
         console.log(JSON.stringify($scope.lcl.user));
         var req = {
@@ -283,19 +287,23 @@ bizzlerApp.controller('bizzlerController',[
       });
     }
     $scope.locationChatPreLoad = function(){
-      $scope.plloader = true;
-      $mdDialog.show({
-        contentElement: '#places-modal',
-        parent: angular.element(document.body),
-        clickOutsideToClose: false
-      }).catch((error)=>{
-        console.log(JSON.stringify(error));
-      });
+        $scope.plloader = true;
+        $scope.plFinish = false;
+        if(!$scope.plRetry){
+            $mdDialog.show({
+              contentElement: '#places-modal',
+              parent: angular.element(document.body),
+              clickOutsideToClose: false
+            }).catch((error)=>{
+              console.log(JSON.stringify(error));
+            });
+      }
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition((position)=>{
+              $scope.plRetry = false;
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
-              $http.get("https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius=100&type="+$scope.placesTypes+"&key="+globals.mapKey).then((response)=>{
+              $http.get("https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius=10000&type="+$scope.placesTypes+"&key="+globals.mapKey).then((response)=>{
                 $scope.placesList = response.data.results;
                 if(response.data.status === "OK"){
                   for(var i=0;i<$scope.PlaceLimit;i++){
@@ -307,12 +315,18 @@ bizzlerApp.controller('bizzlerController',[
                   }
                 }
               }).catch((error)=>{
+                  $scope.plRetry = true;
+                  $scope.plloader = false;
+                  $scope.plFinish = true;
                 console.log('Error occurred. Error code: ' + error.message);
                 $scope.notiMsg('Error occurred. Error code: ' + error.message);
               });
           },(error)=>{
             console.log('Error occurred. Error code: ' + error.message);
             $scope.notiMsg('Error occurred. Error code: ' + error.message);
+            $scope.plFinish = true;
+            $scope.plRetry = true;
+            $scope.plloader = false;
           },{enableHighAccuracy: true, timeout: 100000, maximumAge: 3000});
       }
     }
@@ -352,7 +366,6 @@ bizzlerApp.controller('bizzlerController',[
       var locCick = $scope.placesListLoaded[location];
       var tD = new Date();
       var dateString = tD.getFullYear()+'-'+tD.getMonth()+'-'+tD.getDate()+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
-      console.log(locCick.photoUrl);
       var req = {
        method: 'POST',
        url: dbURL+'?action=start_loc_chat&user_id='+$scope.user.ID+
@@ -368,6 +381,15 @@ bizzlerApp.controller('bizzlerController',[
       $http(req).then((response)=>{
         var res = response.data;
         console.log(JSON.stringify(res));
+        $scope.groupChats.push(res.body.group_details);
+        $scope.curGrpDetails = $scope.groupChats[res.body.group_details.group_id];
+        if(res.code == 200){
+            $scope.groupMessages.push(res.body.group_messages);
+            $location.path("/location-chat/"+res.body.group_details.group_id);
+        }
+        else if(res.code == 300){
+            $location.path("/location-chat-start/"+res.body.group_details.group_id);
+        }
       }).catch((error)=>{
         console.log(JSON.stringify(error));
         $scope.notiMsg("Error: "+JSON.stringify(error));
@@ -380,6 +402,37 @@ bizzlerApp.controller('bizzlerController',[
       $scope.init();
     }
   }
+]);
+bizzlerApp.controller('locationController',['$scope','$routeParams','$location','$http',
+    function($scope,$routeParams,$location,$http){
+        $scope.locationId = $routeParams.locationId;
+        $scope.startNewMessage = function(){
+            console.log($scope.cmsg);
+            var tD = new Date();
+            var dateString = tD.getFullYear()+'-'+tD.getMonth()+'-'+tD.getDate()+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
+            var params = '&user_id='+$scope.user.ID+
+            '&grp_id='+$scope.locationId+
+            '&msg_text='+$scope.cmsg.msg+
+            '&is_grp_msg=1'+
+            '&creation_date='+dateString;
+
+            var req = {
+             method: 'POST',
+             url: dbURL+'?action=msgSend'+params,
+             headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            }
+            $http(req).then((response)=>{
+                //$location.path('/location-chat/'+$scope.locationId);
+                console.log(response.data);
+            }).catch((error)=>{
+
+            });
+        }
+        $scope.inputChanged = function(event){
+            event.preventDefault();
+            console.log(event.target.files);
+        }
+    }
 ]);
 bizzlerApp.directive("compareTo", function() {
       return {

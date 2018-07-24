@@ -102,6 +102,11 @@
                           <md-progress-circular md-diameter="20px" ng-show="plLoadMore"></md-progress-circular>
                         </md-button>
                     </li>
+                    <li class="pl-lm text-center" ng-show="plRetry">
+                        <md-button class="md-raised bzl-btn" ng-click="locationChatPreLoad()">
+                          <span>Retry</span>
+                        </md-button>
+                    </li>
                   </ul>
                 </div>
                 <div class="pl-loader" ng-show="plloader">

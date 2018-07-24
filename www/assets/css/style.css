@@ -1893,15 +1893,19 @@ top: 5px;
     opacity: 0;
 }
 .screen-06 .scr06-inner .uplddata-body .file-upload h6 {
-    display: block;
-    margin: 19% auto 0 25%;
-    padding: 0;
-    font-size: 24px;
+    margin: auto;
+    padding: 0 0 0 50px;
+    position: absolute;
+    font-size: 22px;
     color: #969696;
     line-height: 35px;
     text-align: center;
-    position: relative;
-    width: 60%;
+    top: 0;
+    left: 0;
+    width: 160px;
+    bottom: 0;
+    right: 0;
+    height: 60px;
 }
 .screen-06 .scr06-inner .uplddata-body .file-upload:hover h6, .screen-06 .scr06-inner .uplddata-body .file-upload:hover h6 i, .screen-06 .scr06-inner .uplddata-body .file-upload:hover h6 span{
     color: #ff6e41;
@@ -1909,20 +1913,20 @@ top: 5px;
 .screen-06 .scr06-inner .uplddata-body .file-upload h6 i
 {
     position: absolute;
-    top: -2px;
-    left: -25px;
-    font-size: 60px;
+    top: 3px;
+    left: 0px;
+    font-size: 50px;
     color: #969696;
 }
 .screen-06 .scr06-inner .uplddata-body .file-upload h6 span
 {
-   display: block;
-    margin: 0;
-    padding: 0;
-    font-size: 16px;
-    color: #969696;
-    line-height: 25px;
-    text-align: center;
+    display: block;
+     margin: 0;
+     padding: 0;
+     font-size: 15px;
+     color: #969696;
+     line-height: 25px;
+     text-align: center;
 }
 
 .screen-06 .scr06-inner .uplddata-body .ud-btncon
@@ -2055,9 +2059,10 @@ top: 5px;
   margin: 0;
   padding: 0;
   line-height: normal;
+  list-style-type: none;
 }
 .placelist-wrapper ul .placelist-item{
-  list-style-type: none;
+
   padding: 10px 20px;
   border-bottom: 2px solid #dedede;
   cursor: pointer;

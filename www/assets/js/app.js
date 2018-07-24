@@ -1,5 +1,5 @@
 'use strict';
-const dbURL = 'http://dissdemo.biz/bizzler';
+const dbURL = 'http://bizzler.dissdemo.net';
 const lcl = window.localStorage;
 var bizzlerApp = angular.module('bizzlerApp',['ngMaterial','ngRoute','ngStorage']);
 bizzlerApp.deviceReady = false;

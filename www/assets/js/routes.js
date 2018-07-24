@@ -13,8 +13,13 @@ bizzlerApp.config(['$routeProvider',
       when('/profile', {
         templateUrl: 'screen-04.html'
       }).
-      when('/location-chat', {
-        templateUrl: 'screen-05.html'
+      when('/location-chat/:locationId', {
+        templateUrl: 'screen-05.html',
+        controller:'locationController'
+      }).
+      when('/location-chat-start/:locationId', {
+        templateUrl: 'screen-06.html',
+        controller:'locationController'
       }).
       otherwise({
         templateUrl: 'screen-01.html',
