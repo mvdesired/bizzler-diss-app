@@ -4,7 +4,7 @@ bizzlerApp.controller('bizzlerController',[
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
-    $scope.user = {'save_data':true};
+    $scope.user = {"save_data":true};
     $scope.userData = $scope.lcl.user;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
@@ -25,8 +25,8 @@ bizzlerApp.controller('bizzlerController',[
       $document[0].addEventListener("offline", $scope.onOffline, false);
       $document[0].addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
-      //$scope.locationChatPreLoad();
-      /*if($scope.lcl.isLoggedin){
+      //
+      if($scope.lcl.isLoggedin){
         console.log(JSON.stringify($scope.lcl.user));
         var req = {
          method: 'POST',
@@ -36,9 +36,10 @@ bizzlerApp.controller('bizzlerController',[
         $http(req).then(function(response){
           console.log(JSON.stringify(response.data));
           $scope.userData = response.data.body;
-          $location.path('/profile');
-        });spec="~2.2.3"
-      }*/
+          //$location.path('/profile');
+          $scope.locationChatPreLoad();
+      });//spec="~2.2.3"
+      }
     };
     $scope.onOffline = function(){
       $scope.notiMsg('No internet Connection');
@@ -395,6 +396,7 @@ bizzlerApp.controller('bizzlerController',[
         $scope.notiMsg("Error: "+JSON.stringify(error));
       })
     }
+
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){$scope.ngLoaderHide();});
@@ -403,8 +405,8 @@ bizzlerApp.controller('bizzlerController',[
     }
   }
 ]);
-bizzlerApp.controller('locationController',['$scope','$routeParams','$location','$http',
-    function($scope,$routeParams,$location,$http){
+bizzlerApp.controller('locationController',['$scope','$routeParams','$location','$http','$mdSidenav',
+    function($scope,$routeParams,$location,$http,$mdSidenav){
         $scope.locationId = $routeParams.locationId;
         $scope.startNewMessage = function(){
             console.log($scope.cmsg);
@@ -415,7 +417,6 @@ bizzlerApp.controller('locationController',['$scope','$routeParams','$location',
             '&msg_text='+$scope.cmsg.msg+
             '&is_grp_msg=1'+
             '&creation_date='+dateString;
-
             var req = {
              method: 'POST',
              url: dbURL+'?action=msgSend'+params,
@@ -431,6 +432,9 @@ bizzlerApp.controller('locationController',['$scope','$routeParams','$location',
         $scope.inputChanged = function(event){
             event.preventDefault();
             console.log(event.target.files);
+        }
+        $scope.sideNavOpen = function(){
+            $mdSidenav('slide-out').toggle();
         }
     }
 ]);

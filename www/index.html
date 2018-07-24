@@ -72,10 +72,6 @@
 
       </div>
     </div>
-
-    <div class="main-loader" ng-show="loader">
-      <md-progress-circular md-diameter="50"></md-progress-circular>
-    </div>
     <div style="visibility: hidden;">
       <div id="places-modal" class="md-dialog-container">
         <md-dialog layout-padding aria-label="Places near you">
@@ -117,6 +113,19 @@
           </div>
         </md-dialog>
       </div>
+    </div>
+    <md-sidenav class="md-sidenav-left" md-component-id="slide-out" md-whiteframe="4">
+      <md-content>
+          <ul id="slide-out" class="side-nav main-menu">
+            <li><a><i class="icon-magnifier"></i>Search</a></li>
+            <li><a><i class="icon-note"></i>Edit Profile</a></li>
+            <li><a><i class="icon-speedometer"></i>KM Radius</a></li>
+            <li><a><i class="icon-bubble"></i>Private Messages</a></li>
+          </ul>
+      </md-content>
+    </md-sidenav>
+    <div class="main-loader" ng-show="loader">
+      <md-progress-circular md-diameter="50"></md-progress-circular>
     </div>
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="assets/js/firebase-app.js"></script>

@@ -3,7 +3,7 @@
     <div class="chating-menu">
       <div class="cm-inner">
         <div class="mobile-bar">
-          <a href="#" data-activates="slide-out" id="menu"><i  class="icon-menu"></i></a>
+          <a ng-click="sideNavOpen()" id="menu"><i  class="icon-menu"></i></a>
         </div>
         <!--/mobile-bar-->
         <div class="logo">
@@ -29,7 +29,7 @@
     </div>
     <!--/chating-menu-->
     <div class="chating-group">
-      <h1>You are here : <span> Frankfurt Airpot</span></h1>
+      <h1>You are here : <span> {{curGrpDetails.group_name}}</span></h1>
     </div>
     <!--/chating-group-->
     <div class="chating-body">
@@ -50,17 +50,18 @@
           </ul>
         </div>
         <!--/cf-atchshow-->
-        <div class="cf-fileatch">
+        <!-- <div class="cf-fileatch">
           <label>
-                <i class="z-depth-2 icon-paper-clip">
+
                  <input class="cffa-file"   multiple="" type="file">
                 </i>
 
                 </label>
-        </div>
+        </div> -->
         <!--/cf-fileatch-->
         <textarea class="form-control main-msg-bx" placeholder="Write Here....." name="dsdMsg"></textarea>
-        <button class="waves-effect waves-light z-depth-2 cf-btn"><i class="icon-rocket"></i></button>
+        <md-button class="md-raised cf-fileatch"><i class="z-depth-2 icon-paper-clip"></i></md-button>
+        <md-button class="md-raised md-warn cf-btn"><i class="icon-rocket"></i></md-button>
       </div>
       <!--/cf-typebox-->
     </div>
@@ -72,9 +73,3 @@
 </section>
 <!--/screen-05-->
 <!--/screen-01-->
-<ul id="slide-out" class="side-nav main-menu">
-  <li><a href="#"><i class="icon-magnifier"></i>Search</a></li>
-  <li><a href="#"><i class="icon-note"></i>Edit Profile</a></li>
-  <li><a href="#"><i class="icon-speedometer"></i>KM Radius</a></li>
-  <li><a href="#"><i class="icon-bubble"></i>Private Messages</a></li>
-</ul>
