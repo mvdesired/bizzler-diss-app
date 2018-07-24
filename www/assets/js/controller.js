@@ -160,7 +160,8 @@ bizzlerApp.controller('bizzlerController',[
       $location.path('/profile');
     }
     $scope.gotTochat = function(){
-      $location.path('/location-chat');
+      //$location.path('/location-chat');
+      $scope.locationChatPreLoad();
     }
     $scope.showConfirmPpUp = function (ev){
       $mdDialog.show({
