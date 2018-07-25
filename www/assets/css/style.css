@@ -2114,3 +2114,31 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
     margin-top: 0px;
 }
 .placelist-wrapper ul .placelist-item .pli-txtcon p{margin-top: 5px;margin-bottom: 0;font-size: 11px;}
+.uploaded-file-prv{
+  width: 150px;
+  margin: 15px auto;
+  height: 150px;
+  position: relative;
+  border: 2px solid #dedede;
+  overflow: hidden;
+  text-align: center;
+}
+.uploaded-file-prv img{
+  width: auto;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.uploaded-file-prv span{
+  position: absolute;
+  color: #d84545;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  right: -4px;
+  top: -4px;
+}

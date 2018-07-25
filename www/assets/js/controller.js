@@ -27,17 +27,24 @@ bizzlerApp.controller('bizzlerController',[
       $scope.ngLoaderShow();
       //
       if($scope.lcl.isLoggedin){
-        console.log(JSON.stringify($scope.lcl.user));
         var req = {
          method: 'POST',
          url: dbURL+'?action=get_user_data&user_id='+$scope.lcl.user.ID,
          headers:{'Content-Type':'application/x-www-form-urlencoded'},
         }
         $http(req).then(function(response){
-          console.log(JSON.stringify(response.data));
-          $scope.userData = response.data.body;
+          if(response.data.code == 200){
+            $scope.userData = $scope.lcl.user = response.data.body;
+            //$scope.locationChatPreLoad();
+          }
+          else if(response.data.code == 404){
+            $scope.lcl.user = [];
+            $scope.userData = [];
+            $scope.lcl.isLoggedin = false;
+            $scope.notiMsg(response.data.message);
+          }
           //$location.path('/profile');
-          $scope.locationChatPreLoad();
+
       });//spec="~2.2.3"
       }
     };
@@ -46,8 +53,6 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.onOnline = function(){
       $scope.notiMsg('Back Online');
-      var networkState = navigator.connection.type;
-      $scope.notiMsg('Connection type: ' + networkState);
     }
     $scope.ngLoaderShow = function(){
       $scope.loader = true;
@@ -94,11 +99,13 @@ bizzlerApp.controller('bizzlerController',[
       // login before doing anything
       // this is needed, unless if we just logged in recently
       // check for existing session
+      var redirectUri = dbURL+'?action=linked_access_token';
       var uri = 'https://www.linkedin.com/uas/oauth2/authorization?client_id=81fcixszrwwavz' +
-          '&redirect_uri='+encodeURIComponent('http://dissdemo.biz/bizzler?action=linked_access_token')+
+          '&redirect_uri='+encodeURIComponent(redirectUri)+
           '&response_type=code'+
           '&state='+$scope._gRs()+
           '&scope=r_basicprofile r_emailaddress';
+          console.log(uri);
       $scope.ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes');
       $scope.ref.addEventListener('loadstart', function(e){
         var url = e.url;
@@ -114,16 +121,19 @@ bizzlerApp.controller('bizzlerController',[
               { code: "document.body.textContent" },
               function(values){
                   $scope.jsonValue = JSON.parse(values);
-                  console.log($scope.jsonValue);
+                  console.log(values);
                   $scope.ref.close();
                   $scope.ngLoaderHide();
                   if($scope.jsonValue.code == 200 || $scope.jsonValue.code == 300){
                     $scope.userData = $scope.jsonValue.body;
                     $scope.lcl.user = $scope.jsonValue.body;
                     $scope.lcl.isLoggedin = true;
+                    $scope.notiMsg($scope.jsonValue.message);
                     $location.path('/profile-confirm');
                   }
-                  $scope.notiMsg($scope.jsonValue.message);
+                  else{
+                    $scope.notiMsg($scope.jsonValue.error_description);
+                  }
               }
           );
         }
@@ -301,11 +311,12 @@ bizzlerApp.controller('bizzlerController',[
             });
       }
       if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position)=>{
+          navigator.geolocation.getCurrentPosition(function(position){
               $scope.plRetry = false;
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
-              $http.get("https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius=10000&type="+$scope.placesTypes+"&key="+globals.mapKey).then((response)=>{
+              var rSUrl = "https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius="+$scope.userData.search_radius+"&type="+$scope.placesTypes+"&key="+globals.mapKey;
+              $http.get(rSUrl).then((response)=>{
                 $scope.placesList = response.data.results;
                 if(response.data.status === "OK"){
                   for(var i=0;i<$scope.PlaceLimit;i++){
@@ -320,12 +331,13 @@ bizzlerApp.controller('bizzlerController',[
                   $scope.plRetry = true;
                   $scope.plloader = false;
                   $scope.plFinish = true;
-                console.log('Error occurred. Error code: ' + error.message);
-                $scope.notiMsg('Error occurred. Error code: ' + error.message);
+                console.log('Error occurred. ' + error.message);
+                $scope.notiMsg('Error occurred. ' + error.message);
               });
-          },(error)=>{
-            console.log('Error occurred. Error code: ' + error.message);
-            $scope.notiMsg('Error occurred. Error code: ' + error.message);
+          },function(error){
+            console.log(JSON.stringify(error));
+            console.log('Error occurred. ' + error.message);
+            $scope.notiMsg('Error occurred. ' + error.message);
             $scope.plFinish = true;
             $scope.plRetry = true;
             $scope.plloader = false;
@@ -360,7 +372,7 @@ bizzlerApp.controller('bizzlerController',[
           $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':resRes.name,'address':resRes.formatted_address,'lat':lat,'lng':lng});
           $scope.plloader = false;
         }).catch((error)=>{
-          console.log('Error occurred. Error code: ' + error.message);
+          console.log('Error occurred. ' + error.message);
         });
     }
     $scope.startLocationChatting = function(location){
@@ -370,7 +382,7 @@ bizzlerApp.controller('bizzlerController',[
       var dateString = tD.getFullYear()+'-'+tD.getMonth()+'-'+tD.getDate()+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
       var req = {
        method: 'POST',
-       url: dbURL+'?action=start_loc_chat&user_id='+$scope.user.ID+
+       url: dbURL+'?action=start_loc_chat&user_id='+$scope.userData.ID+
        '&loc_name='+encodeURIComponent(locCick.name)+
        '&loc_add='+encodeURIComponent(locCick.address)+
        '&loc_pic='+encodeURIComponent(locCick.photoUrl)+
@@ -386,18 +398,41 @@ bizzlerApp.controller('bizzlerController',[
         $scope.groupChats.push(res.body.group_details);
         $scope.curGrpDetails = $scope.groupChats[res.body.group_details.group_id];
         if(res.code == 200){
+            $mdDialog.hide();
             $scope.groupMessages.push(res.body.group_messages);
             $location.path("/location-chat/"+res.body.group_details.group_id);
         }
         else if(res.code == 300){
+            $mdDialog.hide();
             $location.path("/location-chat-start/"+res.body.group_details.group_id);
         }
       }).catch((error)=>{
-        console.log(JSON.stringify(error));
-        $scope.notiMsg("Error: "+JSON.stringify(error));
+        console.log(error.message);
+        $scope.notiMsg("Error: "+error.message);
       })
     }
-
+    $scope.getGrpDetails = function(locationId){
+      var req = {
+        method: 'POST',
+        url: dbURL+'?action=getgrpDetails&group_id='+locationId,
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      }
+      $http(req).then((response)=>{
+        var res = response.data;
+        if(res.code == 200){
+          $scope.curGrpDetails = res.body.group_details;
+          $scope.groupMessages[locationId] = res.body.group_messages;
+          $scope.curGrpMessage =  res.body.group_messages;
+          console.log(JSON.stringify(res));
+        }
+        else{
+          $scope.locationChatPreLoad();
+        }
+      }).catch((error)=>{
+        console.log(error.message);
+        $scope.notiMsg("Error: "+error.message);
+      })
+    }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){$scope.ngLoaderHide();});
@@ -406,36 +441,95 @@ bizzlerApp.controller('bizzlerController',[
     }
   }
 ]);
-bizzlerApp.controller('locationController',['$scope','$routeParams','$location','$http','$mdSidenav',
-    function($scope,$routeParams,$location,$http,$mdSidenav){
+bizzlerApp.controller('locationController',['$scope','$routeParams','$location','$http','$mdSidenav','fileReader',
+    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader){
         $scope.locationId = $routeParams.locationId;
+        $scope.mediaU = {"src":'',"file":''};
+        $scope.getGrpDetails($scope.locationId);
+        console.log(JSON.stringify($scope.userData),JSON.stringify($scope.curGrpMessage));
         $scope.startNewMessage = function(){
-            console.log($scope.cmsg);
             var tD = new Date();
-            var dateString = tD.getFullYear()+'-'+tD.getMonth()+'-'+tD.getDate()+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
-            var params = '&user_id='+$scope.user.ID+
+            var dateString = tD.getFullYear()+'-'+('0' + (tD.getMonth()+1)).slice(-2)+'-'+('0' + tD.getDate()).slice(-2)+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
+            /*var params = '&user_id='+$scope.userData.ID+
             '&grp_id='+$scope.locationId+
             '&msg_text='+$scope.cmsg.msg+
             '&is_grp_msg=1'+
-            '&creation_date='+dateString;
-            var req = {
+            '&creation_date='+dateString;*/
+            var fd = new FormData();
+            if($scope.mediaU.src != ''){
+              //params += '&is_file_attached=1';
+              //params += '&media='+$scope.mediaU.src;
+              var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
+              fd.append('is_file_attached', 1);
+              fd.append('media', imgBlob);
+            }
+            /*var req = {
              method: 'POST',
              url: dbURL+'?action=msgSend'+params,
              headers:{'Content-Type':'application/x-www-form-urlencoded'},
-            }
-            $http(req).then((response)=>{
-                //$location.path('/location-chat/'+$scope.locationId);
-                console.log(response.data);
-            }).catch((error)=>{
+           }*/
 
-            });
+            fd.append('action', 'msgSend');
+            fd.append('user_id', $scope.userData.ID);
+            fd.append('grp_id', $scope.locationId);
+            fd.append('msg_text', $scope.cmsg.msg);
+            fd.append('is_grp_msg', 1);
+            fd.append('creation_date', dateString);
+            $http.post(
+                dbURL,
+                fd, {
+                  transformRequest: angular.identity,
+                  headers: {
+                    'Content-Type': undefined
+                  }
+                }
+              )
+              .then(function(response) {
+                var res = response.data;
+                if(res.code==200){
+                  $scope.groupMessages.push(res.body.msgs);
+                  $location.path('/location-chat/'+$scope.locationId);
+                }
+                console.log(JSON.stringify(response.data));
+              })
+              .catch(function(error) {
+                console.log(JSON.stringify(error));
+                $scope.notiMsg("Error: "+error.message);
+              });
+            /*$http(req).then((response)=>{
+                var res = response.data;
+                if(res){
+                  $scope.groupMessages.push(res.body.msgs);
+                  $location.path('/location-chat/'+$scope.locationId);
+                }
+                console.log(JSON.stringify(response.data));
+            }).catch((error)=>{
+              console.log(JSON.stringify(error));
+              $scope.notiMsg("Error: "+error.message);
+            });*/
         }
         $scope.inputChanged = function(event){
             event.preventDefault();
-            console.log(event.target.files);
+            fileReader.readAsDataUrl(event.target.files[0], $scope).then(function(result) {
+                $scope.mediaU.src = result;
+            });
+        }
+        $scope.removeUploadImage = function(){
+          $scope.mediaU.src = '';
         }
         $scope.sideNavOpen = function(){
             $mdSidenav('slide-out').toggle();
+        }
+        $scope.dataURItoBlob = function(dataURI) {
+          var binary = atob(dataURI.split(',')[1]);
+          var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+          var array = [];
+          for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+          }
+          return new Blob([new Uint8Array(array)], {
+            type: mimeString
+          });
         }
     }
 ]);
@@ -457,3 +551,18 @@ bizzlerApp.directive("compareTo", function() {
         }
       };
     });
+bizzlerApp.directive('sendOnEnter',function(){
+    return{
+        restrict : 'A',
+        link : function($scope,elem,attrs){
+            elem.bind('keyup',function(e){
+                if(e.which == 13 && e.keyCode == 13 && e.shiftKey == false){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log($scope.dsdMsg);
+                    return false;
+                }
+            });
+        }
+    }
+});

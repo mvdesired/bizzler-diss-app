@@ -34,6 +34,25 @@
     <!--/chating-group-->
     <div class="chating-body">
       <div class="cb-inner">
+        <div class="cbi-me" ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage">
+          <div class="cbime-inner">
+            <div class="cbimei-imgcon"><img class="z-depth-3" ng-src="{{cgM.send_user_pic}}"></div>
+            <!--/cbimei-imgcon-->
+            <div class="cbimei-name">
+              <h5>{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
+            </div>
+            <!--/cbimei-name-->
+            <div class="cbimei-chat">
+              <p>{{cgM.msg_text}}</p>
+              <div class="cbimei-location" ng-if="cgM.is_file_attached">
+                <img ng-src="{{cgM.media_url}}">
+              </div>
+              <!--/cbimei-location-->
+            </div>
+            <!--/cbimei-chat-->
+          </div>
+          <!--/cbime-inner-->
+        </div>
         <!--/cbi-user-->
       </div>
       <!--/cb-inner-->
@@ -59,9 +78,9 @@
                 </label>
         </div> -->
         <!--/cf-fileatch-->
-        <textarea class="form-control main-msg-bx" placeholder="Write Here....." name="dsdMsg"></textarea>
-        <md-button class="md-raised cf-fileatch"><i class="z-depth-2 icon-paper-clip"></i></md-button>
-        <md-button class="md-raised md-warn cf-btn"><i class="icon-rocket"></i></md-button>
+        <textarea class="form-control main-msg-bx" placeholder="Write Here....." ng-model="dsdMsg" send-on-enter></textarea>
+        <md-button class="md-raised cf-fileatch" aria-label="Attach Media"><i class="z-depth-2 icon-paper-clip"></i></md-button>
+        <md-button class="md-raised md-warn cf-btn" aria-label="Send"><i class="icon-rocket"></i></md-button>
       </div>
       <!--/cf-typebox-->
     </div>
