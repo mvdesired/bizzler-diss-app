@@ -531,6 +531,11 @@ bizzlerApp.controller('locationController',['$scope','$routeParams','$location',
             type: mimeString
           });
         }
+        $scope.$watch('dsdMsg', function(newvalue, oldvalue) {
+            if (newvalue && newvalue.indexOf('\n') > -1) {
+               $scope.dsdMsg = oldvalue;
+            }
+        });
     }
 ]);
 bizzlerApp.directive("compareTo", function() {
@@ -555,13 +560,13 @@ bizzlerApp.directive('sendOnEnter',function(){
     return{
         restrict : 'A',
         link : function($scope,elem,attrs){
-            elem.bind('keyup',function(e){
-                if(e.which == 13 && e.keyCode == 13 && e.shiftKey == false){
-                    e.preventDefault();
-                    e.stopPropagation();
+            elem.bind('keyup',function(event){
+                if(event.which == 13 && event.keyCode == 13 && event.shiftKey == false){
+                    event.preventDefault();
+                    event.stopPropagation();
                     console.log($scope.dsdMsg);
-                    return false;
                 }
+                return false;
             });
         }
     }
