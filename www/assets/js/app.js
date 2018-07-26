@@ -1,7 +1,7 @@
 'use strict';
 const dbURL = 'http://bizzler.dissdemo.net';
 const lcl = window.localStorage;
-var bizzlerApp = angular.module('bizzlerApp',['ngMaterial','ngRoute','ngStorage']);
+var bizzlerApp = angular.module('bizzlerApp',['ngMaterial','ngRoute','ngStorage','ngSanitize']);
 bizzlerApp.deviceReady = false;
 var app = {
     // Application Constructor

@@ -394,7 +394,6 @@ bizzlerApp.controller('bizzlerController',[
       }
       $http(req).then((response)=>{
         var res = response.data;
-        console.log(JSON.stringify(res));
         $scope.groupChats.push(res.body.group_details);
         $scope.curGrpDetails = $scope.groupChats[res.body.group_details.group_id];
         if(res.code == 200){
@@ -423,7 +422,6 @@ bizzlerApp.controller('bizzlerController',[
           $scope.curGrpDetails = res.body.group_details;
           $scope.groupMessages[locationId] = res.body.group_messages;
           $scope.curGrpMessage =  res.body.group_messages;
-          console.log(JSON.stringify(res));
         }
         else{
           $scope.locationChatPreLoad();
@@ -441,34 +439,21 @@ bizzlerApp.controller('bizzlerController',[
     }
   }
 ]);
-bizzlerApp.controller('locationController',['$scope','$routeParams','$location','$http','$mdSidenav','fileReader',
-    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader){
+bizzlerApp.controller('locationController',[
+  '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce',
+    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
         $scope.locationId = $routeParams.locationId;
         $scope.mediaU = {"src":'',"file":''};
         $scope.getGrpDetails($scope.locationId);
-        console.log(JSON.stringify($scope.userData),JSON.stringify($scope.curGrpMessage));
         $scope.startNewMessage = function(){
             var tD = new Date();
             var dateString = tD.getFullYear()+'-'+('0' + (tD.getMonth()+1)).slice(-2)+'-'+('0' + tD.getDate()).slice(-2)+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
-            /*var params = '&user_id='+$scope.userData.ID+
-            '&grp_id='+$scope.locationId+
-            '&msg_text='+$scope.cmsg.msg+
-            '&is_grp_msg=1'+
-            '&creation_date='+dateString;*/
             var fd = new FormData();
             if($scope.mediaU.src != ''){
-              //params += '&is_file_attached=1';
-              //params += '&media='+$scope.mediaU.src;
               var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
               fd.append('is_file_attached', 1);
               fd.append('media', imgBlob);
             }
-            /*var req = {
-             method: 'POST',
-             url: dbURL+'?action=msgSend'+params,
-             headers:{'Content-Type':'application/x-www-form-urlencoded'},
-           }*/
-
             fd.append('action', 'msgSend');
             fd.append('user_id', $scope.userData.ID);
             fd.append('grp_id', $scope.locationId);
@@ -484,7 +469,7 @@ bizzlerApp.controller('locationController',['$scope','$routeParams','$location',
                   }
                 }
               )
-              .then(function(response) {
+              .then((response)=>{
                 var res = response.data;
                 if(res.code==200){
                   $scope.groupMessages.push(res.body.msgs);
@@ -492,21 +477,10 @@ bizzlerApp.controller('locationController',['$scope','$routeParams','$location',
                 }
                 console.log(JSON.stringify(response.data));
               })
-              .catch(function(error) {
+              .catch((error)=>{
                 console.log(JSON.stringify(error));
                 $scope.notiMsg("Error: "+error.message);
               });
-            /*$http(req).then((response)=>{
-                var res = response.data;
-                if(res){
-                  $scope.groupMessages.push(res.body.msgs);
-                  $location.path('/location-chat/'+$scope.locationId);
-                }
-                console.log(JSON.stringify(response.data));
-            }).catch((error)=>{
-              console.log(JSON.stringify(error));
-              $scope.notiMsg("Error: "+error.message);
-            });*/
         }
         $scope.inputChanged = function(event){
             event.preventDefault();
@@ -531,11 +505,63 @@ bizzlerApp.controller('locationController',['$scope','$routeParams','$location',
             type: mimeString
           });
         }
-        $scope.$watch('dsdMsg', function(newvalue, oldvalue) {
-            if (newvalue && newvalue.indexOf('\n') > -1) {
-               $scope.dsdMsg = oldvalue;
-            }
-        });
+        $scope.dTDS = function(sinppet) {
+         return $sce.trustAsHtml(sinppet);
+       };
+        $scope.sendMessage = function(){
+          var msgText = $scope.dsdMsg;
+          $scope.dsdMsg = '';
+          var fd = new FormData();
+          var tD = new Date();
+          var months = ('0' + (tD.getMonth()+1)).slice(-2);
+          var dayDate = ('0' + tD.getDate()).slice(-2);
+          var hours = ('0' + tD.getHours()).slice(-2);
+          var minutes = ('0' + tD.getMinutes()).slice(-2);
+          var dateString = tD.getFullYear()+'-'+months+'-'+dayDate+' '+hours+':'+minutes+':'+tD.getSeconds();
+          fd.append('action', 'msgSend');
+          fd.append('user_id', $scope.userData.ID);//
+          fd.append('grp_id', $scope.locationId);
+          fd.append('msg_text', msgText);
+          fd.append('is_grp_msg', 1);
+          fd.append('creation_date', dateString);
+          fd.append('is_file_attached', 0);
+          fd.append('media', 0);
+          $http.post(dbURL,
+          fd,
+          {
+            transformRequest: angular.identity,
+            headers: {
+              'Content-Type': undefined
+            }}).then((response)=>{
+            console.log(JSON.stringify(response.data));
+          }).catch((error)=>{
+            console.log('Error: '+error.message);
+            $scope.notiMsg('Error: '+error.message);
+          })
+        }
+        $scope.recieveMessage = function(){
+          var last_timestamp = $scope.curGrpMessage[$scope.curGrpMessage.length-1].last_timestamp;
+          $http.get(dbURL+'?action=getMessage&grp_id='+$scope.locationId+'&last_timestamp='+last_timestamp,{
+            transformRequest: angular.identity,
+            headers: {
+              'Content-Type': undefined
+            }}).then((response)=>{
+              var res = response.data;
+              if(res.code==200){
+                if(res.body.group_messages.length > 0){
+                  angular.forEach(res.body.group_messages,function(val,key){
+                    $scope.groupMessages[$scope.locationId].push(val);
+                    //$scope.curGrpMessage.push(val);
+                    console.log($scope.curGrpMessage);
+                  });
+                }
+              }
+            }).catch((error)=>{
+              console.log('Error: '+error.message);
+              $scope.notiMsg('Error: '+error.message);
+            });
+        }
+        $timeout(function(){$interval($scope.recieveMessage,1000);},3000);
     }
 ]);
 bizzlerApp.directive("compareTo", function() {
@@ -564,10 +590,29 @@ bizzlerApp.directive('sendOnEnter',function(){
                 if(event.which == 13 && event.keyCode == 13 && event.shiftKey == false){
                     event.preventDefault();
                     event.stopPropagation();
-                    console.log($scope.dsdMsg);
+                    $scope.sendMessage();
+                    elem.val('');
                 }
                 return false;
             });
         }
     }
+});
+bizzlerApp.directive('scrollToBottom', function($timeout, $window) {
+    return {
+        scope: {
+            scrollToBottom: "="
+        },
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            scope.$watchCollection('scrollToBottom', function(newVal) {
+                if (newVal) {
+                    $timeout(function() {
+                        element[0].scrollTop =  element[0].scrollHeight;
+                    }, 0);
+                }
+
+            });
+        }
+    };
 });

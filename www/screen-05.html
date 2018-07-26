@@ -32,9 +32,9 @@
       <h1>You are here : <span> {{curGrpDetails.group_name}}</span></h1>
     </div>
     <!--/chating-group-->
-    <div class="chating-body">
+    <div class="chating-body"  scroll-to-bottom="curGrpMessage">
       <div class="cb-inner">
-        <div class="cbi-me" ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage">
+        <div class="cbi-me" ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage  track by $index">
           <div class="cbime-inner">
             <div class="cbimei-imgcon"><img class="z-depth-3" ng-src="{{cgM.send_user_pic}}"></div>
             <!--/cbimei-imgcon-->
@@ -43,8 +43,8 @@
             </div>
             <!--/cbimei-name-->
             <div class="cbimei-chat">
-              <p>{{cgM.msg_text}}</p>
-              <div class="cbimei-location" ng-if="cgM.is_file_attached">
+              <p ng-bind-html="dTDS(cgM.msg_text)"></p>
+              <div class="cbimei-location" ng-if="cgM.is_file_attached == 1">
                 <img ng-src="{{cgM.media_url}}">
               </div>
               <!--/cbimei-location-->
