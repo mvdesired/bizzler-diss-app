@@ -34,17 +34,20 @@
     <!--/chating-group-->
     <div class="chating-body"  scroll-to-bottom="curGrpMessage">
       <div class="cb-inner">
-        <div class="cbi-me" ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage  track by $index">
-          <div class="cbime-inner">
-            <div class="cbimei-imgcon"><img class="z-depth-3" ng-src="{{cgM.send_user_pic}}"></div>
+        <div ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage  track by $index">
+          <div ng-class="{true: 'cbime-inner',false:'cbiuser-inner' }[cgM.send_by == userData.ID]">
+            <div ng-class="{true: 'cbimei-imgcon',false:'cbiuseri-imgcon' }[cgM.send_by == userData.ID]">
+              <img class="z-depth-3" ng-src="{{cgM.send_user_pic}}">
+            </div>
             <!--/cbimei-imgcon-->
-            <div class="cbimei-name">
-              <h5>{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
+            <div ng-class="{true: 'cbimei-name',false:'cbiuseri-name' }[cgM.send_by == userData.ID]">
+              <h5 ng-if="cgM.send_by != userData.ID">{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
+              <h5 ng-if="cgM.send_by == userData.ID">You - <span>{{cgM.send_on}}</span></h5>
             </div>
             <!--/cbimei-name-->
-            <div class="cbimei-chat">
+            <div ng-class="{true: 'cbimei-chat',false:'cbiuseri-chat' }[cgM.send_by == userData.ID]">
               <p ng-bind-html="dTDS(cgM.msg_text)"></p>
-              <div class="cbimei-location" ng-if="cgM.is_file_attached == 1">
+              <div ng-if="cgM.is_file_attached == 1" ng-class="{true: 'cbimei-location',false:'cbiuseri-location' }[cgM.send_by == userData.ID]">
                 <img ng-src="{{cgM.media_url}}">
               </div>
               <!--/cbimei-location-->
@@ -58,6 +61,10 @@
       <!--/cb-inner-->
     </div>
     <!--/chating-body-->
+    <div class="cb-nms-tt" ng-show="cbNmsTt">
+      {{cbNTc}} new messages
+    </div>
+    <!--/cb-nms-tt-->
     <div class="chating-footer">
       <div class="cf-typebox">
         <div class="cf-atchshow">
@@ -79,8 +86,8 @@
         </div> -->
         <!--/cf-fileatch-->
         <textarea class="form-control main-msg-bx" placeholder="Write Here....." ng-model="dsdMsg" send-on-enter></textarea>
-        <md-button class="md-raised cf-fileatch" aria-label="Attach Media"><i class="z-depth-2 icon-paper-clip"></i></md-button>
-        <md-button class="md-raised md-warn cf-btn" aria-label="Send"><i class="icon-rocket"></i></md-button>
+        <md-button class="md-raised cf-fileatch" aria-label="Attach Media" ng-click="openMedia()"><i class="z-depth-2 icon-paper-clip"></i></md-button>
+        <md-button class="md-raised md-warn cf-btn" aria-label="Send" ng-click="sendOnClick()"><i class="icon-rocket"></i></md-button>
       </div>
       <!--/cf-typebox-->
     </div>

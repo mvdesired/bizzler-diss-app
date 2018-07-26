@@ -2142,3 +2142,24 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
   right: -4px;
   top: -4px;
 }
+.cb-nms-tt{
+  position: absolute;
+  bottom: 70px;
+  max-width: 200px;
+  width: 180px;
+  height: 30px;
+  line-height: 20px;
+  padding: 5px 15px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+  background-color: #232323;
+  color: #FFF;
+  border-radius: 35px;
+  box-shadow: 0 0 15px #232323;
+  transition: bottom ease-in-out .3s;
+}
+.cb-nms-tt.ng-hide{
+  bottom: 0px;
+}

@@ -1,11 +1,13 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document',
-  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document){
+  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval',
+  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
     $scope.user = {"save_data":true};
+    $scope.lcl.user = {'ID':29};
     $scope.userData = $scope.lcl.user;
+    $scope.userData.ID= 29;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
@@ -50,9 +52,11 @@ bizzlerApp.controller('bizzlerController',[
     };
     $scope.onOffline = function(){
       $scope.notiMsg('No internet Connection');
+      $interval.cancel($scope.RMsgs);
     }
     $scope.onOnline = function(){
       $scope.notiMsg('Back Online');
+      $scope.RMsgs = $interval($scope.recieveMessage,1000);
     }
     $scope.ngLoaderShow = function(){
       $scope.loader = true;
@@ -437,12 +441,14 @@ bizzlerApp.controller('bizzlerController',[
     if(bizzlerApp.deviceReady){
       $scope.init();
     }
+
   }
 ]);
 bizzlerApp.controller('locationController',[
-  '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce',
-    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
+  '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce','$mdBottomSheet',
+    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce,$mdBottomSheet){
         $scope.locationId = $routeParams.locationId;
+        $scope.fetchingMsg = false;
         $scope.mediaU = {"src":'',"file":''};
         $scope.getGrpDetails($scope.locationId);
         $scope.startNewMessage = function(){
@@ -540,6 +546,10 @@ bizzlerApp.controller('locationController',[
           })
         }
         $scope.recieveMessage = function(){
+          if($scope.fetchingMsg){
+            return false;
+          }
+          $scope.fetchingMsg = true;
           var last_timestamp = $scope.curGrpMessage[$scope.curGrpMessage.length-1].last_timestamp;
           $http.get(dbURL+'?action=getMessage&grp_id='+$scope.locationId+'&last_timestamp='+last_timestamp,{
             transformRequest: angular.identity,
@@ -547,13 +557,20 @@ bizzlerApp.controller('locationController',[
               'Content-Type': undefined
             }}).then((response)=>{
               var res = response.data;
+              $scope.fetchingMsg = false;
               if(res.code==200){
                 if(res.body.group_messages.length > 0){
+                  var newMessage = false;
                   angular.forEach(res.body.group_messages,function(val,key){
+                    if(val.send_by != $scope.userData.ID){
+                      newMessage = true;
+                    }
                     $scope.groupMessages[$scope.locationId].push(val);
                     //$scope.curGrpMessage.push(val);
-                    console.log($scope.curGrpMessage);
                   });
+                  if(newMessage){
+                    navigator.notification.beep(2);
+                  }
                 }
               }
             }).catch((error)=>{
@@ -561,7 +578,60 @@ bizzlerApp.controller('locationController',[
               $scope.notiMsg('Error: '+error.message);
             });
         }
-        $timeout(function(){$interval($scope.recieveMessage,1000);},3000);
+        $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
+        $scope.sendOnClick = function(){
+          if($scope.dsdMsg.trim() != ''){
+            $scope.sendMessage();
+            var ngElem = angular.element(document.getElementsByClassName("main-msg-bx"));
+            ngElem.val('');
+          }
+        }
+        $scope.cameraUpload = function(){
+          navigator.camera.getPicture(function(imageURI){
+            console.log(imageURI);
+          }, function(message){
+            console.log(message);
+          }, {
+              quality: 50,
+              allowEdit: true,
+              destinationType: Camera.DestinationType.FILE_URL
+          });
+        }
+        $scope.galleryUpload = function(){
+          navigator.camera.getPicture(function(imageURI){
+            console.log(imageURI);
+          }, function(message){
+            console.log(message);
+          }, {
+              quality: 50,
+              sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+              allowEdit: true,
+              destinationType: Camera.DestinationType.FILE_URI
+          });
+        }
+        $scope.openMedia = function(){
+          $mdBottomSheet.show({
+            template: '<md-bottom-sheet class="md-list md-has-header">'+
+              '<md-subheader>Upload Via</md-subheader>'+
+              '<md-list>'+
+                '<md-list-item >'+
+                  '<md-button ng-click="cameraUpload()" class="md-list-item-content" >'+
+                    '<md-icon class="icon-camera"></md-icon>'+
+                    '<span class="md-inline-list-icon-label">Camera</span>'+
+                  '</md-button>'+
+                '</md-list-item>'+
+                '<md-list-item >'+
+                  '<md-button ng-click="galleryUpload()" class="md-list-item-content" >'+
+                    '<md-icon class="icon-picture"></md-icon>'+
+                    '<span class="md-inline-list-icon-label">Gallery</span>'+
+                  '</md-button>'+
+                '</md-list-item>'+
+              '</md-list>'+
+            '</md-bottom-sheet>',
+            clickOutsideToClose: true,
+            escapeToClose: true
+          });
+        }
     }
 ]);
 bizzlerApp.directive("compareTo", function() {
@@ -590,8 +660,10 @@ bizzlerApp.directive('sendOnEnter',function(){
                 if(event.which == 13 && event.keyCode == 13 && event.shiftKey == false){
                     event.preventDefault();
                     event.stopPropagation();
-                    $scope.sendMessage();
-                    elem.val('');
+                    if(elem.val().trim() != ''){
+                      $scope.sendMessage();
+                      elem.val('');
+                    }
                 }
                 return false;
             });
