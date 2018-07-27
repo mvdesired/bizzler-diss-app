@@ -576,7 +576,7 @@ bizzlerApp.controller('locationController',[
                   });
                   if(newMessage){
                     console.log(newMessage);
-                    navigator.notification.beep(2);
+                    navigator.notification.beep(1);
                   }
                 }
               }
