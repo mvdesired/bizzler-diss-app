@@ -479,6 +479,7 @@ bizzlerApp.controller('locationController',[
                 var res = response.data;
                 if(res.code==200){
                   $scope.groupMessages.push(res.body.msgs);
+                  $scope.mediaU.src = '';
                   $location.path('/location-chat/'+$scope.locationId);
                 }
                 console.log(JSON.stringify(response.data));
@@ -513,9 +514,9 @@ bizzlerApp.controller('locationController',[
         }
         $scope.dTDS = function(sinppet) {
          return $sce.trustAsHtml(sinppet);
-       };
+        };
         $scope.sendMessage = function(){
-          var msgText = $scope.dsdMsg;
+          var msgText = (typeof $scope.dsdMsg !== "undefined")?$scope.dsdMsg:'';
           $scope.dsdMsg = '';
           var fd = new FormData();
           var tD = new Date();
@@ -530,8 +531,13 @@ bizzlerApp.controller('locationController',[
           fd.append('msg_text', msgText);
           fd.append('is_grp_msg', 1);
           fd.append('creation_date', dateString);
-          fd.append('is_file_attached', 0);
-          fd.append('media', 0);
+          // fd.append('is_file_attached', 0);
+          // fd.append('media', 0);
+          if($scope.mediaU.src != ''){
+            var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
+            fd.append('is_file_attached', 1);
+            fd.append('media', imgBlob);
+          }
           $http.post(dbURL,
           fd,
           {
@@ -539,7 +545,7 @@ bizzlerApp.controller('locationController',[
             headers: {
               'Content-Type': undefined
             }}).then((response)=>{
-            console.log(JSON.stringify(response.data));
+              $scope.mediaU.src = '';
           }).catch((error)=>{
             console.log('Error: '+error.message);
             $scope.notiMsg('Error: '+error.message);
@@ -569,6 +575,7 @@ bizzlerApp.controller('locationController',[
                     //$scope.curGrpMessage.push(val);
                   });
                   if(newMessage){
+                    console.log(newMessage);
                     navigator.notification.beep(2);
                   }
                 }
@@ -580,7 +587,7 @@ bizzlerApp.controller('locationController',[
         }
         $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
         $scope.sendOnClick = function(){
-          if($scope.dsdMsg.trim() != ''){
+          if($scope.trimText($scope.dsdMsg) != '' || $scope.mediaU.src != ''){
             $scope.sendMessage();
             var ngElem = angular.element(document.getElementsByClassName("main-msg-bx"));
             ngElem.val('');
@@ -588,49 +595,36 @@ bizzlerApp.controller('locationController',[
         }
         $scope.cameraUpload = function(){
           navigator.camera.getPicture(function(imageURI){
-            console.log(imageURI);
+            $scope.mediaU.src = "data:image/png;base64," + imageURI;
+            $scope.faw = false;
           }, function(message){
             console.log(message);
           }, {
               quality: 50,
-              allowEdit: true,
-              destinationType: Camera.DestinationType.FILE_URL
+              targetWidth:400,
+              targetHeight:400,
+              destinationType: Camera.DestinationType.DATA_URL
           });
         }
         $scope.galleryUpload = function(){
           navigator.camera.getPicture(function(imageURI){
-            console.log(imageURI);
+            $scope.mediaU.src = "data:image/png;base64," + imageURI
+            $scope.faw = false;
           }, function(message){
             console.log(message);
           }, {
               quality: 50,
+              targetWidth:400,
+              targetHeight:400,
               sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-              allowEdit: true,
-              destinationType: Camera.DestinationType.FILE_URI
+              destinationType: Camera.DestinationType.DATA_URL
           });
         }
-        $scope.openMedia = function(){
-          $mdBottomSheet.show({
-            template: '<md-bottom-sheet class="md-list md-has-header">'+
-              '<md-subheader>Upload Via</md-subheader>'+
-              '<md-list>'+
-                '<md-list-item >'+
-                  '<md-button ng-click="cameraUpload()" class="md-list-item-content" >'+
-                    '<md-icon class="icon-camera"></md-icon>'+
-                    '<span class="md-inline-list-icon-label">Camera</span>'+
-                  '</md-button>'+
-                '</md-list-item>'+
-                '<md-list-item >'+
-                  '<md-button ng-click="galleryUpload()" class="md-list-item-content" >'+
-                    '<md-icon class="icon-picture"></md-icon>'+
-                    '<span class="md-inline-list-icon-label">Gallery</span>'+
-                  '</md-button>'+
-                '</md-list-item>'+
-              '</md-list>'+
-            '</md-bottom-sheet>',
-            clickOutsideToClose: true,
-            escapeToClose: true
-          });
+        $scope.mediaRemove = function(){
+          $scope.mediaU.src = '';
+        }
+        $scope.trimText = function(text){
+          return (!text) ? '' : text.replace(/ /g, '');
         }
     }
 ]);
@@ -660,7 +654,7 @@ bizzlerApp.directive('sendOnEnter',function(){
                 if(event.which == 13 && event.keyCode == 13 && event.shiftKey == false){
                     event.preventDefault();
                     event.stopPropagation();
-                    if(elem.val().trim() != ''){
+                    if($scope.trimText(elem.val()) != ''){
                       $scope.sendMessage();
                       elem.val('');
                     }

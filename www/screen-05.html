@@ -85,8 +85,28 @@
                 </label>
         </div> -->
         <!--/cf-fileatch-->
+        <div class="media-attached-wrapper" ng-show="mediaU.src">
+          <div class="maW-item">
+            <img ng-src="{{mediaU.src}}" />
+            <span ng-click="mediaRemove()"><i class="icon-close"></i></span>
+          </div>
+        </div>
+        <div class="file-attach-wrapper" ng-show="faw">
+          <div class="faw-item">
+            <div class="faw-item-content">
+              <i class="icon-camera" ng-click="cameraUpload()"></i>
+              <span>Camera</span>
+            </div>
+          </div>
+          <div class="faw-item">
+            <div class="faw-item-content">
+              <i class="icon-picture" ng-click="galleryUpload()"></i>
+              <span>Gallery</span>
+            </div>
+          </div>
+        </div>
         <textarea class="form-control main-msg-bx" placeholder="Write Here....." ng-model="dsdMsg" send-on-enter></textarea>
-        <md-button class="md-raised cf-fileatch" aria-label="Attach Media" ng-click="openMedia()"><i class="z-depth-2 icon-paper-clip"></i></md-button>
+        <md-button class="md-raised cf-fileatch" aria-label="Attach Media" ng-click="faw = !faw"><i class="z-depth-2 icon-paper-clip"></i></md-button>
         <md-button class="md-raised md-warn cf-btn" aria-label="Send" ng-click="sendOnClick()"><i class="icon-rocket"></i></md-button>
       </div>
       <!--/cf-typebox-->
