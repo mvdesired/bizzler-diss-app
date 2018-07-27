@@ -432,7 +432,6 @@ bizzlerApp.controller('bizzlerController',[
         }
       }).catch((error)=>{
         console.log(error.message);
-        $scope.notiMsg("Error: "+error.message);
       })
     }
     /*Functions Calling*/
@@ -445,8 +444,8 @@ bizzlerApp.controller('bizzlerController',[
   }
 ]);
 bizzlerApp.controller('locationController',[
-  '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce','$mdBottomSheet',
-    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce,$mdBottomSheet){
+  '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce',
+    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
         $scope.locationId = $routeParams.locationId;
         $scope.fetchingMsg = false;
         $scope.mediaU = {"src":'',"file":''};
@@ -626,8 +625,52 @@ bizzlerApp.controller('locationController',[
         $scope.trimText = function(text){
           return (!text) ? '' : text.replace(/ /g, '');
         }
+        $scope.openPrivateChat = function(privateUserId){
+          $scope.ngLoaderShow();
+          var fd = new FormData();
+          fd.append('action', 'startPrivateChat');
+          fd.append('user_id', $scope.userData.ID);//
+          fd.append('privateUserId', privateUserId);
+          $http.post(dbURL,
+          fd,
+          {
+            transformRequest: angular.identity,
+            headers: {
+              'Content-Type': undefined
+            }}).then((response)=>{
+            var res = response.data;
+            console.log(res);
+            //$location.path('/private-chat/'+res.privateChatId);
+          }).catch((error)=>{
+            console.log(error.message);
+          })
+        }
     }
 ]);
+bizzlerController.controller('privateController',[
+  '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce',
+    function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
+      $scope.privateChatId = $routeParams.privateChatId;
+      $scope.getPrivateChatDetails = function(){
+        var req = {
+          method: 'POST',
+          url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.privateChatId,
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        }
+        $http(req).then((response)=>{
+          var res = response.data;
+          if(res.code == 200){
+            $scope.curPrivateDetails = res.body.private_details;
+            $scope.privateMessages[$scope.privateChatId] = res.body.private_messages;
+            $scope.curPrivateMessage =  res.body.private_messages;
+          }
+        }).catch((error)=>{
+          console.log(error.message);
+          $scope.notiMsg("Error: "+error.message);
+        })
+      }
+    }
+])
 bizzlerApp.directive("compareTo", function() {
       return {
         require: "ngModel",
@@ -682,3 +725,15 @@ bizzlerApp.directive('scrollToBottom', function($timeout, $window) {
         }
     };
 });
+bizzlerApp.directive('imageView',function(){
+  return {
+    restrict:'A',
+    link:function($scope,elem,attr){
+      elem.bind('click',function(){
+        //parent.scope.image_viewer = scope.imageView;
+        $scope.image_viewer = attr.imageView;
+        console.log($scope.image_viewer);
+      })
+    }
+  }
+})

@@ -29,10 +29,10 @@
     </div>
     <!--/chating-menu-->
     <div class="chating-group">
-      <h1>You are here : <span> {{curGrpDetails.group_name}}</span></h1>
+      <h1><span>{{privateChatName}}</span></h1>
     </div>
     <!--/chating-group-->
-    <div class="chating-body"  scroll-to-bottom="curGrpMessage">
+    <div class="chating-body" scroll-to-bottom="curGrpMessage">
       <div class="cb-inner">
         <div ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage  track by $index">
           <div ng-class="{true: 'cbime-inner',false:'cbiuser-inner' }[cgM.send_by == userData.ID]">
@@ -45,13 +45,13 @@
             <!--/cbimei-imgcon-->
             <div ng-class="{true: 'cbimei-name',false:'cbiuseri-name' }[cgM.send_by == userData.ID]">
               <h5 ng-if="cgM.send_by != userData.ID">{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
-              <h5 ng-if="cgM.send_by == userData.ID">You - <span>{{cgM.send_on}}</span></h5>
+              <h5 ng-if="cgM.send_by == userData.ID"><span>{{cgM.send_on}}</span></h5>
             </div>
             <!--/cbimei-name-->
             <div ng-class="{true: 'cbimei-chat',false:'cbiuseri-chat' }[cgM.send_by == userData.ID]">
               <p ng-bind-html="dTDS(cgM.msg_text)"></p>
               <div ng-if="cgM.is_file_attached == 1" ng-class="{true: 'cbimei-location',false:'cbiuseri-location' }[cgM.send_by == userData.ID]">
-                <img ng-src="{{cgM.media_url}}" image-view="{{cgM.media_full}}">
+                <img ng-src="{{cgM.media_url}}">
               </div>
               <!--/cbimei-location-->
             </div>
@@ -79,15 +79,6 @@
           </ul>
         </div>
         <!--/cf-atchshow-->
-        <!-- <div class="cf-fileatch">
-          <label>
-
-                 <input class="cffa-file"   multiple="" type="file">
-                </i>
-
-                </label>
-        </div> -->
-        <!--/cf-fileatch-->
         <div class="media-attached-wrapper" ng-show="mediaU.src">
           <div class="maW-item">
             <img ng-src="{{mediaU.src}}" />

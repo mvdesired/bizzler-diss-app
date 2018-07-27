@@ -1277,6 +1277,7 @@ top: 5px;
     padding: 0;
     width: 100%;
     height: auto;
+    min-height: 77px;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner {
     display: block;
@@ -1299,23 +1300,26 @@ top: 5px;
     width: 35px;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-pm {
-    width: 35px;
-    height: 35px;
-
-    text-align: center;
-    display: block;
-    background-color: #ff6e41;
-    border-radius: 100%;
-    position: absolute;
-    left: -45px;
-    top: 45px;
-    cursor: pointer;
+  width: 25px;
+  height: 25px;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  text-align: center;
+  display: block;
+  background-color: #4CAF50;
+  border-radius: 100%;
+  position: absolute;
+  left: -45px;
+  top: 45px;
+  cursor: pointer;
+  line-height: normal;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-pm i
 {
-    color: #fff;
-    font-size: 22px;
-    line-height: 35px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 25px;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-name {
     font-size: 15px;
@@ -1344,7 +1348,7 @@ top: 5px;
     width: auto;
     text-align: left;
     position: relative;
-
+    max-width: 84%;
     background-color: #e67e22;
     border-radius: 0 4px 4px;
 
@@ -1377,6 +1381,13 @@ top: 5px;
     font-family: 'josefin_sansregular';
     color: #FFFFFF;
 }
+.screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-chat .cbiuseri-location,
+.screen-05 .scr05-inner .chating-body .cb-inner .cbi-me > .cbime-inner .cbimei-chat .cbimei-location,
+.screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-chat .cbiuseri-location img,
+.screen-05 .scr05-inner .chating-body .cb-inner .cbi-me > .cbime-inner .cbimei-chat .cbimei-location img{
+  max-width: 100%;
+}
+
 .screen-05 .scr05-inner .chating-footer
 {
 

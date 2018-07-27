@@ -21,6 +21,10 @@ bizzlerApp.config(['$routeProvider',
         templateUrl: 'screen-06.html',
         controller:'locationController'
       }).
+      when('/private-chat/:privateChatId', {
+        templateUrl: 'screen-05-01.html',
+        controller:'privateController'
+      }).
       otherwise({
         templateUrl: 'screen-01.html',
         //redirectTo: '/'
