@@ -32,26 +32,26 @@
       <h1>You are here : <span> {{curGrpDetails.group_name}}</span></h1>
     </div>
     <!--/chating-group-->
-    <div class="chating-body"  scroll-to-bottom="curGrpMessage">
+    <div class="chating-body"  scroll-to-bottom="Messages[chatId]">
       <div class="cb-inner">
-        <div ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in curGrpMessage  track by $index">
+        <div ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in Messages[chatId]  track by $index">
           <div ng-class="{true: 'cbime-inner',false:'cbiuser-inner' }[cgM.send_by == userData.ID]">
-            <div ng-class="{true: 'cbimei-imgcon',false:'cbiuseri-imgcon' }[cgM.send_by == userData.ID]">
+            <div class="cbiuseri-imgcon" ng-if="cgM.send_by != userData.ID">
               <img class="z-depth-3" ng-src="{{cgM.send_user_pic}}">
             </div>
-            <md-button class="md-raised cbiuseri-pm" ng-click="openPrivateChat()" aria-label="Private Message" ng-if="cgM.send_by != userData.ID">
+            <md-button class="md-raised cbiuseri-pm" ng-click="openPrivateChat(cgM.send_by)" aria-label="Private Message" ng-if="cgM.send_by != userData.ID">
               <i class="z-depth-2 icon-bubble"></i>
             </md-button>
             <!--/cbimei-imgcon-->
             <div ng-class="{true: 'cbimei-name',false:'cbiuseri-name' }[cgM.send_by == userData.ID]">
               <h5 ng-if="cgM.send_by != userData.ID">{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
-              <h5 ng-if="cgM.send_by == userData.ID">You - <span>{{cgM.send_on}}</span></h5>
+              <h5 ng-if="cgM.send_by == userData.ID"><span>{{cgM.send_on}}</span></h5>
             </div>
             <!--/cbimei-name-->
             <div ng-class="{true: 'cbimei-chat',false:'cbiuseri-chat' }[cgM.send_by == userData.ID]">
               <p ng-bind-html="dTDS(cgM.msg_text)"></p>
               <div ng-if="cgM.is_file_attached == 1" ng-class="{true: 'cbimei-location',false:'cbiuseri-location' }[cgM.send_by == userData.ID]">
-                <img ng-src="{{cgM.media_url}}" image-view="{{cgM.media_full}}">
+                <img ng-src="{{cgM.media_url}}" images-loaded>
               </div>
               <!--/cbimei-location-->
             </div>
@@ -108,18 +108,13 @@
             </div>
           </div>
         </div>
-        <textarea class="form-control main-msg-bx" placeholder="Write Here....." ng-model="dsdMsg" send-on-enter></textarea>
-        <md-button class="md-raised cf-fileatch" aria-label="Attach Media" ng-click="faw = !faw"><i class="z-depth-2 icon-paper-clip"></i></md-button>
+        <textarea class="form-control main-msg-bx" placeholder="Write Here....."  aria-label="Write Here....." ng-model="dsdMsg" send-on-enter></textarea>
+        <md-button class="md-raised cf-fileatch" aria-label="Attach Media" ng-click="openMediaCapture()"><i class="z-depth-2 icon-paper-clip"></i></md-button>
         <md-button class="md-raised md-warn cf-btn" aria-label="Send" ng-click="sendOnClick()"><i class="icon-rocket"></i></md-button>
       </div>
       <!--/cf-typebox-->
     </div>
     <!--/chating-footer-->
-
-    <div class="img-viewer">
-      <span><i class="icon-close"></i></span>
-      <img ng-src="{{image_viewer}}">
-    </div>
   </div>
   <!--/scr05-inner-->
 </section>

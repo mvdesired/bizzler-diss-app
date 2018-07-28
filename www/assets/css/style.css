@@ -1181,7 +1181,7 @@ top: 5px;
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-me > .cbime-inner {
     display: block;
     height: auto;
-    margin: 10px 13% 0 3%;
+    margin: 10px 15px 0 15px;
     position: relative;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-me > .cbime-inner .cbimei-imgcon {
@@ -1222,6 +1222,7 @@ top: 5px;
     height: auto;
     padding: 5px 15px 5px 15px;
     width: auto;
+    max-width: 100%;
     text-align: left;
     position: relative;
     background-color: #d35400;
@@ -1246,26 +1247,26 @@ top: 5px;
     display: inline-block;
     margin: 0;
     padding: 0;
-    width: 100px;
-    height: 100px;
+    /* width: 100px;
+    height: 100px; */
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-me > .cbime-inner .cbimei-chat::before {
     content: "";
     position: absolute;
-    top: -2px;
+    top: -3px;
     width: 10px;
-    right: -3px;
+    right: -4px;
     height: 10px;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     background: #d35400;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-me > .cbime-inner .cbimei-chat::after {
     content: "";
     position: absolute;
-    top: -8px;
-    width: 10px;
-    right: -9px;
-    height: 10px;
+    top: -7px;
+    width: 9px;
+    right: -8px;
+    height: 9px;
     border: 2px solid #d35400;
     background: transparent;
     box-shadow: -1px 1px 0px 0px #FFF;
@@ -1282,7 +1283,7 @@ top: 5px;
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner {
     display: block;
     height: auto;
-    margin: 10px 3% 0 13%;
+    margin: 10px 20px 0 50px;
     position: relative;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-imgcon {
@@ -1310,7 +1311,7 @@ top: 5px;
   background-color: #4CAF50;
   border-radius: 100%;
   position: absolute;
-  left: -45px;
+  left: -40px;
   top: 45px;
   cursor: pointer;
   line-height: normal;
@@ -1344,32 +1345,31 @@ top: 5px;
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-chat {
     display: inline-block;
     height: auto;
-    padding: 5px 15px 5px 15px;
+    padding: 5px 10px 5px 10px;
     width: auto;
     text-align: left;
     position: relative;
-    max-width: 84%;
+    max-width: 100%;
     background-color: #e67e22;
     border-radius: 0 4px 4px;
-
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-chat::before {
     content: "";
     position: absolute;
-    top: -2px;
+    top: -3px;
     width: 10px;
-    left: -3px;
+    left: -4px;
     height: 10px;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     background: #e67e22;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-chat::after {
     content: "";
     position: absolute;
-    top: -8px;
-    width: 10px;
-    left: -9px;
-    height: 10px;
+    top: -7px;
+    width: 9px;
+    left: -8px;
+    height: 9px;
     border: 2px solid #e67e22;
     background: transparent;
     box-shadow: 1px 1px 0px 0px #FFF;

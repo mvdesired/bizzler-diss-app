@@ -1,11 +1,11 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval',
-  function($scope,$route,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval){
+  '$scope','$route','$routeParams','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval','$sce','$mdSidenav','fileReader',
+  function($scope,$route,$routeParams,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval,$sce,$mdSidenav,fileReader){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
     $scope.user = {"save_data":true};
-    $scope.lcl.user = {'ID':29};
+    $scope.lcl.user = {'ID':29};//
     $scope.userData = $scope.lcl.user;
     $scope.userData.ID= 29;
     $scope.jsonValue = {};
@@ -17,8 +17,13 @@ bizzlerApp.controller('bizzlerController',[
     $scope.placesListLoaded = [];
     $scope.plRetry = false;
     $scope.groupChats = [];
-    $scope.groupMessages = [];
+    $scope.Messages = [];
     $scope.curGrpDetails = [];
+    $scope.dsdMsg ='';
+    $scope.mediaU = {"src":'',"file":''};
+    $scope.chatId = 0;
+    $scope.fetchingMsg = false;
+    $scope.faw = false;
     /*Functiona Creations*/
     countries.list(function(countries) {
       $scope.countries = countries.data;
@@ -109,7 +114,6 @@ bizzlerApp.controller('bizzlerController',[
           '&response_type=code'+
           '&state='+$scope._gRs()+
           '&scope=r_basicprofile r_emailaddress';
-          console.log(uri);
       $scope.ref = cordova.InAppBrowser.open(uri, '_blank', 'location=no,hidden=yes');
       $scope.ref.addEventListener('loadstart', function(e){
         var url = e.url;
@@ -125,7 +129,6 @@ bizzlerApp.controller('bizzlerController',[
               { code: "document.body.textContent" },
               function(values){
                   $scope.jsonValue = JSON.parse(values);
-                  console.log(values);
                   $scope.ref.close();
                   $scope.ngLoaderHide();
                   if($scope.jsonValue.code == 200 || $scope.jsonValue.code == 300){
@@ -146,7 +149,6 @@ bizzlerApp.controller('bizzlerController',[
         }
       });
       $scope.ref.addEventListener('loaderror', function(params){
-        console.log(params);
         var scriptErrorMesssage =
        "alert('Sorry we cannot open that page. Message from the server is : "
        + params.message + "');"
@@ -322,6 +324,7 @@ bizzlerApp.controller('bizzlerController',[
               var rSUrl = "https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius="+$scope.userData.search_radius+"&type="+$scope.placesTypes+"&key="+globals.mapKey;
               $http.get(rSUrl).then((response)=>{
                 $scope.placesList = response.data.results;
+                console.log(JSON.stringify($scope.placesList));
                 if(response.data.status === "OK"){
                   for(var i=0;i<$scope.PlaceLimit;i++){
                     if(typeof $scope.placesList[i].place_id !== "undefined"){
@@ -402,7 +405,7 @@ bizzlerApp.controller('bizzlerController',[
         $scope.curGrpDetails = $scope.groupChats[res.body.group_details.group_id];
         if(res.code == 200){
             $mdDialog.hide();
-            $scope.groupMessages.push(res.body.group_messages);
+            $scope.Messages[$scope.chatId] = res.body.messages;
             $location.path("/location-chat/"+res.body.group_details.group_id);
         }
         else if(res.code == 300){
@@ -424,8 +427,8 @@ bizzlerApp.controller('bizzlerController',[
         var res = response.data;
         if(res.code == 200){
           $scope.curGrpDetails = res.body.group_details;
-          $scope.groupMessages[locationId] = res.body.group_messages;
-          $scope.curGrpMessage =  res.body.group_messages;
+          $scope.Messages[locationId] = res.body.group_messages;
+          //$scope.curGrpMessage =  res.body.group_messages;
         }
         else{
           $scope.locationChatPreLoad();
@@ -434,241 +437,266 @@ bizzlerApp.controller('bizzlerController',[
         console.log(error.message);
       })
     }
+    $scope.trimText = function(text){
+      return (!text) ? '' : text.replace(/ /g, '');
+    }
+    $scope.sendMessage = function(msgText){
+      //var msgText = $scope.dsdMsg;
+      //$scope.dsdMsg = '';
+      var fd = new FormData();
+      var tD = new Date();
+      var months = ('0' + (tD.getMonth()+1)).slice(-2);
+      var dayDate = ('0' + tD.getDate()).slice(-2);
+      var hours = ('0' + tD.getHours()).slice(-2);
+      var minutes = ('0' + tD.getMinutes()).slice(-2);
+      var dateString = tD.getFullYear()+'-'+months+'-'+dayDate+' '+hours+':'+minutes+':'+tD.getSeconds();
+      fd.append('action', 'msgSend');
+      fd.append('user_id', $scope.userData.ID);//
+      fd.append('grp_id', $scope.chatId);
+      fd.append('msg_text', msgText);
+      fd.append('is_grp_msg', $scope.isGrpMessage);
+      fd.append('creation_date', dateString);
+      // fd.append('is_file_attached', 0);
+      // fd.append('media', 0);
+      if($scope.mediaU.src != ''){
+        var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
+        fd.append('is_file_attached', 1);
+        fd.append('media', imgBlob);
+      }
+      $http.post(dbURL,
+      fd,
+      {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then((response)=>{
+          $scope.mediaU.src = '';
+      }).catch((error)=>{
+        console.log('Error: '+error.message);
+        $scope.notiMsg('Error: '+error.message);
+      })
+    }
+    $scope.sendOnClick = function(){
+      var ngElem = angular.element(document.getElementsByClassName("main-msg-bx"));
+      if($scope.trimText(ngElem.val()) != '' || $scope.mediaU.src != ''){
+        $scope.sendMessage(ngElem.val());
+        ngElem.val('');
+      }
+    }
+    $scope.recieveMessage = function(){
+      if($scope.fetchingMsg){
+        return false;
+      }
+      $scope.fetchingMsg = true;
+      var fetchMsgsScope = $scope.Messages[$scope.chatId];
+      if($scope.Messages.length > 0){
+        var last_timestamp = fetchMsgsScope[fetchMsgsScope.length-1].last_timestamp;
+        $http.get(dbURL+'?action=getMessage&grp_id='+$scope.chatId+'&last_timestamp='+last_timestamp,{
+          transformRequest: angular.identity,
+          headers: {
+            'Content-Type': undefined
+          }}).then((response)=>{
+            var res = response.data;
+            $scope.fetchingMsg = false;
+            if(res.code==200){
+              if(res.body.messages.length > 0){
+                var newMessage = false;
+                angular.forEach(res.body.messages,function(val,key){
+                  if(val.send_by != $scope.userData.ID){
+                    newMessage = true;
+                  }
+                  $scope.Messages[$scope.chatId].push(val);
+                  //$scope.curGrpMessage.push(val);
+                });
+                if(newMessage){
+                  navigator.notification.beep(1);
+                }
+              }
+            }
+          }).catch((error)=>{
+            console.log('Error: '+error.message);
+            $scope.notiMsg('Error: '+error.message);
+          });
+      }
+    }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
-    $scope.$on('$routeChangeSuccess',function(scope, next, current){$scope.ngLoaderHide();});
+    $scope.$on('$routeChangeSuccess',function(scope, next, current){
+      $scope.ngLoaderHide();
+      if(typeof $routeParams.privateChatId !== "undefined"){
+        $scope.chatId = $routeParams.locationId;
+        $scope.isGrpMessage = 0;
+        $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
+      }
+      else if(typeof $routeParams.locationId !== "undefined"){
+        $scope.chatId = $routeParams.locationId;
+        $scope.getGrpDetails($scope.chatId);
+        $scope.isGrpMessage = 1;
+        $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
+      }
+      else if(typeof $routeParams.locationChatId !== "undefined"){
+        $scope.chatId = $routeParams.locationId;
+        $scope.getGrpDetails($scope.chatId);
+        $scope.isGrpMessage = 1;
+      }
+    });
     if(bizzlerApp.deviceReady){
       $scope.init();
     }
-
+    $scope.cameraUpload = function(){
+      navigator.camera.getPicture(function(imageURI){
+        $scope.mediaU.src = "data:image/png;base64," + imageURI;
+        $scope.faw = false;
+      }, function(message){
+        console.log(message);
+      }, {
+          quality: 50,
+          targetWidth:400,
+          targetHeight:400,
+          destinationType: Camera.DestinationType.DATA_URL
+      });
+    }
+    $scope.galleryUpload = function(){
+      navigator.camera.getPicture(function(imageURI){
+        $scope.mediaU.src = "data:image/png;base64," + imageURI
+        $scope.faw = false;
+      }, function(message){
+        console.log(message);
+      }, {
+          quality: 50,
+          targetWidth:400,
+          targetHeight:400,
+          sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+          destinationType: Camera.DestinationType.DATA_URL
+      });
+    }
+    $scope.mediaRemove = function(){
+      $scope.mediaU.src = '';
+    }
+    $scope.openPrivateChat = function(privateUserId){
+      $scope.ngLoaderShow();
+      var fd = new FormData();
+      fd.append('action', 'startPrivateChat');
+      fd.append('user_id', $scope.userData.ID);//
+      fd.append('privateUserId', privateUserId);
+      $http.post(dbURL,
+      fd,
+      {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then((response)=>{
+        var res = response.data;
+        if(res.code == 200){
+          $location.path('/private-chat/'+res.privateChatId);
+        }
+      }).catch((error)=>{
+        console.log(error.message);
+      })
+    }
+    $scope.dataURItoBlob = function(dataURI) {
+      var binary = atob(dataURI.split(',')[1]);
+      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      var array = [];
+      for (var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+      }
+      return new Blob([new Uint8Array(array)], {
+        type: mimeString
+      });
+    }
+    $scope.dTDS = function(sinppet) {
+     return $sce.trustAsHtml(sinppet);
+    };
+    $scope.removeUploadImage = function(){
+      $scope.mediaU.src = '';
+    }
+    $scope.sideNavOpen = function(){
+        $mdSidenav('slide-out').toggle();
+    }
+    $scope.inputChanged = function(event){
+        event.preventDefault();
+        fileReader.readAsDataUrl(event.target.files[0], $scope).then(function(result) {
+            $scope.mediaU.src = result;
+        });
+    }
+    $scope.startNewMessage = function(){
+        var tD = new Date();
+        var dateString = tD.getFullYear()+'-'+('0' + (tD.getMonth()+1)).slice(-2)+'-'+('0' + tD.getDate()).slice(-2)+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
+        var fd = new FormData();
+        if($scope.mediaU.src != ''){
+          var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
+          fd.append('is_file_attached', 1);
+          fd.append('media', imgBlob);
+        }
+        fd.append('action', 'msgSend');
+        fd.append('user_id', $scope.userData.ID);
+        fd.append('grp_id', $scope.chatId);
+        fd.append('msg_text', $scope.cmsg.msg);
+        fd.append('is_grp_msg', $scope.isGrpMessage);
+        fd.append('creation_date', dateString);
+        $http.post(
+            dbURL,
+            fd, {
+              transformRequest: angular.identity,
+              headers: {
+                'Content-Type': undefined
+              }
+            }
+          )
+          .then((response)=>{
+            var res = response.data;
+            if(res.code==200){
+              $scope.Messages[$scope.chatId] = res.body.messages;
+              $scope.mediaU.src = '';
+              $location.path('/location-chat/'+$scope.chatId);
+            }
+          })
+          .catch((error)=>{
+            console.log(JSON.stringify(error));
+            $scope.notiMsg("Error: "+error.message);
+          });
+    }
+    $scope.openMediaCapture = function(){
+      if($scope.faw == false){$scope.faw = true}
+      else {$scope.faw = false;}
+    }
   }
 ]);
 bizzlerApp.controller('locationController',[
   '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce',
     function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
-        $scope.locationId = $routeParams.locationId;
-        $scope.fetchingMsg = false;
-        $scope.mediaU = {"src":'',"file":''};
-        $scope.getGrpDetails($scope.locationId);
-        $scope.startNewMessage = function(){
-            var tD = new Date();
-            var dateString = tD.getFullYear()+'-'+('0' + (tD.getMonth()+1)).slice(-2)+'-'+('0' + tD.getDate()).slice(-2)+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
-            var fd = new FormData();
-            if($scope.mediaU.src != ''){
-              var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
-              fd.append('is_file_attached', 1);
-              fd.append('media', imgBlob);
-            }
-            fd.append('action', 'msgSend');
-            fd.append('user_id', $scope.userData.ID);
-            fd.append('grp_id', $scope.locationId);
-            fd.append('msg_text', $scope.cmsg.msg);
-            fd.append('is_grp_msg', 1);
-            fd.append('creation_date', dateString);
-            $http.post(
-                dbURL,
-                fd, {
-                  transformRequest: angular.identity,
-                  headers: {
-                    'Content-Type': undefined
-                  }
-                }
-              )
-              .then((response)=>{
-                var res = response.data;
-                if(res.code==200){
-                  $scope.groupMessages.push(res.body.msgs);
-                  $scope.mediaU.src = '';
-                  $location.path('/location-chat/'+$scope.locationId);
-                }
-                console.log(JSON.stringify(response.data));
-              })
-              .catch((error)=>{
-                console.log(JSON.stringify(error));
-                $scope.notiMsg("Error: "+error.message);
-              });
-        }
-        $scope.inputChanged = function(event){
-            event.preventDefault();
-            fileReader.readAsDataUrl(event.target.files[0], $scope).then(function(result) {
-                $scope.mediaU.src = result;
-            });
-        }
-        $scope.removeUploadImage = function(){
-          $scope.mediaU.src = '';
-        }
-        $scope.sideNavOpen = function(){
-            $mdSidenav('slide-out').toggle();
-        }
-        $scope.dataURItoBlob = function(dataURI) {
-          var binary = atob(dataURI.split(',')[1]);
-          var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-          var array = [];
-          for (var i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-          }
-          return new Blob([new Uint8Array(array)], {
-            type: mimeString
-          });
-        }
-        $scope.dTDS = function(sinppet) {
-         return $sce.trustAsHtml(sinppet);
-        };
-        $scope.sendMessage = function(){
-          var msgText = (typeof $scope.dsdMsg !== "undefined")?$scope.dsdMsg:'';
-          $scope.dsdMsg = '';
-          var fd = new FormData();
-          var tD = new Date();
-          var months = ('0' + (tD.getMonth()+1)).slice(-2);
-          var dayDate = ('0' + tD.getDate()).slice(-2);
-          var hours = ('0' + tD.getHours()).slice(-2);
-          var minutes = ('0' + tD.getMinutes()).slice(-2);
-          var dateString = tD.getFullYear()+'-'+months+'-'+dayDate+' '+hours+':'+minutes+':'+tD.getSeconds();
-          fd.append('action', 'msgSend');
-          fd.append('user_id', $scope.userData.ID);//
-          fd.append('grp_id', $scope.locationId);
-          fd.append('msg_text', msgText);
-          fd.append('is_grp_msg', 1);
-          fd.append('creation_date', dateString);
-          // fd.append('is_file_attached', 0);
-          // fd.append('media', 0);
-          if($scope.mediaU.src != ''){
-            var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
-            fd.append('is_file_attached', 1);
-            fd.append('media', imgBlob);
-          }
-          $http.post(dbURL,
-          fd,
-          {
-            transformRequest: angular.identity,
-            headers: {
-              'Content-Type': undefined
-            }}).then((response)=>{
-              $scope.mediaU.src = '';
-          }).catch((error)=>{
-            console.log('Error: '+error.message);
-            $scope.notiMsg('Error: '+error.message);
-          })
-        }
-        $scope.recieveMessage = function(){
-          if($scope.fetchingMsg){
-            return false;
-          }
-          $scope.fetchingMsg = true;
-          var last_timestamp = $scope.curGrpMessage[$scope.curGrpMessage.length-1].last_timestamp;
-          $http.get(dbURL+'?action=getMessage&grp_id='+$scope.locationId+'&last_timestamp='+last_timestamp,{
-            transformRequest: angular.identity,
-            headers: {
-              'Content-Type': undefined
-            }}).then((response)=>{
-              var res = response.data;
-              $scope.fetchingMsg = false;
-              if(res.code==200){
-                if(res.body.group_messages.length > 0){
-                  var newMessage = false;
-                  angular.forEach(res.body.group_messages,function(val,key){
-                    if(val.send_by != $scope.userData.ID){
-                      newMessage = true;
-                    }
-                    $scope.groupMessages[$scope.locationId].push(val);
-                    //$scope.curGrpMessage.push(val);
-                  });
-                  if(newMessage){
-                    console.log(newMessage);
-                    navigator.notification.beep(1);
-                  }
-                }
-              }
-            }).catch((error)=>{
-              console.log('Error: '+error.message);
-              $scope.notiMsg('Error: '+error.message);
-            });
-        }
-        $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
-        $scope.sendOnClick = function(){
-          if($scope.trimText($scope.dsdMsg) != '' || $scope.mediaU.src != ''){
-            $scope.sendMessage();
-            var ngElem = angular.element(document.getElementsByClassName("main-msg-bx"));
-            ngElem.val('');
-          }
-        }
-        $scope.cameraUpload = function(){
-          navigator.camera.getPicture(function(imageURI){
-            $scope.mediaU.src = "data:image/png;base64," + imageURI;
-            $scope.faw = false;
-          }, function(message){
-            console.log(message);
-          }, {
-              quality: 50,
-              targetWidth:400,
-              targetHeight:400,
-              destinationType: Camera.DestinationType.DATA_URL
-          });
-        }
-        $scope.galleryUpload = function(){
-          navigator.camera.getPicture(function(imageURI){
-            $scope.mediaU.src = "data:image/png;base64," + imageURI
-            $scope.faw = false;
-          }, function(message){
-            console.log(message);
-          }, {
-              quality: 50,
-              targetWidth:400,
-              targetHeight:400,
-              sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-              destinationType: Camera.DestinationType.DATA_URL
-          });
-        }
-        $scope.mediaRemove = function(){
-          $scope.mediaU.src = '';
-        }
-        $scope.trimText = function(text){
-          return (!text) ? '' : text.replace(/ /g, '');
-        }
-        $scope.openPrivateChat = function(privateUserId){
-          $scope.ngLoaderShow();
-          var fd = new FormData();
-          fd.append('action', 'startPrivateChat');
-          fd.append('user_id', $scope.userData.ID);//
-          fd.append('privateUserId', privateUserId);
-          $http.post(dbURL,
-          fd,
-          {
-            transformRequest: angular.identity,
-            headers: {
-              'Content-Type': undefined
-            }}).then((response)=>{
-            var res = response.data;
-            console.log(res);
-            //$location.path('/private-chat/'+res.privateChatId);
-          }).catch((error)=>{
-            console.log(error.message);
-          })
-        }
+        $scope.isGrpMessage = 1;
+        $scope.chatId = $routeParams.locationId;
+        $scope.getGrpDetails($scope.chatId);
     }
 ]);
-bizzlerController.controller('privateController',[
+bizzlerApp.controller('privateController',[
   '$scope','$routeParams','$location','$http','$mdSidenav','fileReader','$timeout','$interval','$sce',
     function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
-      $scope.privateChatId = $routeParams.privateChatId;
+      $scope.chatId = $routeParams.privateChatId;
+      $scope.isGrpMessage = 0;
       $scope.getPrivateChatDetails = function(){
         var req = {
           method: 'POST',
-          url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.privateChatId,
+          url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.chatId+'&user_id='+$scope.userData.ID,
           headers:{'Content-Type':'application/x-www-form-urlencoded'},
         }
         $http(req).then((response)=>{
           var res = response.data;
           if(res.code == 200){
             $scope.curPrivateDetails = res.body.private_details;
-            $scope.privateMessages[$scope.privateChatId] = res.body.private_messages;
-            $scope.curPrivateMessage =  res.body.private_messages;
+            if(res.body.messages.length > 0){
+              $scope.Messages[$scope.chatId] = res.body.messages;
+            }
+            $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
           }
         }).catch((error)=>{
           console.log(error.message);
           $scope.notiMsg("Error: "+error.message);
         })
       }
+      $scope.getPrivateChatDetails();
     }
 ])
 bizzlerApp.directive("compareTo", function() {
@@ -698,7 +726,7 @@ bizzlerApp.directive('sendOnEnter',function(){
                     event.preventDefault();
                     event.stopPropagation();
                     if($scope.trimText(elem.val()) != ''){
-                      $scope.sendMessage();
+                      $scope.sendMessage(elem.val());
                       elem.val('');
                     }
                 }
@@ -725,15 +753,16 @@ bizzlerApp.directive('scrollToBottom', function($timeout, $window) {
         }
     };
 });
-bizzlerApp.directive('imageView',function(){
-  return {
-    restrict:'A',
-    link:function($scope,elem,attr){
-      elem.bind('click',function(){
-        //parent.scope.image_viewer = scope.imageView;
-        $scope.image_viewer = attr.imageView;
-        console.log($scope.image_viewer);
-      })
+bizzlerApp.directive('imagesLoaded',function($timeout, $window){
+    return{
+        restrict : 'A',
+        link : function($scope,elem,attrs){
+            elem.bind('load',function(event){
+                var ngElem = angular.element(document.getElementsByClassName("chating-body"));
+                $timeout(function() {
+                    ngElem[0].scrollTop =  ngElem[0].scrollHeight;
+                }, 0);
+            });
+        }
     }
-  }
-})
+});
