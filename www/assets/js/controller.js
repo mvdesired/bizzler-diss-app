@@ -5,9 +5,9 @@ bizzlerApp.controller('bizzlerController',[
     $scope.lcl = $localStorage;
     $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
     $scope.user = {"save_data":true};
-    $scope.lcl.user = {'ID':29};//
+    $scope.lcl.user = {};//'ID':29
     $scope.userData = $scope.lcl.user;
-    $scope.userData.ID= 29;
+    //$scope.userData.ID= 29;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
@@ -93,7 +93,6 @@ bizzlerApp.controller('bizzlerController',[
         }
       }
       $http(req).then(function(response){
-        console.log(response.data);
         $scope.ngLoaderHide();
         $scope.notiMsg(response.data.message);
       },
@@ -293,7 +292,6 @@ bizzlerApp.controller('bizzlerController',[
        headers:{'Content-Type':'application/x-www-form-urlencoded'},
       }
       $http(req).then(function(response){
-        console.log(response.data);
         $scope.ngLoaderHide();
         $scope.notiMsg(response.data.message);
         if(response.data.code==200){
@@ -324,7 +322,6 @@ bizzlerApp.controller('bizzlerController',[
               var rSUrl = "https://maps.googleapis.com/maps/api/place/radarsearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius="+$scope.userData.search_radius+"&type="+$scope.placesTypes+"&key="+globals.mapKey;
               $http.get(rSUrl).then((response)=>{
                 $scope.placesList = response.data.results;
-                console.log(JSON.stringify($scope.placesList));
                 if(response.data.status === "OK"){
                   for(var i=0;i<$scope.PlaceLimit;i++){
                     if(typeof $scope.placesList[i].place_id !== "undefined"){
@@ -489,9 +486,11 @@ bizzlerApp.controller('bizzlerController',[
       }
       $scope.fetchingMsg = true;
       var fetchMsgsScope = $scope.Messages[$scope.chatId];
-      if($scope.Messages.length > 0){
-        var last_timestamp = fetchMsgsScope[fetchMsgsScope.length-1].last_timestamp;
-        $http.get(dbURL+'?action=getMessage&grp_id='+$scope.chatId+'&last_timestamp='+last_timestamp,{
+      var last_timestamp = '';
+        if(typeof fetchMsgsScope !== "undefined" && fetchMsgsScope.length > 0){
+          last_timestamp = encodeURIComponent(fetchMsgsScope[fetchMsgsScope.length-1].last_timestamp);
+        }
+        $http.get(dbURL+'?action=getMessage&grp_id='+$scope.chatId+'&last_timestamp='+last_timestamp+'&isgrp='+$scope.isGrpMessage,{
           transformRequest: angular.identity,
           headers: {
             'Content-Type': undefined
@@ -501,6 +500,7 @@ bizzlerApp.controller('bizzlerController',[
             if(res.code==200){
               if(res.body.messages.length > 0){
                 var newMessage = false;
+
                 angular.forEach(res.body.messages,function(val,key){
                   if(val.send_by != $scope.userData.ID){
                     newMessage = true;
@@ -517,25 +517,29 @@ bizzlerApp.controller('bizzlerController',[
             console.log('Error: '+error.message);
             $scope.notiMsg('Error: '+error.message);
           });
-      }
+
     }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
       $scope.ngLoaderHide();
       if(typeof $routeParams.privateChatId !== "undefined"){
-        $scope.chatId = $routeParams.locationId;
+        $scope.chatId = $routeParams.privateChatId;
+        $scope.Messages[$scope.chatId] = [];
         $scope.isGrpMessage = 0;
+        $scope.getPrivateChatDetails();
         $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
       }
       else if(typeof $routeParams.locationId !== "undefined"){
         $scope.chatId = $routeParams.locationId;
+        $scope.Messages[$scope.chatId] = [];
         $scope.getGrpDetails($scope.chatId);
         $scope.isGrpMessage = 1;
         $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
       }
       else if(typeof $routeParams.locationChatId !== "undefined"){
         $scope.chatId = $routeParams.locationId;
+        $scope.Messages[$scope.chatId] = [];
         $scope.getGrpDetails($scope.chatId);
         $scope.isGrpMessage = 1;
       }
@@ -661,6 +665,32 @@ bizzlerApp.controller('bizzlerController',[
       if($scope.faw == false){$scope.faw = true}
       else {$scope.faw = false;}
     }
+    /*Private Chat Functions*/
+    $scope.getPrivateChatDetails = function(){
+      var req = {
+        method: 'POST',
+        url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.chatId+'&user_id='+$scope.userData.ID,
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      }
+      $http(req).then((response)=>{
+        var res = response.data;
+        console.log(res);
+        if(res.code == 200){
+          $scope.curPrivateDetails = res.body.private_details;
+          if(res.body.messages.length > 0){
+            $scope.Messages[$scope.chatId] = res.body.messages;
+          }
+          $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
+        }
+      }).catch((error)=>{
+        console.log(error.message);
+        $scope.notiMsg("Error: "+error.message);
+      })
+    }
+    /*Navigation Functions*/
+    $scope.privateMsgList = function(){
+      $location.path('/private-chat-list');
+    }
   }
 ]);
 bizzlerApp.controller('locationController',[
@@ -676,26 +706,7 @@ bizzlerApp.controller('privateController',[
     function($scope,$routeParams,$location,$http,$mdSidenav,fileReader,$timeout,$interval,$sce){
       $scope.chatId = $routeParams.privateChatId;
       $scope.isGrpMessage = 0;
-      $scope.getPrivateChatDetails = function(){
-        var req = {
-          method: 'POST',
-          url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.chatId+'&user_id='+$scope.userData.ID,
-          headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        }
-        $http(req).then((response)=>{
-          var res = response.data;
-          if(res.code == 200){
-            $scope.curPrivateDetails = res.body.private_details;
-            if(res.body.messages.length > 0){
-              $scope.Messages[$scope.chatId] = res.body.messages;
-            }
-            $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
-          }
-        }).catch((error)=>{
-          console.log(error.message);
-          $scope.notiMsg("Error: "+error.message);
-        })
-      }
+
       $scope.getPrivateChatDetails();
     }
 ])

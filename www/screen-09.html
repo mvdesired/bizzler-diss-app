@@ -3,7 +3,7 @@
     <div class="chating-menu">
       <div class="cm-inner">
         <div class="mobile-bar">
-          <a href="#" data-activates="slide-out" id="menu"><i  class="icon-menu"></i></a>
+          <a ng-click="sideNavOpen()" id="menu"><i  class="icon-menu"></i></a>
         </div>
         <!--/mobile-bar-->
         <div class="logo">
@@ -11,7 +11,7 @@
         </div>
         <!--/logo-->
         <div class="user-pic">
-          <img src="assets/image/avatar-10.jpg" />
+          <img  ng-src="{{userData.user_pic_thumb}}" />
         </div>
         <!--/user-pic-->
         <div class="clearfix"></div>
