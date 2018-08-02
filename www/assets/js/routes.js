@@ -4,6 +4,9 @@ bizzlerApp.config(['$routeProvider',
       when('/', {
         templateUrl: 'screen-01.html',
       }).
+      when('/sign-in', {
+        templateUrl: 'screen-03-02.html'
+      }).
       when('/sign-up', {
         templateUrl: 'screen-03.html'
       }).
@@ -24,6 +27,9 @@ bizzlerApp.config(['$routeProvider',
       }).
       when('/private-chat-list', {
         templateUrl: 'screen-09.html',
+      }).
+      when('/radius-changer', {
+        templateUrl: 'screen-07.html',
       }).
       otherwise({
         templateUrl: 'screen-01.html',

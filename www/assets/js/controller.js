@@ -1,6 +1,6 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$routeParams','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval','$sce','$mdSidenav','fileReader',
-  function($scope,$route,$routeParams,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval,$sce,$mdSidenav,fileReader){
+  '$scope','$route','$routeParams','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval','$sce','$mdSidenav','fileReader','$element',
+  function($scope,$route,$routeParams,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval,$sce,$mdSidenav,fileReader,$element){
     /*Variables Define*/
     $scope.lcl = $localStorage;
     $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
@@ -8,6 +8,7 @@ bizzlerApp.controller('bizzlerController',[
     $scope.lcl.user = {};//'ID':29
     $scope.userData = $scope.lcl.user;
     //$scope.userData.ID= 29;
+    //$scope.userData.search_radius = 200;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
@@ -24,6 +25,7 @@ bizzlerApp.controller('bizzlerController',[
     $scope.chatId = 0;
     $scope.fetchingMsg = false;
     $scope.faw = false;
+    $scope.search_radius = $scope.userData.search_radius;
     /*Functiona Creations*/
     countries.list(function(countries) {
       $scope.countries = countries.data;
@@ -161,6 +163,37 @@ bizzlerApp.controller('bizzlerController',[
       $scope.ref.addEventListener('exit',function(){
         $scope.ngLoaderHide(true);
       });
+    }
+    $scope.loginForm = function(){
+      $scope.ngLoaderShow();
+      var params = '?action=login_user&lg_email='+$scope.user.lg_email+'&lg_pass='+$scope.user.lg_pass+'&lg_device='+device.platform+'&lg_from=Normal';
+      var req = {
+       method: 'POST',
+       url: dbURL+params,
+       headers:{'Content-Type':'application/x-www-form-urlencoded'},
+       data: {
+         action:'login_user',
+         lg_email:$scope.user.lg_email,
+         lg_pass:$scope.user.lg_pass,
+         lg_device:device.platform,
+         lg_from:'Normal'
+        }
+      }
+      $http(req).then(function(response){
+        var res = response.data;
+        console.log(res);
+        $scope.notiMsg(res.message);
+        if(res.code == 200){
+          $scope.userData = res.body;
+          $scope.lcl.user = res.body;
+          $scope.lcl.isLoggedin = true;
+          $scope.locationChatPreLoad();
+        }
+      }).catch(function(err){
+        console.log(error);
+      });
+      console.log(req);
+      console.log(params);
     }
     $scope._gRs = function() {
       var text = "";
@@ -336,12 +369,10 @@ bizzlerApp.controller('bizzlerController',[
                   $scope.plloader = false;
                   $scope.plFinish = true;
                 console.log('Error occurred. ' + error.message);
-                $scope.notiMsg('Error occurred. ' + error.message);
               });
           },function(error){
             console.log(JSON.stringify(error));
             console.log('Error occurred. ' + error.message);
-            $scope.notiMsg('Error occurred. ' + error.message);
             $scope.plFinish = true;
             $scope.plRetry = true;
             $scope.plloader = false;
@@ -411,7 +442,6 @@ bizzlerApp.controller('bizzlerController',[
         }
       }).catch((error)=>{
         console.log(error.message);
-        $scope.notiMsg("Error: "+error.message);
       })
     }
     $scope.getGrpDetails = function(locationId){
@@ -470,7 +500,6 @@ bizzlerApp.controller('bizzlerController',[
           $scope.mediaU.src = '';
       }).catch((error)=>{
         console.log('Error: '+error.message);
-        $scope.notiMsg('Error: '+error.message);
       })
     }
     $scope.sendOnClick = function(){
@@ -515,14 +544,51 @@ bizzlerApp.controller('bizzlerController',[
             }
           }).catch((error)=>{
             console.log('Error: '+error.message);
-            $scope.notiMsg('Error: '+error.message);
           });
 
     }
+    $scope.handleOpenURL = function(url) {
+      // do stuff, for example
+      // document.getElementById("url").value = url;
+      console.log('checkingmail',url);
+      /*if(typeof(url) !== 'undefined' && url.indexOf('check-mail') !== -1){
+        var getToken = url.split('/check-mail/')[1];
+        getToken = getToken.replace('token=','');
+        notiMsg(getToken);
+        console.log(url);
+        showLoader(true);
+        notiMsg('Verifying your email ID');
+        var params = '?action=check-token&token='+getToken;
+        jQuery.ajax({type:'POST',url:dbURL+params}).done(function(r){
+          console.log(r);
+            notiMsg(r.message);
+            if(r.code == 404){
+              jQuery.get('screen-01.html',function(data){
+              jQuery('.content-changer').html(data);
+                hideLoader(true);
+              });
+            }
+            else{
+              currentUserId = r.user_id;
+              lcl.currentUserId = currentUserId;
+              jQuery.get('screen-03-01.html',function(data){
+                jQuery('.content-changer').html(data);
+                hideLoader(true);
+              });
+            }
+        });
+      }
+      else{
+        console.log(url);
+        console.log('checkingmail');
+        jQuery.get('screen-01.html',function(data){
+          jQuery('.content-changer').html(data);
+        });
+      }*/
+    };
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
-      $scope.ngLoaderHide();
       if(typeof $routeParams.privateChatId !== "undefined"){
         $scope.chatId = $routeParams.privateChatId;
         $scope.Messages[$scope.chatId] = [];
@@ -543,9 +609,24 @@ bizzlerApp.controller('bizzlerController',[
         $scope.getGrpDetails($scope.chatId);
         $scope.isGrpMessage = 1;
       }
+      else if($route.current.loadedTemplateUrl == "screen-09.html"){
+        var req = {
+          method: 'POST',
+          url: dbURL+'?action=getPrivateList&user_id='+$scope.userData.ID,
+          headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        }
+        $http(req).then((response)=>{
+          var res = response.data;
+          $scope.private_chat_ist = res.body.results;
+        }).catch((error)=>{
+          console.log(error);
+        });
+      }
+      $scope.ngLoaderHide();
     });
     if(bizzlerApp.deviceReady){
       $scope.init();
+      $timeout(function(){$scope.handleOpenURL();},0)
     }
     $scope.cameraUpload = function(){
       navigator.camera.getPicture(function(imageURI){
@@ -658,12 +739,25 @@ bizzlerApp.controller('bizzlerController',[
           })
           .catch((error)=>{
             console.log(JSON.stringify(error));
-            $scope.notiMsg("Error: "+error.message);
           });
     }
     $scope.openMediaCapture = function(){
       if($scope.faw == false){$scope.faw = true}
       else {$scope.faw = false;}
+    }
+    $scope.saveSearchRadius = function(){
+      var req = {
+        method: 'POST',
+        url: dbURL+'?action=saveRadius&search_radius='+$scope.search_radius+'&user_id='+$scope.userData.ID,
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      }
+      $http(req).then((response)=>{
+        var res = response.data;
+        console.log(res);
+        $location.path('/private-chat-list');
+      }).catch((error)=>{
+        console.log(error.message);
+      })
     }
     /*Private Chat Functions*/
     $scope.getPrivateChatDetails = function(){
@@ -674,7 +768,6 @@ bizzlerApp.controller('bizzlerController',[
       }
       $http(req).then((response)=>{
         var res = response.data;
-        console.log(res);
         if(res.code == 200){
           $scope.curPrivateDetails = res.body.private_details;
           if(res.body.messages.length > 0){
@@ -684,12 +777,23 @@ bizzlerApp.controller('bizzlerController',[
         }
       }).catch((error)=>{
         console.log(error.message);
-        $scope.notiMsg("Error: "+error.message);
       })
     }
     /*Navigation Functions*/
     $scope.privateMsgList = function(){
+      $mdSidenav('slide-out').toggle();
       $location.path('/private-chat-list');
+    }
+    $scope.radiusView = function(){
+      $mdSidenav('slide-out').toggle();
+      $location.path('/radius-changer');
+    }
+    $scope.profileView = function(){
+      $mdSidenav('slide-out').toggle();
+      $location.path('/profile');
+    }
+    $scope.open_private_chat = function(privateId){
+      $location.path('/private-chat/'+privateId);
     }
   }
 ]);
@@ -776,4 +880,31 @@ bizzlerApp.directive('imagesLoaded',function($timeout, $window){
             });
         }
     }
+});
+bizzlerApp.directive('radiusChanger',function(){
+  return{
+    restrict:'A',
+    link:function(scope,elem,attr){
+      console.log(scope.search_radius);
+      var rS = elem.roundSlider({
+        sliderType: "min-range",
+        editableTooltip: false,
+        radius: 105,
+        width: 16,
+        value: scope.search_radius/10,
+        handleSize: 0,
+        handleShape: "square",
+        circleShape: "pie",
+        startAngle: 315,
+        tooltipFormat: function(e) {
+          var val = e.value;
+          return val * 10 + " miles";
+        }
+      });
+      rS.on('change',function(e){
+        scope.$parent.search_radius = e.value*10;
+        console.log(scope.search_radius);
+      });
+    }
+  }
 });

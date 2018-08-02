@@ -29,7 +29,7 @@
     <!-- img-src 'self' data:; -->
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" /> -->
-    <meta http-equiv="Content-Security-Policy" content="script-src * 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' blob:; img-src * data:; media-src * data:;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * bizzler:; script-src * 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' blob:; img-src * data:; media-src * data:;" />
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -45,6 +45,7 @@
     <!-- Bootstrap core CSS -->
     <link href="assets/icons/icons.css" rel="stylesheet" type="text/css">
     <link href="assets/css/angular-material.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/roundslider.min.css" rel="stylesheet" type="text/css">
     <link href="assets/css/style.css" rel="stylesheet" type="text/css">
       <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
       <!--[if lt IE 9]>
@@ -120,8 +121,8 @@
       <md-content>
           <ul id="slide-out" class="side-nav main-menu">
             <li><a><i class="icon-magnifier"></i>Search</a></li>
-            <li><a><i class="icon-note"></i>Edit Profile</a></li>
-            <li><a><i class="icon-speedometer"></i>KM Radius</a></li>
+            <li><a ng-click="profileView()"><i class="icon-note"></i>Edit Profile</a></li>
+            <li><a ng-click="radiusView()"><i class="icon-speedometer"></i>Radius</a></li>
             <li><a ng-click="privateMsgList()"><i class="icon-bubble"></i>Private Messages</a></li>
           </ul>
       </md-content>
@@ -130,6 +131,7 @@
       <md-progress-circular md-diameter="50"></md-progress-circular>
     </div>
     <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="assets/js/firebase-app.js"></script>
     <script type="text/javascript" src="assets/js/firebase-messaging.js"></script>
     <script type="text/javascript" src="assets/js/hammer.js"></script>
@@ -140,7 +142,7 @@
     <script type="text/javascript" src="assets/js/angular-route.js"></script>
     <script type="text/javascript" src="assets/js/storage.js"></script>
     <script type="text/javascript" src="assets/js/angular-sanitize.min.js"></script>
-    <!-- <script type="text/javascript" src="assets/js/roundslider.js"></script> -->
+    <script type="text/javascript" src="assets/js/roundslider.min.js"></script>
     <script type="text/javascript" src="assets/js/app.js"></script>
     <script type="text/javascript" src="assets/js/routes.js"></script>
     <script type="text/javascript" src="assets/js/services.js"></script>

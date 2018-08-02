@@ -1,0 +1,56 @@
+<section class="screen-02 scr-edit">
+  <div class="scr02-inner">
+    <div class="profile-head">
+      <p>
+        <a href="#" class="backScreen" backScreen="screen-01.html"><i class="icon-arrow-left "></i> Back</a>
+      </p>
+    </div>
+    <!--/profile-head-->
+    <div class="profile-body">
+      <div class="pro-heading">
+
+        <h2>Sign In</h2>
+      </div>
+      <!--/pro-heading-->
+      <br/>
+      <div class="pro-fileds">
+        <form name="logForm">
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Email</label>
+              <md-icon class="rg_email icon-envelope-open"></md-icon>
+              <input name="rg_email" ng-model="user.rg_email" required minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" placeholder="aharongal@gmail.com"/>
+              <div ng-messages="logForm.rg_email.$error">
+                <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
+                  Your email must be between 10 and 100 characters long and look like an e-mail address.
+                </div>
+              </div>
+            </md-input-container>
+            <div flex="5" hide-xs hide-sm>
+              <!-- Spacer //-->
+            </div>
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Password</label>
+              <md-icon class="rg_pass icon-lock"></md-icon>
+              <input name="lg_pass" type="password" required ng-model="user.lg_pass" />
+              <div ng-messages="logForm.lg_pass.$error">
+                <div ng-message="required">Password not Empty</div>
+              </div>
+            </md-input-container>
+            <div flex="5" hide-xs hide-sm></div>
+          </div>
+          <div layout-gt-sm="row" class="text-center">
+            <md-button ng-click="loginForm()" class="md-raised pro-reg-btn rb-btn" ng-disabled="logForm.$invalid" ng-click-options="{preventDoubleClick: true}">
+              <md-icon class="icon-login"></md-icon>
+              Login
+            </md-button>
+          </div>
+        </form>
+      </div>
+      <!--/pro-fileds-->
+    </div>
+    <!--/profile-body-->
+  </div>
+  <!--/scr02-inner-->
+</section>
+<!--/screen-01-->

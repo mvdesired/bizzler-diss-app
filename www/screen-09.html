@@ -30,203 +30,23 @@
     <!--/chating-menu-->
     <div class="userlist-pm">
       <div class="delete-chat">
-        <a href="#" class="waves-effect waves-light dc-btn"><i class="icon-trash"></i></a>
+        <md-button class="md-raised dc-btn" ng-click="delete_selected_chat()" aria-label="Delete Chat">
+          <i class="icon-trash"></i>
+        </md-button>
       </div>
       <!--/delete-chat-->
       <ul>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-01" />
-              <label for="delete-01">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
+        <li ng-repeat="pcl in private_chat_ist">
+          <a ng-click="open_private_chat(pcl.chat_id)" >
             <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-1.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Natalie Portman </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-02" />
-              <label for="delete-02">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-2.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Colton Haynes  </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-03" />
-              <label for="delete-03">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-3.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Scarlett Johansson   </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-04" />
-              <label for="delete-04">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-4.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Keegan Allen</h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-05" />
-              <label for="delete-05">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-5.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Robbie Amell </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-06" />
-              <label for="delete-06">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-6.jpg" />
+              <img ng-src="{{pcl.user_pic}}"/>
               <em class="offline"></em>
             </div>
             <!--/ulpm-imgcon-->
             <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Michael Angarano</h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-07" />
-              <label for="delete-07">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-7.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Penn Badgley </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-08" />
-              <label for="delete-08">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-8.jpg" />
-              <em class="offline"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Gal Gadot </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
-            </div>
-            <!--/ulpm-txtcon-->
-            <div class="clearfix"></div>
-          </a>
-        </li>
-        <li class="delete">
-          <div class="chk-box">
-            <p>
-              <input type="checkbox" class="filled-in" id="delete-09" />
-              <label for="delete-09">&nbsp;</label>
-            </p>
-          </div>
-          <a href="#">
-            <div class="ulpm-imgcon">
-              <img src="assets/image/avatar-9.jpg" />
-              <em class="online"></em>
-            </div>
-            <!--/ulpm-imgcon-->
-            <div class="ulpm-txtcon">
-              <span>12:30</span>
-              <h2>Mustafa Vohra </h2>
-              <p>Integer ut mauris et velit placerat sollicitudin. Cras aliquet luctus rhoncus. Vivamus varius </p>
+              <span>{{pcl.send_on}}</span>
+              <h2>{{pcl.name}}</h2>
+              <p>{{pcl.msg_text}}</p>
             </div>
             <!--/ulpm-txtcon-->
             <div class="clearfix"></div>
@@ -240,13 +60,3 @@
 </section>
 <!--/screen-05-->
 <!--/screen-01-->
-
-
-
-<ul id="slide-out" class="side-nav main-menu">
-  <li><a href="#"><i class="icon-magnifier"></i>Search</a></li>
-  <li><a href="#"><i class="icon-note"></i>Edit Profile</a></li>
-  <li><a href="#"><i class="icon-speedometer"></i>KM Radius</a></li>
-  <li><a href="#"><i class="icon-bubble"></i>Private Messages</a></li>
-
-</ul>

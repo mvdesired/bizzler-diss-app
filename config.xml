@@ -18,7 +18,7 @@
     <plugin name="cordova-plugin-camera" source="npm" spec="~4.0.3" />
     <plugin name="cordova-plugin-media-capture" source="npm" spec="~3.0.2" />
     <plugin name="cordova-plugin-customurlscheme" source="npm" spec="~4.3.0">
-        <variable name="URL_SCHEME" value="bizzler" />
+        <variable name="URL_SCHEME" value="phonegap" />
     </plugin>
     <plugin name="cordova-plugin-console" source="npm" spec="~1.0.3" />
     <plugin name="cordova-plugin-device" source="npm" spec="~2.0.2" />
@@ -121,6 +121,7 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <allow-intent href="bizzler:*" />
     <platform name="android">
         <allow-intent href="market:*" />
     </platform>
@@ -129,5 +130,5 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <engine name="browser" spec="~5.0.3" />
-    <engine name="android" spec="~7.0.0" />
+    <engine name="android" spec="^7.0.0" />
 </widget>
