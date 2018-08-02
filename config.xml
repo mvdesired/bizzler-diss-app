@@ -18,7 +18,7 @@
     <plugin name="cordova-plugin-camera" source="npm" spec="~4.0.3" />
     <plugin name="cordova-plugin-media-capture" source="npm" spec="~3.0.2" />
     <plugin name="cordova-plugin-customurlscheme" source="npm" spec="~4.3.0">
-        <variable name="URL_SCHEME" value="phonegap" />
+        <variable name="URL_SCHEME" value="bizzler" />
     </plugin>
     <plugin name="cordova-plugin-console" source="npm" spec="~1.0.3" />
     <plugin name="cordova-plugin-device" source="npm" spec="~2.0.2" />
