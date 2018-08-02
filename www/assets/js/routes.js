@@ -10,6 +10,9 @@ bizzlerApp.config(['$routeProvider',
       when('/sign-up', {
         templateUrl: 'screen-03.html'
       }).
+      when('/email-confirmed', {
+        templateUrl: 'screen-03-01.html'
+      }).
       when('/profile-confirm', {
         templateUrl: 'screen-02.html'
       }).

@@ -373,6 +373,7 @@ bizzlerApp.controller('bizzlerController',[
           },function(error){
             console.log(JSON.stringify(error));
             console.log('Error occurred. ' + error.message);
+            $scope.notiMsg('Error occurred. ' + error.message);
             $scope.plFinish = true;
             $scope.plRetry = true;
             $scope.plloader = false;
@@ -547,45 +548,35 @@ bizzlerApp.controller('bizzlerController',[
           });
 
     }
-    $scope.handleOpenURL = function(url) {
-      // do stuff, for example
-      // document.getElementById("url").value = url;
-      console.log('checkingmail',url);
-      /*if(typeof(url) !== 'undefined' && url.indexOf('check-mail') !== -1){
-        var getToken = url.split('/check-mail/')[1];
-        getToken = getToken.replace('token=','');
-        notiMsg(getToken);
-        console.log(url);
-        showLoader(true);
-        notiMsg('Verifying your email ID');
-        var params = '?action=check-token&token='+getToken;
-        jQuery.ajax({type:'POST',url:dbURL+params}).done(function(r){
-          console.log(r);
-            notiMsg(r.message);
-            if(r.code == 404){
-              jQuery.get('screen-01.html',function(data){
-              jQuery('.content-changer').html(data);
-                hideLoader(true);
-              });
-            }
-            else{
-              currentUserId = r.user_id;
-              lcl.currentUserId = currentUserId;
-              jQuery.get('screen-03-01.html',function(data){
-                jQuery('.content-changer').html(data);
-                hideLoader(true);
-              });
-            }
-        });
+    $scope.checkEmailToken = function(){
+      $scope.notiMsg('Verifying your email');
+      $scope.ngLoaderShow();
+      var params = '?action=check-token&token='+$scope.emailToken;
+      var req = {
+       method: 'POST',
+       url: dbURL+params,
+       headers:{'Content-Type':'application/x-www-form-urlencoded'},
+       data: {
+         action:'check-token',
+         token:$scope.emailToken
+        }
       }
-      else{
-        console.log(url);
-        console.log('checkingmail');
-        jQuery.get('screen-01.html',function(data){
-          jQuery('.content-changer').html(data);
-        });
-      }*/
-    };
+      $http(req).then((response)=>{
+        var res = response.data;
+        $scope.notiMsg(res.message);
+        if(res.code == 404){
+        }
+        else{
+          $scope.userData = res.body;
+          $scope.lcl.user = res.body;
+          $scope.lcl.isLoggedin = true;
+          $location.path('/email-confirmed');
+        }
+      }).catch((error)=>{
+        $scope.notiMsg(error);
+        console.log(error);
+      });
+    }
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
@@ -626,7 +617,11 @@ bizzlerApp.controller('bizzlerController',[
     });
     if(bizzlerApp.deviceReady){
       $scope.init();
-      $timeout(function(){$scope.handleOpenURL();},0)
+      if(bizzlerApp.openCustomUrl){
+        if(bizzlerApp.customUrl == 'check-mail'){
+          $scope.emailToken = bizzlerApp.emailToken;
+        }
+      }
     }
     $scope.cameraUpload = function(){
       navigator.camera.getPicture(function(imageURI){
