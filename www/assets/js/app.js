@@ -14,7 +14,7 @@ var app = {
     onDeviceReady: function() {
         //app.receivedEvent('deviceready');
         bizzlerApp.deviceReady = true;
-        $timeout(function(){handleOpenURL();},0)
+        setTimeout(function(){handleOpenURL();},0)
         angular.bootstrap(document, ['bizzlerApp']);
     }
 };
