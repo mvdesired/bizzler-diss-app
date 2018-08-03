@@ -1,53 +1,53 @@
-    <section class="screen-06">
-        <div class="scr06-inner">
-            <div class="uplddata-body">
-                <h2>You are at : <span>{{curGrpDetails.group_name}}</span></h2>
-                <p>Be the first one to create an meet up here. Enter a an inviting message and you might meet very intersting people.</p>
+<section class="screen-06">
+    <div class="scr06-inner">
+        <div class="uplddata-body">
+            <h2>You are at : <span>{{curGrpDetails.group_name}}</span></h2>
+            <p>Be the first one to create an meet up here. Enter a an inviting message and you might meet very intersting people.</p>
 
-                <div class="row">
-                    <form name="cmsgs" method="post">
-                        <div class="col s12 m12">
-                            <md-input-container class="md-block">
-                                <label>Message</label>
-                                <textarea ng-model="cmsg.msg" name="msg" md-maxlength="150" rows="5" required></textarea>
-                                <div ng-messages="cmsgs.msg.$error" role="alert" multiple>
-                                  <div ng-message="required" class="my-message">You must enter a message</div>
-                                </div>
-                            </md-input-container>
-                        </div>
-                        <!--/m12-->
-                        <div class="clearfix"></div>
-                        <div class="col s12 m12"  ng-if="mediaU.src == ''">
-                            <div class="file-upload">
-                                <h6><i class="icon-cloud-upload"></i> Uplod File <span>Click Here</span></h6>
-                                <input type="file" class="type-file" name="attachment" ng-model="cmsg.attachment" accept="image/*;camera=capture" onchange="angular.element(this).scope().inputChanged(event)">
+            <div class="row">
+                <form name="cmsgs" method="post">
+                    <div class="col s12 m12">
+                        <md-input-container class="md-block">
+                            <label>Message</label>
+                            <textarea ng-model="cmsg.msg" name="msg" md-maxlength="150" rows="5" required></textarea>
+                            <div ng-messages="cmsgs.msg.$error" role="alert" multiple>
+                              <div ng-message="required" class="my-message">You must enter a message</div>
                             </div>
-                            <!--/file-upload-->
+                        </md-input-container>
+                    </div>
+                    <!--/m12-->
+                    <div class="clearfix"></div>
+                    <div class="col s12 m12"  ng-if="mediaU.src == ''">
+                        <div class="file-upload">
+                            <h6><i class="icon-cloud-upload"></i> Uplod File <span>Click Here</span></h6>
+                            <input type="file" class="type-file" name="attachment" ng-model="cmsg.attachment" accept="image/*;camera=capture" onchange="angular.element(this).scope().inputChanged(event)">
                         </div>
-                        <div class="clearfix"></div>
-                        <!--/m12-->
-                        <div class="uploaded-file-prv" ng-if="mediaU.src != ''">
-                          <img ng-src="{{mediaU.src}}">
-                          <span ng-click="removeUploadImage()"><i class="icon-close"></i></span>
+                        <!--/file-upload-->
+                    </div>
+                    <div class="clearfix"></div>
+                    <!--/m12-->
+                    <div class="uploaded-file-prv" ng-if="mediaU.src != ''">
+                      <img ng-src="{{mediaU.src}}">
+                      <span ng-click="removeUploadImage()"><i class="icon-close"></i></span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col s12 m12">
+                        <div class="ud-btncon">
+                            <md-button type="button" class="md-raised md-warn upbc-send" ng-disabled="cmsgs.$invalid" ng-click="startNewMessage()">
+                                <i class="icon-share-alt"></i> Send
+                            </md-button>
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="col s12 m12">
-                            <div class="ud-btncon">
-                                <md-button type="button" class="md-raised md-warn upbc-send" ng-disabled="cmsgs.$invalid" ng-click="startNewMessage()">
-                                    <i class="icon-share-alt"></i> Send
-                                </md-button>
-                            </div>
-                            <!--/ud-btncon-->
-                        </div>
-                        <!--/col s12 m12-->
-                        <div class="clearfix"></div>
-                    </form>
-                </div>
-                <!--/row-->
+                        <!--/ud-btncon-->
+                    </div>
+                    <!--/col s12 m12-->
+                    <div class="clearfix"></div>
+                </form>
             </div>
-            <!--/uplddata-body-->
+            <!--/row-->
         </div>
-        <!--/scr05-inner-->
-    </section>
-    <!--/screen-05-->
-    <!--/screen-01-->
+        <!--/uplddata-body-->
+    </div>
+    <!--/scr05-inner-->
+</section>
+<!--/screen-05-->
+<!--/screen-01-->
