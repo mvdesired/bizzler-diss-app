@@ -58,11 +58,11 @@
         <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <config-file parent="/manifest" target="AndroidManifest.xml">
+        <!--<config-file parent="/manifest" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        </config-file>
+        </config-file>-->
     </platform>
     <platform name="ios">
         <icon height="57" platform="ios" src="www/res/icon/ios/icon.png" width="57" />
