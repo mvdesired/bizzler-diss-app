@@ -208,7 +208,7 @@ bizzlerApp.controller('bizzlerController',[
         console.log(error);
       });
     }
-    $scope.logOut(){
+    $scope.logOut = function(){
       $scope.lcl.user = [];
       $scope.userData = [];
       $scope.lcl.isLoggedin = false;
