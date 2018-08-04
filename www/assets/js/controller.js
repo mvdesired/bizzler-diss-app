@@ -213,6 +213,7 @@ bizzlerApp.controller('bizzlerController',[
       $scope.userData = [];
       $scope.lcl.isLoggedin = false;
       $scope.notiMsg('Successfully Loggedout');
+      $mdSidenav('slide-out').toggle();
       $location.path('/sign-in');
     }
     $scope._gRs = function() {
