@@ -1,0 +1,63 @@
+<section class="screen-05">
+  <div class="scr05-inner">
+    <div class="chating-menu">
+      <div class="cm-inner">
+        <div class="mobile-bar">
+          <a ng-click="sideNavOpen()" id="menu"><i  class="icon-menu"></i></a>
+        </div>
+        <!--/mobile-bar-->
+        <div class="logo">
+          <img src="assets/image/logo-white.png" />
+        </div>
+        <!--/logo-->
+        <div class="user-pic">
+          <img ng-src="{{userData.user_pic_thumb}}" />
+        </div>
+        <!--/user-pic-->
+        <div class="clearfix"></div>
+
+        <!--/search-filed-->
+      </div>
+      <!--/cm-inner-->
+
+    </div>
+    <!--/chating-menu-->
+    <div class="chating-group">
+      <h1><span> Places Near Me</span></h1>
+    </div>
+    <div class="placelist-wrapper">
+      <ul>
+        <li class="placelist-item" ng-repeat="pl in placesListLoaded | filter: {}" ng-click="startLocationChatting($index)">
+            <div class="pli-imgcon">
+              <img ng-src="{{pl.photoUrl || defaultImage}}" />
+            </div>
+            <!--/ulpm-imgcon-->
+            <div class="pli-txtcon">
+              <h3>{{pl.name}}</h3>
+              <p>{{pl.address}}</p>
+            </div>
+            <div class="clearfix"></div>
+        </li>
+        <li class="pl-lm text-center" ng-hide="plFinish">
+            <md-button class="md-raised bzl-btn" ng-disabled="plLoadMore" ng-click="plLoadMoreBtn()">
+              <span ng-hide="plLoadMore">Load More</span>
+              <md-progress-circular md-diameter="20px" ng-show="plLoadMore"></md-progress-circular>
+            </md-button>
+        </li>
+        <li class="pl-lm text-center" ng-show="plRetry">
+            <md-button class="md-raised bzl-btn" ng-click="locationChatPreLoad()">
+              <span>Retry</span>
+            </md-button>
+        </li>
+      </ul>
+      <div class="pl-loader" ng-show="plloader">
+        <md-progress-circular class="md-warn" md-diameter="50px"></md-progress-circular>
+      </div>
+    </div>
+
+    <!--/chating-footer-->
+  </div>
+  <!--/scr05-inner-->
+</section>
+<!--/screen-05-->
+<!--/screen-01-->

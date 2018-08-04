@@ -1074,8 +1074,7 @@ top: 5px;
 }
 .screen-05 .scr05-inner .chating-menu .cm-inner .search-filed
 {
-    display: none;
-    margin: 0;
+   margin: 0;
     padding: 0;
     position: absolute;
     top: 0;
@@ -1105,6 +1104,9 @@ top: 5px;
     line-height: 18px;
     background-color: #fe7c4f;
     box-shadow: none;
+    border:none;
+    border-right:1px solid #FFFFFF;
+    outline:none;
 }
 .screen-05 .scr05-inner .chating-menu .cm-inner .search-filed .srcfld-inner .form-control:focus
 {
@@ -2061,7 +2063,7 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
   max-height: 95%;
 }
 #places-modal md-dialog .md-dialog-content{padding:15px 0;position: relative;}
-#places-modal md-dialog .md-dialog-content .pl-loader{
+.pl-loader{
   position: absolute;
   top: 0;
   bottom: 0;
@@ -2070,7 +2072,7 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
   background-color: #FFF;
   text-align: center;
 }
-#places-modal md-dialog .md-dialog-content .pl-loader md-progress-circular{
+.pl-loader md-progress-circular{
   position: absolute;
   margin: auto;
   top: 0;
@@ -2078,7 +2080,12 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
   right: 0;
   left: 0;
 }
-.placelist-wrapper{}
+.placelist-wrapper{
+    position: relative;
+    overflow: auto;
+    height: 100%;
+    padding-bottom:100px;
+}
 .placelist-wrapper ul{
   margin: 0;
   padding: 0;

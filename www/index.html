@@ -120,10 +120,12 @@
     <md-sidenav class="md-sidenav-left" md-component-id="slide-out" md-whiteframe="4">
       <md-content>
           <ul id="slide-out" class="side-nav main-menu">
-            <li><a><i class="icon-magnifier"></i>Search</a></li>
+            <li ng-if="currentTemplateLoaded == 'screen-05.html' || currentTemplateLoaded == 'screen-05-01.html'"><a ng-click="searchFieldToggle()"><i class="icon-magnifier"></i>Search</a></li>
             <li><a ng-click="profileView()"><i class="icon-note"></i>Edit Profile</a></li>
             <li><a ng-click="radiusView()"><i class="icon-speedometer"></i>Radius</a></li>
+            <li><a ng-click="goToCurrentLocationChat()"><i class="icon-location-pin"></i>Current Location</a></li>
             <li><a ng-click="privateMsgList()"><i class="icon-bubble"></i>Private Messages</a></li>
+            <li><a ng-click="logOut()"><i class="icon-bubble"></i>Logout</a></li>
           </ul>
       </md-content>
     </md-sidenav>

@@ -15,10 +15,10 @@
         </div>
         <!--/user-pic-->
         <div class="clearfix"></div>
-        <div class="search-filed">
+        <div class="search-filed" ng-show="searchField">
           <div class="srcfld-inner">
-            <input type="text" class="form-control" placeholder="Write Here..." />
-            <span><i class="icon-close"></i></span>
+            <input type="text" class="form-control" placeholder="Write Here..." ng-model="searchKeyword"/>
+            <span ng-click="searchFieldToggle()"><i class="icon-close"></i></span>
           </div>
           <!--/srcfld-inner-->
         </div>
@@ -34,7 +34,7 @@
     <!--/chating-group-->
     <div class="chating-body" scroll-to-bottom="Messages[chatId]">
       <div class="cb-inner">
-        <div ng-class="{true: 'cbi-me',false:'cbi-user' }[pM.send_by == userData.ID]" ng-repeat="pM in Messages[chatId] track by $index">
+        <div ng-class="{true: 'cbi-me',false:'cbi-user' }[pM.send_by == userData.ID]" ng-repeat="pM in Messages[chatId]| filter: {msg_text:searchKeyword} track by $index">
           <div ng-class="{true: 'cbime-inner',false:'cbiuser-inner' }[pM.send_by == userData.ID]">
             <!--/cbimei-imgcon-->
             <div ng-class="{true: 'cbimei-name',false:'cbiuseri-name' }[pM.send_by == userData.ID]">

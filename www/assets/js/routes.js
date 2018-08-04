@@ -19,6 +19,9 @@ bizzlerApp.config(['$routeProvider',
       when('/profile', {
         templateUrl: 'screen-04.html'
       }).
+      when('/location-preload', {
+         templateUrl: 'screen-05-02.html'
+      }).
       when('/location-chat/:locationId', {
         templateUrl: 'screen-05.html',
       }).

@@ -26,6 +26,8 @@ bizzlerApp.controller('bizzlerController',[
     $scope.chatId = 0;
     $scope.fetchingMsg = false;
     $scope.faw = false;
+    $scope.cmsg = {"msg":''};
+    $scope.searchField = false;
     //$scope.search_radius = $scope.userData.search_radius;
     /*Functiona Creations*/
     countries.list(function(countries) {
@@ -36,7 +38,6 @@ bizzlerApp.controller('bizzlerController',[
       $document[0].addEventListener("online", $scope.onOnline, false);
       $scope.ngLoaderShow();
       if($scope.lcl.isLoggedin){
-      console.log("USER "+JSON.stringify($scope.lcl.user));
         var req = {
          method: 'POST',
          url: dbURL+'?action=get_user_data&user_id='+$scope.lcl.user.ID,
@@ -45,6 +46,7 @@ bizzlerApp.controller('bizzlerController',[
         $http(req).then(function(response){
           if(response.data.code == 200){
             $scope.userData = $scope.lcl.user = response.data.body;
+            console.log(JSON.stringify($scope.userData));
             $scope.locationChatPreLoad();
           }
           else if(response.data.code == 404){
@@ -52,9 +54,9 @@ bizzlerApp.controller('bizzlerController',[
             $scope.userData = [];
             $scope.lcl.isLoggedin = false;
             $scope.notiMsg(response.data.message);
+            $location.path('/sign-in');
           }
           //$location.path('/profile');
-
       });//spec="~2.2.3"
       }
     };
@@ -98,11 +100,12 @@ bizzlerApp.controller('bizzlerController',[
       $http(req).then(function(response){
         $scope.ngLoaderHide();
         var res =response.data;
-        /*if(res.code == 200){
-            $scope.userData = res.body;
-            $scope.lcl.user = res.body;
-            $scope.lcl.isLoggedin = true;
-        }*/
+        if(res.code == 200){
+            //$scope.userData = res.body;
+            //$scope.lcl.user = res.body;
+            //$scope.lcl.isLoggedin = true;
+
+        }
         $scope.notiMsg(res.message);
       },
       function(response){
@@ -143,6 +146,7 @@ bizzlerApp.controller('bizzlerController',[
                     $scope.userData = $scope.jsonValue.body;
                     $scope.lcl.user = $scope.jsonValue.body;
                     $scope.lcl.isLoggedin = true;
+                    $scope.registerDevice();
                     $scope.notiMsg($scope.jsonValue.message);
                     $location.path('/profile-confirm');
                   }
@@ -188,23 +192,28 @@ bizzlerApp.controller('bizzlerController',[
       }
       $http(req).then(function(response){
         var res = response.data;
-        console.log(JSON.stringify(res));
         $scope.notiMsg(res.message);
         if(res.code == 200){
           $scope.userData = res.body;
           $scope.lcl.user = res.body;
           $scope.lcl.isLoggedin = true;
+          $scope.registerDevice();
           $scope.ngLoaderHide();
           $scope.locationChatPreLoad();
         }
         else{
             $scope.ngLoaderHide();
         }
-      }).catch(function(err){
+      }).catch(function(error){
         console.log(error);
       });
-      console.log(req);
-      console.log(params);
+    }
+    $scope.logOut(){
+      $scope.lcl.user = [];
+      $scope.userData = [];
+      $scope.lcl.isLoggedin = false;
+      $scope.notiMsg('Successfully Loggedout');
+      $location.path('/sign-in');
     }
     $scope._gRs = function() {
       var text = "";
@@ -251,12 +260,13 @@ bizzlerApp.controller('bizzlerController',[
       $http(req).then(function(response){
         $scope.ngLoaderHide();
         $scope.notiMsg(response.data.message);
-        if(response.data.code==200){
+        $mdDialog.hide();
+        /*if(response.data.code==200){
           $scope.locationChatPreLoad();
-        }
+        }*/
       },
       function(response){
-        console.log(response);
+        console.log(JSON.stringify(response));
       });
     }
     $scope.locationChatPreLoad = function(){
@@ -264,22 +274,22 @@ bizzlerApp.controller('bizzlerController',[
         $scope.plloader = true;
         $scope.plFinish = false;
         if(!$scope.plRetry){
-            $mdDialog.show({
+        $location.path('/location-preload');
+            /*$mdDialog.show({
               contentElement: '#places-modal',
               parent: angular.element(document.body),
               clickOutsideToClose: false
             }).catch(function (error){
               console.log(JSON.stringify(error));
-            });
+            });*/
       }
       if (navigator.geolocation) {
-            console.log("$scope.userData.search_radius "+$scope.userData.search_radius);
           navigator.geolocation.getCurrentPosition(function(position){
               $scope.plRetry = false;
               $scope.latitude = position.coords.latitude;
               $scope.longitude = position.coords.longitude;
-              var rSUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius="+$scope.userData.search_radius+"&type="+$scope.placesTypes+"&key="+globals.mapKey;
-              console.log()
+              //"&type="+$scope.placesTypes+
+              var rSUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius="+$scope.userData.search_radius+"&key="+globals.mapKey;
               $http.get(rSUrl).then(function(response){
                 $scope.placesList = response.data.results;
                 if(response.data.status === "OK"){
@@ -357,7 +367,7 @@ bizzlerApp.controller('bizzlerController',[
       }
       $http(req).then(function(response){
         var res = response.data;
-        $scope.groupChats.push(res.body.group_details);
+        $scope.groupChats[res.body.group_details.group_id] = res.body.group_details;
         $scope.curGrpDetails = $scope.groupChats[res.body.group_details.group_id];
         if(res.code == 200){
             $mdDialog.hide();
@@ -391,6 +401,15 @@ bizzlerApp.controller('bizzlerController',[
       }).catch(function(error){
         console.log(error.message);
       })
+    }
+    $scope.goToCurrentLocationChat = function(){
+        if(typeof($scope.curGrpDetails) !== "undefined" && $scope.curGrpDetails !=""){
+            $location.path('/location-chat/'+$scope.chatId);
+        }
+        else{
+            $scope.locationChatPreLoad();
+        }
+        $mdSidenav('slide-out').toggle();
     }
     $scope.trimText = function(text){
       return (!text) ? '' : text.replace(/ /g, '');
@@ -477,7 +496,6 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.checkEmailToken = function(){
       $scope.ngLoaderShow();
-      console.log($scope.emailToken);
       var params = '?action=check-token&token='+$scope.emailToken;
       var req = {
        method: 'POST',
@@ -494,7 +512,6 @@ bizzlerApp.controller('bizzlerController',[
         if(res.code == 404){
         }
         else{
-            console.log("UserData "+JSON.stringify(res.body));
           $scope.userData = res.body;
           $scope.lcl.user = res.body;
           $scope.lcl.isLoggedin = true;
@@ -507,6 +524,7 @@ bizzlerApp.controller('bizzlerController',[
     /*Functions Calling*/
     $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
+    $scope.currentTemplateLoaded = $route.current.loadedTemplateUrl;
       if(typeof $routeParams.privateChatId !== "undefined"){
         $scope.chatId = $routeParams.privateChatId;
         $scope.Messages[$scope.chatId] = [];
@@ -522,7 +540,7 @@ bizzlerApp.controller('bizzlerController',[
         $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
       }
       else if(typeof $routeParams.locationChatId !== "undefined"){
-        $scope.chatId = $routeParams.locationId;
+        $scope.chatId = $routeParams.locationChatId;
         $scope.Messages[$scope.chatId] = [];
         $scope.getGrpDetails($scope.chatId);
         $scope.isGrpMessage = 1;
@@ -635,7 +653,6 @@ bizzlerApp.controller('bizzlerController',[
           fd.append('is_file_attached', 1);
           fd.append('media', imgBlob);
         }
-        console.log(JSON.stringify($scope.cmsg));
         fd.append('action', 'msgSend');
         fd.append('user_id', $scope.userData.ID);
         fd.append('grp_id', $scope.chatId);
@@ -675,8 +692,7 @@ bizzlerApp.controller('bizzlerController',[
       }
       $http(req).then(function(response){
         var res = response.data;
-        console.log(res);
-        $location.path('/private-chat-list');
+        $location.path('/location-preload');
       }).catch(function(error){
         console.log(error.message);
       })
@@ -716,6 +732,51 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.open_private_chat = function(privateId){
       $location.path('/private-chat/'+privateId);
+    }
+    $scope.searchFieldToggle = function(){
+        $scope.searchField = !$scope.searchField;
+        if($scope.searchField == true){
+            $mdSidenav('slide-out').toggle();
+        }
+    }
+    $scope.registerDevice = function(){
+        var push = PushNotification.init({
+        android: {
+            senderID: "71450108131",
+             iconColor: '#28c8e2',
+             forceShow : "true",
+             sound : "true"
+        },
+        browser: {},
+        ios: {
+            senderID: "71450108131",
+            forceShow : "true",
+            iconColor: '#28c8e2',
+            alert: 'true',
+            sound: 'true',
+            badge: 'true'
+        },
+        windows: {}
+    });
+    push.on('registration', function(data) {
+        var params = '?action=registerDevice'+
+          '&user_id='+$scope.userData.ID+
+          '&device_token='+data.registrationId+
+          '&device_type='+device.platform;
+          var req = {
+           method: 'POST',
+           url: dbURL+params,
+           headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          }
+        $http(req).then(function(response){
+
+        }).catch(function(error){
+
+        });
+    });
+    push.on('error', function(e) {
+        console.error("push error = " + e.message);
+    });
     }
   }
 ]);
@@ -807,13 +868,12 @@ bizzlerApp.directive('radiusChanger',function(){
   return{
     restrict:'A',
     link:function(scope,elem,attr){
-      console.log(scope.search_radius);
       var rS = elem.roundSlider({
         sliderType: "min-range",
         editableTooltip: false,
         radius: 105,
         width: 16,
-        value: scope.search_radius/10,
+        value: scope.userData.search_radius/10,
         handleSize: 0,
         handleShape: "square",
         circleShape: "pie",
@@ -824,8 +884,7 @@ bizzlerApp.directive('radiusChanger',function(){
         }
       });
       rS.on('change',function(e){
-        scope.$parent.search_radius = e.value*10;
-        console.log(scope.search_radius);
+        scope.$parent.userData.search_radius = e.value*10;
       });
     }
   }
