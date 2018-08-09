@@ -46,7 +46,6 @@ bizzlerApp.controller('bizzlerController',[
         $http(req).then(function(response){
           if(response.data.code == 200){
             $scope.userData = $scope.lcl.user = response.data.body;
-            console.log(JSON.stringify($scope.userData));
             $scope.locationChatPreLoad();
           }
           else if(response.data.code == 404){
@@ -307,14 +306,13 @@ bizzlerApp.controller('bizzlerController',[
         navigator.camera.getPicture(function(imageURI){
             $scope.user_pic = "data:image/png;base64," + imageURI;
             $scope.userData.user_pic_thumb = $scope.user_pic;
-            console.log($scope.userData.user_pic_thumb);
-            console.log($scope.user_pic);
           }, function(message){
             console.log(message);
           }, {
-              quality: 50,
+              quality: 80,
               targetWidth:400,
               targetHeight:400,
+              sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
               destinationType: Camera.DestinationType.DATA_URL
           });
     }
@@ -350,7 +348,6 @@ bizzlerApp.controller('bizzlerController',[
                       headers: {
                         'Content-Type': undefined
                       }}).then(function(r){
-                      console.log(r.data);
                         if(r.data.code==200){
                             $scope.placesList = r.data.results;
                             for(var i=0;i<$scope.PlaceLimit;i++){
@@ -657,9 +654,7 @@ bizzlerApp.controller('bizzlerController',[
       }, function(message){
         console.log(message);
       }, {
-          quality: 50,
-          targetWidth:400,
-          targetHeight:400,
+          quality: 70,
           destinationType: Camera.DestinationType.DATA_URL
       });
     }
@@ -670,9 +665,7 @@ bizzlerApp.controller('bizzlerController',[
       }, function(message){
         console.log(message);
       }, {
-          quality: 50,
-          targetWidth:400,
-          targetHeight:400,
+          quality: 70,
           sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
           destinationType: Camera.DestinationType.DATA_URL
       });
@@ -857,6 +850,9 @@ bizzlerApp.controller('bizzlerController',[
         }).catch(function(error){
 
         });
+    });
+    push.on('replyBtn',function(){
+        console.log("Showing Notification Click");
     });
     push.on('error', function(e) {
         console.error("push error = " + e.message);
