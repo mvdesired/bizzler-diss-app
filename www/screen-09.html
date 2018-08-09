@@ -15,13 +15,6 @@
         </div>
         <!--/user-pic-->
         <div class="clearfix"></div>
-        <div class="search-filed">
-          <div class="srcfld-inner">
-            <input type="text" class="form-control" placeholder="Write Here..." />
-            <span><i class="icon-close"></i></span>
-          </div>
-          <!--/srcfld-inner-->
-        </div>
         <!--/search-filed-->
       </div>
       <!--/cm-inner-->
@@ -43,7 +36,7 @@
           <a ng-click="open_private_chat(pcl.chat_id)" >
             <div class="ulpm-imgcon">
               <img ng-src="{{pcl.user_pic}}"/>
-              <em class="offline"></em>
+              <em ng-class="{true:'online',false:'offline'}[pcl.is_online == 1]"></em>
             </div>
             <!--/ulpm-imgcon-->
             <div class="ulpm-txtcon">

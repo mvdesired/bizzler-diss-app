@@ -27,7 +27,7 @@
     </div>
     <div class="placelist-wrapper">
       <ul>
-        <li class="placelist-item" ng-repeat="pl in placesListLoaded | filter: {}" ng-click="startLocationChatting($index)">
+        <li class="placelist-item" ng-repeat="pl in placesListLoaded" ng-click="startLocationChatting($index)">
             <div class="pli-imgcon">
               <img ng-src="{{pl.photoUrl || defaultImage}}" />
             </div>
@@ -35,6 +35,7 @@
             <div class="pli-txtcon">
               <h3>{{pl.name}}</h3>
               <p>{{pl.address}}</p>
+              <p ng-if="pl.dateTime">Open on {{pl.dateTime}}</p>
             </div>
             <div class="clearfix"></div>
         </li>

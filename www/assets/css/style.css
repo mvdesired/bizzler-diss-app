@@ -403,15 +403,19 @@ md-input-container:not(.md-input-invalid).md-input-focused .md-input{
     overflow: hidden;
     border-radius: 100%;
     border: 3px solid #ff6e41;
+    position:relative;
 }
 .screen-02 .scr02-inner .profile-body .proimg span img
 {
     width: 100%;
-    height: 100%;
     padding: 0px;
     max-width: 100%;
-    max-height: 100%;
-    /*! border-radius: 100%; */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
 }
 .screen-02 .scr02-inner .profile-body p.name
 {
@@ -1288,6 +1292,9 @@ top: 5px;
     margin: 10px 20px 0 50px;
     position: relative;
 }
+.screen-05.private-chat-msg .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner {
+    margin: 10px 20px 0 20px;
+}
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-imgcon {
     height: auto;
     left: -45px;
@@ -1335,8 +1342,9 @@ top: 5px;
     font-family: 'josefin_sansbold';
     color: #8a8a8a;
     margin: 0;
-    padding: 0 10px;
+    padding: 0 10px 0 0;
     font-size:20px;
+    margin-left: -8px;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-name h5 span {
     font-family: 'josefin_sansregular';

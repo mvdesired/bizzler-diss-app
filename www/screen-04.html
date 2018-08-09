@@ -6,10 +6,9 @@
     <!--/profile-head-->
     <div class="profile-body">
       <div class="proimg">
-        <span>
+        <span  ng-click="CaptureImage()">
           <img class=" profilePic" ng-class="{blur:userData.user_pic_thumb ==''}" ng-src="{{userData.user_pic_thumb}}">
-          <label for="profile_pic" ng-class="{active:userData.user_pic_thumb !=''}"><i class="icon-camera"></i></label>
-          <input type="file" class="hide" name="profile_pic" id="profile_pic" accept="image/*" capture="camera"/>
+          <label ng-class="{active:userData.user_pic_thumb !=''}"><i class="icon-camera"></i></label>
         </span>
       </div>
       <!--/proimg-->

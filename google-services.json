@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "71450108131",
+    "firebase_url": "https://test-bizzler-app.firebaseio.com",
+    "project_id": "test-bizzler-app",
+    "storage_bucket": "test-bizzler-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71450108131:android:ccfdae7cb02295e9",
+        "android_client_info": {
+          "package_name": "com.bizzler.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71450108131-i2hi9samhnvede58fg8i7vk0g74r3r72.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBq_xWebmNtanMxa74hoqBwPvd4L3izzA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
