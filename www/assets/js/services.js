@@ -80,3 +80,25 @@ bizzlerApp.factory('countries', function($http){
       }
     };
   });
+bizzlerApp.service('profileData',function(){
+    return {
+        setProfileUserId : function(userId){
+            this.profileUserId = userId;
+        },
+        getProfileUserId : function(){
+            return this.profileUserId;
+        },
+        setData : function(data){
+            this.profileFullData = data;
+        },
+        getData : function(){
+            return this.profileFullData;
+        },
+        setUserData : function(userdata){
+            this.UserData = userdata;
+        },
+        getUserData : function(){
+            return this.UserData;
+        }
+    }
+});

@@ -4,8 +4,7 @@
   "displayName": "Bizzler",
   "cordova": {
     "platforms": [
-      "browser",
-      "android"
+      "browser"
     ],
     "plugins": {
       "cordova-plugin-camera": {},
@@ -35,7 +34,8 @@
   },
   "dependencies": {
     "cordova-android": "^7.0.0",
-    "cordova-browser": "^5.0.3",
+    "cordova-browser": "^5.0.4",
+    "cordova-device-accounts": "git+https://github.com/loicknuchel/cordova-device-accounts.git",
     "cordova-plugin-camera": "~4.0.3",
     "cordova-plugin-console": "~1.0.3",
     "cordova-plugin-customurlscheme": "~4.3.0",

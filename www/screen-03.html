@@ -31,7 +31,7 @@
             <md-input-container class="md-block" flex-gt-sm>
               <label>Email</label>
               <md-icon class="rg_email icon-envelope-open"></md-icon>
-              <input name="rg_email" ng-model="user.rg_email" required minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/" placeholder="aharongal@gmail.com"/>
+              <input name="rg_email" ng-model="user.rg_email" required minlength="10" maxlength="100" ng-pattern="/^.+@.+\..+$/"/>
               <div ng-messages="regForm.rg_email.$error">
                 <div ng-message-exp="['required', 'minlength', 'maxlength', 'pattern']">
                   Your email must be between 10 and 100 characters long and look like an e-mail address.

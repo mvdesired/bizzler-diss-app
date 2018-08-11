@@ -7,6 +7,7 @@
         </div>
         <!--/mobile-bar-->
         <div class="logo">
+          <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
           <img src="assets/image/logo-white.png" />
         </div>
         <!--/logo-->
@@ -36,7 +37,7 @@
       <div class="cb-inner">
         <div ng-class="{true: 'cbi-me',false:'cbi-user' }[cgM.send_by == userData.ID]" ng-repeat="cgM in Messages[chatId]| filter: {msg_text:searchKeyword} track by $index">
           <div ng-class="{true: 'cbime-inner',false:'cbiuser-inner' }[cgM.send_by == userData.ID]">
-            <div class="cbiuseri-imgcon" ng-if="cgM.send_by != userData.ID">
+            <div class="cbiuseri-imgcon" ng-if="cgM.send_by != userData.ID" ng-click="viewProfile($event,cgM.send_by)">
               <img class="z-depth-3" ng-src="{{cgM.send_user_pic}}">
             </div>
             <md-button class="md-raised cbiuseri-pm" ng-click="openPrivateChat(cgM.send_by)" aria-label="Private Message" ng-if="cgM.send_by != userData.ID">

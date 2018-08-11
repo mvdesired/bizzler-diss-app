@@ -124,11 +124,76 @@
             <li><a ng-click="profileView()"><i class="icon-note"></i>Edit Profile</a></li>
             <li><a ng-click="radiusView()"><i class="icon-speedometer"></i>Radius</a></li>
             <li><a ng-click="goToCurrentLocationChat()"><i class="icon-location-pin"></i>Current Location</a></li>
-            <li><a ng-click="privateMsgList()"><i class="icon-bubble"></i>Private Messages</a></li>
+            <li>
+              <a ng-click="privateMsgList()">
+                <i class="icon-bubble"></i>Private Messages <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
+              </a>
+            </li>
             <li><a ng-click="logOut()"><i class="icon-logout"></i>Logout</a></li>
           </ul>
       </md-content>
     </md-sidenav>
+    <div style="visibility: hidden">
+      <div id="viewData">
+          <div class="">
+
+          </div>
+        <!--<md-dialog aria-label="{{viewData.first_name}} {{viewData.last_name}}">
+        <form ng-cloak>
+          <md-toolbar>
+            <div class="md-toolbar-tools">
+              <h2>{{viewData.first_name}} {{viewData.last_name}}</h2>
+              <span flex></span>
+              <md-button class="md-icon-button" ng-click="cancelDailog()">
+                <md-icon class="icon-close" aria-label="Close dialog"></md-icon>
+              </md-button>
+            </div>
+          </md-toolbar>
+          <md-dialog-content>
+            <md-content>
+              <md-list flex>
+                <md-list-item class="md-2-line">
+                  <md-icon class="icon-user"></md-icon>
+                  <div class="md-list-item-text">
+                    <h3> {{viewData.first_name}} {{viewData.last_name}} </h3>
+                    <p>Name</p>
+                  </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                  <md-icon class="icon-globe"></md-icon>
+                  <div class="md-list-item-text">
+                    <h3> {{viewData.country}} </h3>
+                    <p>Country</p>
+                  </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                  <md-icon class="icon-pin"></md-icon>
+                  <div class="md-list-item-text">
+                    <h3> {{viewData.headline}} </h3>
+                    <p>Headline</p>
+                  </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                  <md-icon class="icon-briefcase"></md-icon>
+                  <div class="md-list-item-text">
+                    <h3> {{viewData.current_position}} </h3>
+                    <p>Current Position</p>
+                  </div>
+                </md-list-item>
+                <md-list-item class="md-2-line">
+                  <md-icon class="icon-trophy"></md-icon>
+                  <div class="md-list-item-text">
+                    <h3> {{viewData.intrests}} </h3>
+                    <p>Interests</p>
+                  </div>
+                </md-list-item>
+              </md-list>
+            </md-content>
+          </md-dialog-content>
+        </form>
+      </md-dialog>-->
+      </div>
+    </div>
     <div class="main-loader" ng-show="loader">
       <md-progress-circular md-diameter="50"></md-progress-circular>
     </div>

@@ -7,6 +7,7 @@
         </div>
         <!--/mobile-bar-->
         <div class="logo">
+          <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
           <img src="assets/image/logo-white.png" />
         </div>
         <!--/logo-->
@@ -30,12 +31,14 @@
         <li class="placelist-item" ng-repeat="pl in placesListLoaded" ng-click="startLocationChatting($index)">
             <div class="pli-imgcon">
               <img ng-src="{{pl.photoUrl || defaultImage}}" />
+
             </div>
             <!--/ulpm-imgcon-->
             <div class="pli-txtcon">
               <h3>{{pl.name}}</h3>
               <p>{{pl.address}}</p>
               <p ng-if="pl.dateTime">Open on {{pl.dateTime}}</p>
+                <p ng-if="pl.userOnline">Users Online : <span class="gUO">{{pl.userOnline}}</span></p>
             </div>
             <div class="clearfix"></div>
         </li>

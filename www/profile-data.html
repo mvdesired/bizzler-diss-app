@@ -1,0 +1,40 @@
+<md-bottom-sheet class="md-list md-has-header profileData">
+    <md-content>
+        <div class="profile-body">
+            <div class="proimg">
+                <span><img src="assets/image/avatar-10.jpg" ng-src="{{viewData.user_pic_full}}"></span>
+            </div><!--/proimg-->
+            <div class="pname">
+                <p class="name">
+                    {{viewData.first_name}} {{viewData.last_name}}
+                    <!--<md-button class="md-fab md-raised md-warn md-mini mybt" open-private-chat="openPrivateChat(viewData.ID)" ng-click="openPrivateChat(viewData.ID)" aria-label="Profile Data">-->
+                        <!--<i class="icon-speech myicon"></i>-->
+                    <!--</md-button>-->
+                </p>
+                <ul class="pb-ul">
+                    <li>
+                        <b><i class="icon-globe"></i><small>Country</small></b>
+                        <span>{{viewData.country}}</span>
+                        <em class="clearfix"></em>
+                    </li>
+                    <li>
+                        <b><i class=" icon-pin"></i><small>Headline</small></b>
+                        <span>{{viewData.headline}}</span>
+                        <em class="clearfix"></em>
+                    </li>
+                    <li>
+                        <b><i class="icon-briefcase"></i><small>Current Position</small></b>
+                        <span>{{viewData.current_position}}</span>
+                        <em class="clearfix"></em>
+                    </li>
+                    <li class="bottom_li">
+                        <b><i class="icon-trophy"></i><small>Interests</small></b>
+                        <span>{{viewData.interests}}</span>
+                        <em class="clearfix"></em>
+                    </li>
+
+                </ul>
+            </div><!--/profile-body-->
+        </div>
+    </md-content>
+</md-bottom-sheet>

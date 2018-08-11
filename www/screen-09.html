@@ -7,6 +7,7 @@
         </div>
         <!--/mobile-bar-->
         <div class="logo">
+          <!--<md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>-->
           <img src="assets/image/logo-white.png" />
         </div>
         <!--/logo-->
@@ -26,14 +27,19 @@
     </div>
     <div class="userlist-pm">
       <div class="delete-chat">
-        <md-button class="md-raised dc-btn" ng-click="delete_selected_chat()" aria-label="Delete Chat">
+        <md-button class="md-raised dc-btn" ng-show="selectedChats" ng-click="delete_selected_chat()" aria-label="Delete Chat">
           <i class="icon-trash"></i>
         </md-button>
       </div>
       <!--/delete-chat-->
       <ul>
-        <li ng-repeat="pcl in private_chat_ist">
-          <a ng-click="open_private_chat(pcl.chat_id)" >
+        <li ng-repeat="pcl in private_chat_ist" ng-class="{delete:pcl.deleteThis == true}">
+          <div class="chk-box" ng-if="pcl.deleteThis == true">
+            <p ng-click="private_chat_ist[$index].deleteThis = !private_chat_ist[$index].deleteThis">
+              <md-checkbox ng-model="private_chat_ist[$index].deleteThis" aria-label="delete-{{$index}}"></md-checkbox>
+            </p>
+          </div>
+          <a on-long-press="onLongPress($index)" on-touch-end="open_private_chat(pcl.chat_id)">
             <div class="ulpm-imgcon">
               <img ng-src="{{pcl.user_pic}}"/>
               <em ng-class="{true:'online',false:'offline'}[pcl.is_online == 1]"></em>
