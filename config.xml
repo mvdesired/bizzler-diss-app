@@ -53,8 +53,6 @@
         <splash density="port-xhdpi" src="www/res/screen/android/drawable-port-xhdpi-screen.png" />
         <splash density="port-xxhdpi" src="www/res/screen/android/drawable-port-xxhdpi-screen.png" />
         <splash density="port-xxxhdpi" src="www/res/screen/android/drawable-port-xxxhdpi-screen.png" />
-        <resource-file src="www/res/icon/android/fcm_push_icon.png" target="res/drawable/fcm_push_icon.png" />
-        <resource-file src="www/res/icon/android/reply.png" target="res/drawable/reply.png" />
     </platform>
     <platform name="ios">
         <icon height="57" platform="ios" src="www/res/icon/ios/icon.png" width="57" />
@@ -130,4 +128,5 @@
     </plugin>
     <plugin name="cordova-support-google-services" spec="1.2.1" />
     <engine name="browser" spec="~5.0.4" />
+    <engine name="android" spec="~7.0.0" />
 </widget>
