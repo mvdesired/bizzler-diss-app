@@ -10,6 +10,15 @@ bizzlerApp.config(['$routeProvider',
       when('/sign-up', {
         templateUrl: 'screen-03.html'
       }).
+      when('/forgot-password', {
+        templateUrl: 'forgot-password.html'
+      }).
+      when('/forgot-password-token-check', {
+        templateUrl: 'forgot-password-token-check.html'
+      }).
+      when('/reset-password', {
+        templateUrl: 'reset-password.html'
+      }).
       when('/email-confirmed/:emailToken', {
         templateUrl: 'screen-03-01.html'
       }).

@@ -25,7 +25,7 @@ var app = {
     },
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
-        document.addEventListener("backbutton", this.onBackPress, false);
+        //document.addEventListener("backbutton", this.onBackPress, false);
     },
     onDeviceReady: function() {
         //app.receivedEvent('deviceready');

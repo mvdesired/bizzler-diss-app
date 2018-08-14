@@ -30,14 +30,31 @@ bizzlerApp.controller('bizzlerController',[
     $scope.viewData = {};
     $scope.searchField = false;
     $scope.private_chat_ist = [];
+    $scope.backLink = [];
     //$scope.search_radius = $scope.userData.search_radius;
     /*Functiona Creations*/
     countries.list(function(countries) {
       $scope.countries = countries.data;
     });
+    $scope.backbutton = function () {
+        var prevUrl = $scope.backLink.length > 1 ? $scope.backLink.splice(-2)[0] : "/";
+
+        if(prevUrl == '/' && $scope.lcl.isLoggedin){
+            navigator.app.exitApp();
+        }
+        else if(prevUrl == '/location-preload'){
+            $scope.locationChatPreLoad();
+        }
+        else{
+            console.log(prevUrl);
+            $location.path(prevUrl);
+        }
+
+    };
     $scope.init = function(){
       $document[0].addEventListener("offline", $scope.onOffline, false);
       $document[0].addEventListener("online", $scope.onOnline, false);
+      $document[0].addEventListener("backbutton", $scope.backbutton, false);
       $scope.ngLoaderShow();
       if($scope.lcl.isLoggedin){
         var req = {
@@ -206,6 +223,77 @@ bizzlerApp.controller('bizzlerController',[
       }).catch(function(error){
         console.log(error);
       });
+    }
+    $scope.forgotFrm = function(){
+      $scope.ngLoaderShow();
+      var frmDt = new FormData();
+      frmDt.append('action','forgot_password');
+      frmDt.append('fp_email',$scope.user.fp_email);
+      $http.post(dbURL,
+      frmDt,
+      {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then(function(response){
+          var res = response.data;
+          console.log(res);
+          if(res.code == 200){
+            $scope.user.fp_email = '';
+            $location.path('/forgot-password-token-check');
+          }
+          $scope.Toast(res.message);
+          $scope.ngLoaderHide();
+      }).catch(function(error){
+        console.log('Error: '+error.message);
+      })
+    }
+    $scope.fpTokenFrm = function(){
+      $scope.ngLoaderShow();
+      var frmDt = new FormData();
+      frmDt.append('action','fptoken_check');
+      frmDt.append('token',$scope.user.fp_token);
+      $http.post(dbURL,
+      frmDt,
+      {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then(function(response){
+          var res = response.data;
+          console.log(res);
+          if(res.code == 200){
+            $location.path('/reset-password');
+          }
+          $scope.Toast(res.message);
+          $scope.ngLoaderHide();
+      }).catch(function(error){
+        console.log('Error: '+error.message);
+      })
+    }
+    $scope.fpResetPass = function(){
+      $scope.ngLoaderShow();
+      var frmDt = new FormData();
+      frmDt.append('action','reset_password');
+      frmDt.append('token',$scope.user.fp_token);
+      frmDt.append('fp_reset_password',$scope.user.fp_reset_password);
+      $http.post(dbURL,
+      frmDt,
+      {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then(function(response){
+          var res = response.data;
+          console.log(res);
+          if(res.code == 200){
+            $location.path('/sign-in');
+          }
+          $scope.Toast(res.message);
+          $scope.ngLoaderHide();
+      }).catch(function(error){
+        console.log('Error: '+error.message);
+      })
     }
     $scope.logOut = function(){
         $scope.userData = {};
@@ -535,9 +623,9 @@ bizzlerApp.controller('bizzlerController',[
       }
     }
     $scope.recieveMessage = function(){
-    if($scope.chatId == ''){
-        return false;
-    }
+      if($scope.chatId == ''){
+          return false;
+      }
       if($scope.fetchingMsg){
         return false;
       }
@@ -603,8 +691,14 @@ bizzlerApp.controller('bizzlerController',[
       });
     }
     /*Functions Calling*/
-    $scope.$on('$routeChangeStart',function(scope, next, current){$scope.ngLoaderShow();});
+    $scope.$on('$routeChangeStart',function(scope, next, current){
+        $scope.ngLoaderShow();
+        if($location.$$path == '/' || $location.$$path == ''){
+            $scope.locationChatPreLoad();
+        }
+    });
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
+        $scope.backLink.push($location.$$path);
         $scope.currentTemplateLoaded = $route.current.loadedTemplateUrl;
         $interval.cancel($scope.RMsgs);
         $scope.chatId = '';
@@ -842,32 +936,32 @@ bizzlerApp.controller('bizzlerController',[
             badge: 'true'
         },
         windows: {}
-    });
-    push.on('registration', function(data) {
-        var params = '?action=registerDevice'+
-          '&user_id='+$scope.userData.ID+
-          '&device_token='+data.registrationId+
-          '&device_type='+device.platform;
-          var req = {
-           method: 'POST',
-           url: dbURL+params,
-           headers:{'Content-Type':'application/x-www-form-urlencoded'},
-          }
-        $http(req).then(function(response){
+      });
+      push.on('registration', function(data) {
+          var params = '?action=registerDevice'+
+            '&user_id='+$scope.userData.ID+
+            '&device_token='+data.registrationId+
+            '&device_type='+device.platform;
+            var req = {
+             method: 'POST',
+             url: dbURL+params,
+             headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            }
+          $http(req).then(function(response){
 
-        }).catch(function(error){
+          }).catch(function(error){
 
-        });
-    });
-    push.on('notification',function(data){
-        console.log('Notification Received'+data);
-    });
-    push.on('replyBtn',function(data){
-        console.log("Showing Notification Click " + data);
-    });
-    push.on('error', function(e) {
-        console.error("push error = " + e.message);
-    });
+          });
+      });
+      push.on('notification',function(data){
+          console.log('Notification Received'+data);
+      });
+      push.on('replyBtn',function(data){
+          console.log("Showing Notification Click " + data);
+      });
+      push.on('error', function(e) {
+          console.error("push error = " + e.message);
+      });
     }
     $scope.viewProfile = function(ev,userId){
         $scope.ngLoaderShow();
@@ -913,7 +1007,7 @@ bizzlerApp.controller('bizzlerController',[
         map(function(obj,key) {
             return {"isDelete":obj.deleteThis,"isKey":key};
         });
-    }, function (newVal) {
+      }, function (newVal) {
             if(typeof(newVal[0]) !== "undefined" && newVal[0].isDelete == false){
                 console.log(newVal[0].isDelete);
                 $scope.deleteChats.splice(newVal[0].isKey,1);
@@ -945,6 +1039,16 @@ bizzlerApp.controller('bizzlerController',[
             console.log(error);
         });
         console.log($scope.deleteChats);
+    }
+    $scope.Toast = function(msg){
+      window.plugins.toast.showWithOptions(
+        {
+          message: msg,
+          duration: "long", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
+          position: "bottom",
+          addPixelsY: -40  // added a negative value to move it up a bit (default 0)
+        }
+      );
     }
   }
 ]);
