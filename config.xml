@@ -132,4 +132,5 @@
     </plugin>
     <plugin name="cordova-support-google-services" spec="^1.2.1" />
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.8" />
+    <engine name="android" spec="~7.0.0" />
 </widget>
