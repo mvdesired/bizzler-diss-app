@@ -4,8 +4,7 @@
   "displayName": "Bizzler",
   "cordova": {
     "platforms": [
-      "browser",
-      "android"
+      "browser"
     ],
     "plugins": {
       "cordova-plugin-camera": {},
