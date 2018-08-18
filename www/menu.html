@@ -1,0 +1,28 @@
+<div class="chating-menu">
+    <div class="cm-inner">
+        <div class="mobile-bar">
+            <a ng-click="sideNavOpen()" id="menu"><i  class="icon-menu"></i></a>
+        </div>
+        <!--/mobile-bar-->
+        <div class="logo">
+            <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
+            <img src="assets/image/logo-white.png" />
+        </div>
+        <!--/logo-->
+        <div class="user-pic">
+            <img ng-src="{{userData.user_pic_thumb}}" />
+        </div>
+        <!--/user-pic-->
+        <div class="clearfix"></div>
+        <div class="search-filed" ng-show="searchField">
+            <div class="srcfld-inner">
+                <input type="text" class="form-control" placeholder="Write Here..." ng-model="searchKeyword"/>
+                <span ng-click="searchFieldToggle()"><i class="icon-close"></i></span>
+            </div>
+            <!--/srcfld-inner-->
+        </div>
+        <!--/search-filed-->
+    </div>
+    <!--/cm-inner-->
+
+</div>

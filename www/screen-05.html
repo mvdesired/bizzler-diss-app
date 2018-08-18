@@ -1,33 +1,6 @@
 <section class="screen-05">
   <div class="scr05-inner">
-    <div class="chating-menu">
-      <div class="cm-inner">
-        <div class="mobile-bar">
-          <a ng-click="sideNavOpen()" id="menu"><i  class="icon-menu"></i></a>
-        </div>
-        <!--/mobile-bar-->
-        <div class="logo">
-          <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
-          <img src="assets/image/logo-white.png" />
-        </div>
-        <!--/logo-->
-        <div class="user-pic">
-          <img ng-src="{{userData.user_pic_thumb}}" />
-        </div>
-        <!--/user-pic-->
-        <div class="clearfix"></div>
-        <div class="search-filed" ng-show="searchField">
-          <div class="srcfld-inner">
-            <input type="text" class="form-control" placeholder="Write Here..." ng-model="searchKeyword"/>
-            <span ng-click="searchFieldToggle()"><i class="icon-close"></i></span>
-          </div>
-          <!--/srcfld-inner-->
-        </div>
-        <!--/search-filed-->
-      </div>
-      <!--/cm-inner-->
-
-    </div>
+    <div ng-include="'menu.html'"></div>
     <!--/chating-menu-->
     <div class="chating-group">
       <h1>You are here : <span> {{curGrpDetails.group_name}}</span></h1>
@@ -50,10 +23,10 @@
             </div>
             <!--/cbimei-name-->
             <div ng-class="{true: 'cbimei-chat',false:'cbiuseri-chat' }[cgM.send_by == userData.ID]">
-              <p ng-bind-html="dTDS(cgM.msg_text)"></p>
               <div ng-if="cgM.is_file_attached == 1" ng-class="{true: 'cbimei-location',false:'cbiuseri-location' }[cgM.send_by == userData.ID]">
                 <img ng-src="{{cgM.media_url}}" images-loaded>
               </div>
+              <p ng-bind-html="dTDS(cgM.msg_text)"></p>
               <!--/cbimei-location-->
             </div>
             <!--/cbimei-chat-->

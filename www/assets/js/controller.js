@@ -1,15 +1,16 @@
 bizzlerApp.controller('bizzlerController',[
-  '$scope','$route','$routeParams','$window','$location','$http','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval','$sce','$mdSidenav','fileReader','$element','profileData',
-  function($scope,$route,$routeParams,$window,$location,$http,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval,$sce,$mdSidenav,fileReader,$element,profileData){
-    /*Variables Define*/
+  '$scope','$route','$routeParams','$window','$location','$http','$q','$mdToast','$localStorage','$mdDialog','countries','$timeout','$document','$mdBottomSheet','$interval','$sce','$mdSidenav','fileReader','$element','profileData',
+  function($scope,$route,$routeParams,$window,$location,$http,$q,$mdToast,$localStorage,$mdDialog,countries,$timeout,$document,$mdBottomSheet,$interval,$sce,$mdSidenav,fileReader,$element,profileData){
+    /***********************************************************************************************
+    ************************************************************************************************
+    *******************************Variables Definition*********************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
     $scope.lcl = $localStorage;
     $scope.defaultImage = dbURL+'/assets/images/group-icon.png';
     $scope.user = {"save_data":true};
-    //$scope.lcl.user = {};//'ID':29
     $scope.userData = $scope.lcl.user;
     $scope.searchKeyword = '';
-    //$scope.userData.ID= 29;
-    //$scope.userData.search_radius = 200;
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
@@ -31,14 +32,50 @@ bizzlerApp.controller('bizzlerController',[
     $scope.searchField = false;
     $scope.private_chat_ist = [];
     $scope.backLink = [];
+    $scope.userEmailJson = "user_email.json";
+    $scope.user_pic = '';
     //$scope.search_radius = $scope.userData.search_radius;
-    /*Functiona Creations*/
-    countries.list(function(countries) {
-      $scope.countries = countries.data;
-    });
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Multitimes Used Functions*******************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
+    $scope.ngLoaderShow = function(){$scope.loader = true;};
+    $scope.ngLoaderHide = function(){$scope.loader = false;};
+    $scope.notiMsg = function(msg){
+      $mdToast.show(
+        $mdToast.simple().textContent(msg).position('bottom').hideDelay(7000));
+    }
+    $scope.openNextScreen = function(screenName){$location.path('/'+screenName);}
+    $scope._gRs = function() {
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+          for (var i = 0; i < 10; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+          return text;
+        }
+    $scope.Toast = function(msg){
+              window.plugins.toast.showWithOptions(
+                {
+                  message: msg,
+                  duration: "long", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
+                  position: "bottom",
+                  addPixelsY: -40  // added a negative value to move it up a bit (default 0)
+                }
+              );
+            }
+    $scope.dTDS = function(sinppet) {return $sce.trustAsHtml(sinppet);};
+    $scope.trimText = function(text){return (!text) ? '' : text.replace(/ /g, '');}
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Initialization of App***********************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
+    countries.list(function(countries) {$scope.countries = countries.data;});
     $scope.backbutton = function () {
         var prevUrl = $scope.backLink.length > 1 ? $scope.backLink.splice(-2)[0] : "/";
-
         if(prevUrl == '/' && $scope.lcl.isLoggedin){
             navigator.app.exitApp();
         }
@@ -46,15 +83,11 @@ bizzlerApp.controller('bizzlerController',[
             $scope.locationChatPreLoad();
         }
         else{
-            console.log(prevUrl);
-            $location.path(prevUrl);
+            //$location.path(prevUrl);
+            navigator.app.backHistory();
         }
-
     };
     $scope.init = function(){
-      $document[0].addEventListener("offline", $scope.onOffline, false);
-      $document[0].addEventListener("online", $scope.onOnline, false);
-      $document[0].addEventListener("backbutton", $scope.backbutton, false);
       $scope.ngLoaderShow();
       if($scope.lcl.isLoggedin){
         var req = {
@@ -79,6 +112,9 @@ bizzlerApp.controller('bizzlerController',[
           //$location.path('/profile');
       });//spec="~2.2.3"
       }
+      else{
+
+      }
     };
     $scope.onOffline = function(){
       $scope.notiMsg('No internet Connection');
@@ -88,13 +124,63 @@ bizzlerApp.controller('bizzlerController',[
       $scope.notiMsg('Back Online');
       $scope.RMsgs = $interval($scope.recieveMessage,1000);
     }
-    $scope.ngLoaderShow = function(){$scope.loader = true;};
-    $scope.ngLoaderHide = function(){$scope.loader = false;};
-    $scope.notiMsg = function(msg){
-      $mdToast.show(
-        $mdToast.simple().textContent(msg).position('bottom').hideDelay(7000));
+    if(bizzlerApp.deviceReady){
+        $document[0].addEventListener("offline", $scope.onOffline, false);
+        $document[0].addEventListener("online", $scope.onOnline, false);
+        $document[0].addEventListener("backbutton", $scope.backbutton, false);
+        $scope.init();
     }
-    $scope.openNextScreen = function(screenName){$location.path('/'+screenName);}
+    $scope.registerDevice = function(){
+            var push = PushNotification.init({
+            android: {
+                senderID: "71450108131",
+                 iconColor: '#28c8e2',
+                 forceShow : "true",
+                 sound : "true",
+                 badge: 'true'
+            },
+            browser: {},
+            ios: {
+                senderID: "71450108131",
+                forceShow : "true",
+                iconColor: '#28c8e2',
+                alert: 'true',
+                sound: 'true',
+                badge: 'true'
+            },
+            windows: {}
+          });
+          push.on('registration', function(data) {
+              var params = '?action=registerDevice'+
+                '&user_id='+$scope.userData.ID+
+                '&device_token='+data.registrationId+
+                '&device_type='+device.platform;
+                var req = {
+                 method: 'POST',
+                 url: dbURL+params,
+                 headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                }
+              $http(req).then(function(response){
+
+              }).catch(function(error){
+
+              });
+          });
+          push.on('notification',function(data){
+              console.log('Notification Received'+data);
+          });
+          push.on('replyBtn',function(data){
+              console.log("Showing Notification Click " + data);
+          });
+          push.on('error', function(e) {
+              console.error("push error = " + e.message);
+          });
+        }
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Functions For User Login & Registration*****************************
+    ************************************************************************************************
+    ***********************************************************************************************/
     $scope.registrationForm = function(){
       $scope.ngLoaderShow();
       var params = '?action=register_user&rg_name='+$scope.user.rg_name+'&rg_email='+$scope.user.rg_email+'&rg_pass='+$scope.user.rg_pass+'&rg_device='+device.platform+'&rg_from=Normal';
@@ -193,20 +279,17 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.loginForm = function(){
       $scope.ngLoaderShow();
-      var params = '?action=login_user&lg_email='+$scope.user.lg_email+'&lg_pass='+$scope.user.lg_pass+'&lg_device='+device.platform+'&lg_from=Normal';
-      var req = {
-       method: 'POST',
-       url: dbURL+params,
-       headers:{'Content-Type':'application/x-www-form-urlencoded'},
-       data: {
-         action:'login_user',
-         lg_email:$scope.user.lg_email,
-         lg_pass:$scope.user.lg_pass,
-         lg_device:device.platform,
-         lg_from:'Normal'
-        }
-      }
-      $http(req).then(function(response){
+      var fd = new FormData();
+      fd.append('action', 'login_user');
+      fd.append('lg_email', $scope.user.lg_email);
+      fd.append('lg_pass', $scope.user.lg_pass);
+      fd.append('lg_device', device.platform);
+      fd.append('lg_from', 'Normal');
+      $http.post(dbURL,fd,{
+       transformRequest: angular.identity,
+       headers: {
+         'Content-Type': undefined
+       }}).then(function(response){
         var res = response.data;
         $scope.notiMsg(res.message);
         if(res.code == 200){
@@ -303,17 +386,12 @@ bizzlerApp.controller('bizzlerController',[
         $interval.cancel($scope.RMsgs);
         $location.path('/sign-in');
     }
-    $scope._gRs = function() {
-      var text = "";
-      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-      for (var i = 0; i < 10; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      return text;
-    }
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Users Profile Related Functions*************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
     $scope.goToProfile = function(){$location.path('/profile');}
-    $scope.gotTochat = function(){$scope.locationChatPreLoad();}
     $scope.showConfirmPpUp = function (ev){
       $mdDialog.show({
         contentElement: '#continue-modal',
@@ -385,25 +463,257 @@ bizzlerApp.controller('bizzlerController',[
         console.log(JSON.stringify(response));
       });*/
     }
+    $scope.radiusView = function(){
+          $mdSidenav('slide-out').toggle();
+          $location.path('/radius-changer');
+        }
+    $scope.profileView = function(){
+          $mdSidenav('slide-out').toggle();
+          $location.path('/profile');
+        }
+    $scope.viewProfile = function(ev,userId){
+            $scope.ngLoaderShow();
+            profileData.userId = userId;
+            var params = '?action=get_user_data'+
+                      '&user_id='+userId;
+              var req = {
+               method: 'POST',
+               url: dbURL+params,
+               headers:{'Content-Type':'application/x-www-form-urlencoded'},
+              }
+            $http(req).then(function(response){
+                var res = response.data;
+                profileData.setData(res.body);
+                $scope.ngLoaderHide();
+                /*$mdDialog.show({
+                  contentElement: '#viewData',
+                  parent: angular.element(document.body),
+                  targetEvent: ev,
+                  clickOutsideToClose:true,
+                }).then(function() {}, function() {});*/
+                $mdBottomSheet.show({
+                  templateUrl: 'profile-data.html',
+                  controller: 'profileView',
+                  clickOutsideToClose: true
+                }).then(function(clickedItem) {
+                }).catch(function(error) {
+                });
+            }).catch(function(){});
+        }
+    $scope.saveSearchRadius = function(){
+          var req = {
+            method: 'POST',
+            url: dbURL+'?action=saveRadius&search_radius='+$scope.userData.search_radius+'&user_id='+$scope.userData.ID,
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          }
+          $http(req).then(function(response){
+            var res = response.data;
+            $scope.locationChatPreLoad();
+          }).catch(function(error){
+            console.log(error.message);
+          })
+        }
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Media Related Functions*********************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
     $scope.CaptureImage = function(){
-        navigator.camera.getPicture(function(imageURI){
-            $scope.user_pic = "data:image/png;base64," + imageURI;
-            $scope.userData.user_pic_thumb = $scope.user_pic;
+            navigator.camera.getPicture(function(imageURI){
+                $scope.user_pic = "data:image/png;base64," + imageURI;
+                $scope.userData.user_pic_thumb = $scope.user_pic;
+              }, function(message){
+                console.log(message);
+              }, {
+                  quality: 80,
+                  targetWidth:400,
+                  targetHeight:400,
+                  sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                  destinationType: Camera.DestinationType.DATA_URL
+              });
+        }
+    $scope.cameraUpload = function(){
+          navigator.camera.getPicture(function(imageURI){
+            $scope.mediaU.src = "data:image/png;base64," + imageURI;
+            $scope.faw = false;
           }, function(message){
             console.log(message);
           }, {
-              quality: 80,
-              targetWidth:400,
-              targetHeight:400,
-              sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+              quality: 70,
               destinationType: Camera.DestinationType.DATA_URL
           });
+        }
+    $scope.galleryUpload = function(){
+      navigator.camera.getPicture(function(imageURI){
+        $scope.mediaU.src = "data:image/png;base64," + imageURI
+        $scope.faw = false;
+      }, function(message){
+        console.log(message);
+      }, {
+          quality: 70,
+          sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+          destinationType: Camera.DestinationType.DATA_URL
+      });
     }
+    $scope.mediaRemove = function(){$scope.mediaU.src = '';}
+    $scope.dataURItoBlob = function(dataURI) {
+          var binary = atob(dataURI.split(',')[1]);
+          var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+          var array = [];
+          for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+          }
+          return new Blob([new Uint8Array(array)], {
+            type: mimeString
+          });
+        }
+    $scope.inputChanged = function(event){
+            event.preventDefault();
+            fileReader.readAsDataUrl(event.target.files[0], $scope).then(function(result) {
+                $scope.mediaU.src = result;
+            });
+        }
+    $scope.openMediaCapture = function(){
+          if($scope.faw == false){$scope.faw = true}
+          else {$scope.faw = false;}
+        }
+    $scope.removeUploadImage = function(){$scope.mediaU.src = '';}
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Messages Related Functions******************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
+    $scope.sendMessage = function(msgText){
+          //var msgText = $scope.dsdMsg;
+          //$scope.dsdMsg = '';
+          var fd = new FormData();
+          var tD = new Date();
+          var months = ('0' + (tD.getMonth()+1)).slice(-2);
+          var dayDate = ('0' + tD.getDate()).slice(-2);
+          var hours = ('0' + tD.getHours()).slice(-2);
+          var minutes = ('0' + tD.getMinutes()).slice(-2);
+          var dateString = tD.getFullYear()+'-'+months+'-'+dayDate+' '+hours+':'+minutes+':'+tD.getSeconds();
+          fd.append('action', 'msgSend');
+          fd.append('user_id', $scope.userData.ID);//
+          fd.append('grp_id', $scope.chatId);
+          fd.append('msg_text', msgText);
+          fd.append('is_grp_msg', $scope.isGrpMessage);
+          fd.append('creation_date', dateString);
+          // fd.append('is_file_attached', 0);
+          // fd.append('media', 0);
+          if($scope.mediaU.src != ''){
+            var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
+            fd.append('is_file_attached', 1);
+            fd.append('media', imgBlob);
+          }
+          $http.post(dbURL,
+          fd,
+          {
+            transformRequest: angular.identity,
+            headers: {
+              'Content-Type': undefined
+            }}).then(function(response){
+            console.log(response.data);
+              $scope.mediaU.src = '';
+          }).catch(function(error){
+            console.log('Error: '+error.message);
+          })
+        }
+    $scope.sendOnClick = function(){
+      var ngElem = angular.element(document.getElementsByClassName("main-msg-bx"));
+      if($scope.trimText(ngElem.val()) != '' || $scope.mediaU.src != ''){
+        $scope.sendMessage(ngElem.val());
+        ngElem.val('');
+      }
+    }
+    $scope.recieveMessage = function(){
+      if($scope.chatId == ''){
+          return false;
+      }
+      if($scope.fetchingMsg){
+        return false;
+      }
+      $scope.fetchingMsg = true;
+      var fetchMsgsScope = $scope.Messages[$scope.chatId];
+      var last_timestamp = '';
+        if(typeof fetchMsgsScope !== "undefined" && fetchMsgsScope.length > 0){
+          last_timestamp = encodeURIComponent(fetchMsgsScope[fetchMsgsScope.length-1].last_timestamp);
+        }
+        $http.get(dbURL+'?action=getMessage&grp_id='+$scope.chatId+'&last_timestamp='+last_timestamp+'&isgrp='+$scope.isGrpMessage,{
+          transformRequest: angular.identity,
+          headers: {
+            'Content-Type': undefined
+          }}).then(function(response){
+            var res = response.data;
+            $scope.fetchingMsg = false;
+            if(res.code==200){
+              if(res.body.messages.length > 0){
+                var newMessage = false;
+
+                angular.forEach(res.body.messages,function(val,key){
+                  if(val.send_by != $scope.userData.ID){
+                    newMessage = true;
+                  }
+                  $scope.Messages[$scope.chatId].push(val);
+                  //$scope.curGrpMessage.push(val);
+                });
+                if(newMessage){
+                  navigator.notification.beep(1);
+                }
+              }
+            }
+          }).catch(function(error){
+            console.log('Error: '+error.message);
+          });
+
+    }
+    $scope.startNewMessage = function(){
+            var tD = new Date();
+            var dateString = tD.getFullYear()+'-'+('0' + (tD.getMonth()+1)).slice(-2)+'-'+('0' + tD.getDate()).slice(-2)+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
+            var fd = new FormData();
+            if($scope.mediaU.src != ''){
+              var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
+              fd.append('is_file_attached', 1);
+              fd.append('media', imgBlob);
+            }
+            fd.append('action', 'msgSend');
+            fd.append('user_id', $scope.userData.ID);
+            fd.append('grp_id', $scope.chatId);
+            fd.append('msg_text', $scope.cmsg.msg);
+            fd.append('is_grp_msg', $scope.isGrpMessage);
+            fd.append('creation_date', dateString);
+            $http.post(
+                dbURL,
+                fd, {
+                  transformRequest: angular.identity,
+                  headers: {
+                    'Content-Type': undefined
+                  }
+                }
+              )
+              .then(function(response){
+                var res = response.data;
+                if(res.code==200){
+                  $scope.Messages[$scope.chatId] = res.body.messages;
+                  $scope.mediaU.src = '';
+                  $location.path('/location-chat/'+$scope.chatId);
+                }
+              })
+              .catch(function(error){
+                console.log(JSON.stringify(error));
+              });
+        }
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Location Related Functions******************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
+    $scope.gotTochat = function(){$scope.locationChatPreLoad();}
     $scope.locationChatPreLoad = function(){
         $scope.placesListLoaded = [];
-        $scope.plloader = true;
-        $scope.plFinish = false;
+
         if(!$scope.plRetry){
+        $scope.placesList = [];
         $location.path('/location-preload');
             /*$mdDialog.show({
               contentElement: '#places-modal',
@@ -413,61 +723,71 @@ bizzlerApp.controller('bizzlerController',[
               console.log(JSON.stringify(error));
             });*/
       }
-      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position){
-              $scope.plRetry = false;
-              $scope.latitude = position.coords.latitude;
-              $scope.longitude = position.coords.longitude;
-              $scope.placePage = 1;
-              //"&type="+$scope.placesTypes+
-              var rSUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+$scope.latitude+","+$scope.longitude+"&radius="+$scope.userData.search_radius+"&key="+globals.mapKey;
-              $http.get(rSUrl).then(function(response){
-                //$scope.placesList = response.data.results;
-                if(response.data.status === "OK"){
-                    var fd = new FormData();
-                    fd.append('action', 'search_location_db');
-                    fd.append('location_results', JSON.stringify(response.data.results));//
-                    $http.post(dbURL,fd,{
-                      transformRequest: angular.identity,
-                      headers: {
-                        'Content-Type': undefined
-                      }}).then(function(r){
-                        if(r.data.code==200){
-                            $scope.placesList = r.data.results;
-                            for(var i=0;i<$scope.PlaceLimit;i++){
-                                if(typeof($scope.placesList[i]) !== "undefined"){
-                                    if(typeof($scope.placesList[i].place_id) !== "undefined"){
-                                      var cur = $scope.placesList[i];
-                                      $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
-                                    }
-                                    else{
-                                        var cur = $scope.placesList[i];
-                                        $scope.placesListLoaded.push({'groupId':cur.groupId,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
-                                        $scope.plloader = false;
-                                    }
-                                    //else{break;}
-                                }
-                            }
-                        }
-                    }).catch(function(error){
-                      console.log('Error: '+error.message);
-                    })
+        cordova.plugins.diagnostic.isLocationEnabled(function(enable){
+            console.log(enable);
+            if(enable){
+                if (navigator.geolocation) {
+                      $scope.plRetry = false;
+                      $scope.plloader = true;
+                      $scope.plFinish = false;
+                      navigator.geolocation.getCurrentPosition(function(position){
+                          $scope.latitude = position.coords.latitude;
+                          $scope.longitude = position.coords.longitude;
+                          $scope.placePage = 1;
+                          var fd = new FormData();
+                          fd.append('action', 'search_location_db');
+                          fd.append('user_id', $scope.userData.ID);
+                          fd.append('radius', $scope.userData.search_radius);
+                          fd.append('lat', $scope.latitude);
+                          fd.append('lng', $scope.longitude);
+                          fd.append('types', $scope.placesTypes);
+                          fd.append('key', globals.mapKey);
+                          $http.post(dbURL,fd,{
+                            transformRequest: angular.identity,
+                            headers: {
+                              'Content-Type': undefined
+                            }}).then(function(r){
+                              if(r.data.code==200){
+                                  $scope.placesList = r.data.results;
+                                  for(var i=0;i<$scope.PlaceLimit;i++){
+                                      if(typeof($scope.placesList[i]) !== "undefined"){
+                                          if(typeof($scope.placesList[i].place_id) !== "undefined"){
+                                            var cur = $scope.placesList[i];
+                                            $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
+                                          }
+                                          else{
+                                              var cur = $scope.placesList[i];
+                                              $scope.placesListLoaded.push({'groupId':cur.groupId,'lastMsg':cur.lastMsg,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
+                                              $scope.plloader = false;
+                                          }
+                                      }
+                                  }
+                              }
+                          }).catch(function(error){
+                            console.log('Error: '+error.message);
+                            $scope.plRetry = true;
+                            $scope.plloader = false;
+                            $scope.plFinish = true;
+                          });
+                      },function(error){
+                        console.log(JSON.stringify(error));
+                        console.log('Error occurred. ' + error.message);
+                        $scope.notiMsg('Error occurred. ' + error.message);
+                        $scope.plFinish = true;
+                        $scope.plRetry = true;
+                        $scope.plloader = false;
+                      },{enableHighAccuracy: true, timeout: 1000000, maximumAge: 3000});
                 }
-              }).catch(function(error){
-                  $scope.plRetry = true;
-                  $scope.plloader = false;
-                  $scope.plFinish = true;
-                console.log('Error occurred. ' + JSON.stringify(error.data));
-              });
-          },function(error){
-            console.log(JSON.stringify(error));
-            console.log('Error occurred. ' + error.message);
-            $scope.notiMsg('Error occurred. ' + error.message);
-            $scope.plFinish = true;
-            $scope.plRetry = true;
-            $scope.plloader = false;
-          },{enableHighAccuracy: true, timeout: 1000000, maximumAge: 3000});
-      }
+            }
+            else{
+                $scope.Toast("Please enable your GPS");
+                $scope.plRetry = true;
+                $scope.plloader = false;
+                $scope.plFinish = true;
+            }
+          }, function(error){
+            console.log(error);
+        });
     }
     $scope.plLoadMoreBtn = function(){
       $scope.plLoadMore = true;
@@ -481,9 +801,8 @@ bizzlerApp.controller('bizzlerController',[
             $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
         }
         else{
-            $scope.placesListLoaded.push({'groupId':cur.groupId,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
+            $scope.placesListLoaded.push({'lastMsg':cur.lastMsg,'groupId':cur.groupId,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
         }
-
       });
     }
     $scope.pagination = function(){
@@ -576,93 +895,35 @@ bizzlerApp.controller('bizzlerController',[
         $scope.locationChatPreLoad();
         $mdSidenav('slide-out').toggle();
     }
-    $scope.trimText = function(text){
-      return (!text) ? '' : text.replace(/ /g, '');
-    }
-    $scope.sendMessage = function(msgText){
-      //var msgText = $scope.dsdMsg;
-      //$scope.dsdMsg = '';
-      var fd = new FormData();
-      var tD = new Date();
-      var months = ('0' + (tD.getMonth()+1)).slice(-2);
-      var dayDate = ('0' + tD.getDate()).slice(-2);
-      var hours = ('0' + tD.getHours()).slice(-2);
-      var minutes = ('0' + tD.getMinutes()).slice(-2);
-      var dateString = tD.getFullYear()+'-'+months+'-'+dayDate+' '+hours+':'+minutes+':'+tD.getSeconds();
-      fd.append('action', 'msgSend');
-      fd.append('user_id', $scope.userData.ID);//
-      fd.append('grp_id', $scope.chatId);
-      fd.append('msg_text', msgText);
-      fd.append('is_grp_msg', $scope.isGrpMessage);
-      fd.append('creation_date', dateString);
-      // fd.append('is_file_attached', 0);
-      // fd.append('media', 0);
-      if($scope.mediaU.src != ''){
-        var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
-        fd.append('is_file_attached', 1);
-        fd.append('media', imgBlob);
-      }
-      $http.post(dbURL,
-      fd,
-      {
-        transformRequest: angular.identity,
-        headers: {
-          'Content-Type': undefined
-        }}).then(function(response){
-        console.log(response.data);
-          $scope.mediaU.src = '';
-      }).catch(function(error){
-        console.log('Error: '+error.message);
-      })
-    }
-    $scope.sendOnClick = function(){
-      var ngElem = angular.element(document.getElementsByClassName("main-msg-bx"));
-      if($scope.trimText(ngElem.val()) != '' || $scope.mediaU.src != ''){
-        $scope.sendMessage(ngElem.val());
-        ngElem.val('');
-      }
-    }
-    $scope.recieveMessage = function(){
-      if($scope.chatId == ''){
-          return false;
-      }
-      if($scope.fetchingMsg){
-        return false;
-      }
-      $scope.fetchingMsg = true;
-      var fetchMsgsScope = $scope.Messages[$scope.chatId];
-      var last_timestamp = '';
-        if(typeof fetchMsgsScope !== "undefined" && fetchMsgsScope.length > 0){
-          last_timestamp = encodeURIComponent(fetchMsgsScope[fetchMsgsScope.length-1].last_timestamp);
-        }
-        $http.get(dbURL+'?action=getMessage&grp_id='+$scope.chatId+'&last_timestamp='+last_timestamp+'&isgrp='+$scope.isGrpMessage,{
-          transformRequest: angular.identity,
-          headers: {
-            'Content-Type': undefined
-          }}).then(function(response){
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Private Related Functions******************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
+    $scope.getPrivateChatDetails = function(){
+          var req = {
+            method: 'POST',
+            url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.chatId+'&user_id='+$scope.userData.ID,
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          }
+          $http(req).then(function(response){
             var res = response.data;
-            $scope.fetchingMsg = false;
-            if(res.code==200){
+            if(res.code == 200){
+              $scope.curPrivateDetails = res.body.private_details;
               if(res.body.messages.length > 0){
-                var newMessage = false;
-
-                angular.forEach(res.body.messages,function(val,key){
-                  if(val.send_by != $scope.userData.ID){
-                    newMessage = true;
-                  }
-                  $scope.Messages[$scope.chatId].push(val);
-                  //$scope.curGrpMessage.push(val);
-                });
-                if(newMessage){
-                  navigator.notification.beep(1);
-                }
+                $scope.Messages[$scope.chatId] = res.body.messages;
               }
+              $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
             }
           }).catch(function(error){
-            console.log('Error: '+error.message);
-          });
-
-    }
+            console.log(error.message);
+          })
+        }
+    $scope.privateMsgList = function(){
+          $mdSidenav('slide-out').toggle();
+          $location.path('/private-chat-list');
+        }
+    $scope.open_private_chat = function(privateId){$location.path('/private-chat/'+privateId);}
     $scope.checkEmailToken = function(){
       $scope.ngLoaderShow();
       var params = '?action=check-token&token='+$scope.emailToken;
@@ -690,12 +951,96 @@ bizzlerApp.controller('bizzlerController',[
         console.log(error);
       });
     }
-    /*Functions Calling*/
+    $scope.privateChatCountFetch = function(){
+            var req = {
+             method: 'POST',
+             url: dbURL+'?action=privatMsgsCount&user_id='+$scope.lcl.user.ID,
+             headers:{'Content-Type':'application/x-www-form-urlencoded'},
+            }
+            $http(req).then(function(response){
+                $scope.privateMsgsCount = response.data.pcCount;
+            });
+        }
+    $scope.openPrivateChat = function(privateUserId){
+      $scope.ngLoaderShow();
+      var fd = new FormData();
+      fd.append('action', 'startPrivateChat');
+      fd.append('user_id', $scope.userData.ID);//
+      fd.append('privateUserId', privateUserId);
+      $http.post(dbURL,
+      fd,
+      {
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then(function(response){
+        var res = response.data;
+        if(res.code == 200){
+          $location.path('/private-chat/'+res.privateChatId);
+          $scope.privateChatCountFetch();
+        }
+      }).catch(function(error){
+        console.log(error.message);
+      })
+    }
+    $scope.deleteChats = [];
+    $scope.onLongPress = function(chatIndex){
+            $scope.private_chat_ist[chatIndex].deleteThis = true;
+            $scope.deleteChats[chatIndex] = $scope.private_chat_ist[chatIndex];
+            $scope.selectedChats = true;
+        }
+    $scope.$watch(function($scope) {
+        return $scope.private_chat_ist.
+        map(function(obj,key) {
+            return {"isDelete":obj.deleteThis,"isKey":key};
+        });
+      }, function (newVal) {
+            if(typeof(newVal[0]) !== "undefined" && newVal[0].isDelete == false){
+                console.log(newVal[0].isDelete);
+                $scope.deleteChats.splice(newVal[0].isKey,1);
+            }
+            if($scope.deleteChats.length < 1){$scope.selectedChats = false;}
+    }, true);
+    $scope.delete_selected_chat = function(){
+        if($scope.deleteChats.length  < 1){
+            return false;
+        }
+        $scope.selectedChats = false;
+        $scope.ngLoaderShow();
+        var req = {
+            method: 'POST',
+            url: dbURL+'?action=deletePrivateChat&chatId='+JSON.stringify($scope.deleteChats)+'&user_id='+$scope.userData.ID,
+            headers:{'Content-Type':'application/x-www-form-urlencoded'},
+          }
+        $http(req).then(function(response){
+            var res = response.data;
+            if(res.code == 404){
+                $scope.private_chat_ist = [];
+            }
+            else{
+                $scope.private_chat_ist = res.body.results;
+            }
+            $scope.privateChatCountFetch();
+            $scope.ngLoaderHide();
+         }).catch(function(error){
+            console.log(error);
+        });
+        console.log($scope.deleteChats);
+    }
+    $scope.cancelBottomSheet = function(){
+            $mdBottomSheet.hide();
+            $scope.viewData = {};
+        }
+    /***********************************************************************************************
+    ************************************************************************************************
+    ****************************Routing & Miscellaneous Related Functions******************************************
+    ************************************************************************************************
+    ***********************************************************************************************/
     $scope.$on('$routeChangeStart',function(scope, next, current){
         $scope.ngLoaderShow();
-        if($location.$$path == '/' || $location.$$path == ''){
+        /*if(($location.$$path == '/' || $location.$$path == '') && $scope.lcl.isLoggedin){
             $scope.locationChatPreLoad();
-        }
+        }*/
     });
     $scope.$on('$routeChangeSuccess',function(scope, next, current){
         $scope.backLink.push($location.$$path);
@@ -744,311 +1089,13 @@ bizzlerApp.controller('bizzlerController',[
       }
       $scope.ngLoaderHide();
     });
-    if(bizzlerApp.deviceReady){
-        $scope.init();
-    }
-    $scope.privateChatCountFetch = function(){
-        var req = {
-         method: 'POST',
-         url: dbURL+'?action=privatMsgsCount&user_id='+$scope.lcl.user.ID,
-         headers:{'Content-Type':'application/x-www-form-urlencoded'},
-        }
-        $http(req).then(function(response){
-            $scope.privateMsgsCount = response.data.pcCount;
-        });
-    }
-    $scope.cameraUpload = function(){
-      navigator.camera.getPicture(function(imageURI){
-        $scope.mediaU.src = "data:image/png;base64," + imageURI;
-        $scope.faw = false;
-      }, function(message){
-        console.log(message);
-      }, {
-          quality: 70,
-          destinationType: Camera.DestinationType.DATA_URL
-      });
-    }
-    $scope.galleryUpload = function(){
-      navigator.camera.getPicture(function(imageURI){
-        $scope.mediaU.src = "data:image/png;base64," + imageURI
-        $scope.faw = false;
-      }, function(message){
-        console.log(message);
-      }, {
-          quality: 70,
-          sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-          destinationType: Camera.DestinationType.DATA_URL
-      });
-    }
-    $scope.mediaRemove = function(){$scope.mediaU.src = '';}
-    $scope.openPrivateChat = function(privateUserId){
-      $scope.ngLoaderShow();
-      var fd = new FormData();
-      fd.append('action', 'startPrivateChat');
-      fd.append('user_id', $scope.userData.ID);//
-      fd.append('privateUserId', privateUserId);
-      $http.post(dbURL,
-      fd,
-      {
-        transformRequest: angular.identity,
-        headers: {
-          'Content-Type': undefined
-        }}).then(function(response){
-        var res = response.data;
-        if(res.code == 200){
-          $location.path('/private-chat/'+res.privateChatId);
-          $scope.privateChatCountFetch();
-        }
-      }).catch(function(error){
-        console.log(error.message);
-      })
-    }
-    $scope.dataURItoBlob = function(dataURI) {
-      var binary = atob(dataURI.split(',')[1]);
-      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-      var array = [];
-      for (var i = 0; i < binary.length; i++) {
-        array.push(binary.charCodeAt(i));
-      }
-      return new Blob([new Uint8Array(array)], {
-        type: mimeString
-      });
-    }
-    $scope.dTDS = function(sinppet) {return $sce.trustAsHtml(sinppet);};
-    $scope.removeUploadImage = function(){$scope.mediaU.src = '';}
     $scope.sideNavOpen = function(){$mdSidenav('slide-out').toggle();}
-    $scope.inputChanged = function(event){
-        event.preventDefault();
-        fileReader.readAsDataUrl(event.target.files[0], $scope).then(function(result) {
-            $scope.mediaU.src = result;
-        });
-    }
-    $scope.startNewMessage = function(){
-        var tD = new Date();
-        var dateString = tD.getFullYear()+'-'+('0' + (tD.getMonth()+1)).slice(-2)+'-'+('0' + tD.getDate()).slice(-2)+' '+tD.getHours()+':'+tD.getMinutes()+':'+tD.getSeconds();
-        var fd = new FormData();
-        if($scope.mediaU.src != ''){
-          var imgBlob = $scope.dataURItoBlob($scope.mediaU.src);
-          fd.append('is_file_attached', 1);
-          fd.append('media', imgBlob);
-        }
-        fd.append('action', 'msgSend');
-        fd.append('user_id', $scope.userData.ID);
-        fd.append('grp_id', $scope.chatId);
-        fd.append('msg_text', $scope.cmsg.msg);
-        fd.append('is_grp_msg', $scope.isGrpMessage);
-        fd.append('creation_date', dateString);
-        $http.post(
-            dbURL,
-            fd, {
-              transformRequest: angular.identity,
-              headers: {
-                'Content-Type': undefined
-              }
-            }
-          )
-          .then(function(response){
-            var res = response.data;
-            if(res.code==200){
-              $scope.Messages[$scope.chatId] = res.body.messages;
-              $scope.mediaU.src = '';
-              $location.path('/location-chat/'+$scope.chatId);
-            }
-          })
-          .catch(function(error){
-            console.log(JSON.stringify(error));
-          });
-    }
-    $scope.openMediaCapture = function(){
-      if($scope.faw == false){$scope.faw = true}
-      else {$scope.faw = false;}
-    }
-    $scope.saveSearchRadius = function(){
-      var req = {
-        method: 'POST',
-        url: dbURL+'?action=saveRadius&search_radius='+$scope.userData.search_radius+'&user_id='+$scope.userData.ID,
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      }
-      $http(req).then(function(response){
-        var res = response.data;
-        $scope.locationChatPreLoad();
-      }).catch(function(error){
-        console.log(error.message);
-      })
-    }
-    /*Private Chat Functions*/
-    $scope.getPrivateChatDetails = function(){
-      var req = {
-        method: 'POST',
-        url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.chatId+'&user_id='+$scope.userData.ID,
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      }
-      $http(req).then(function(response){
-        var res = response.data;
-        if(res.code == 200){
-          $scope.curPrivateDetails = res.body.private_details;
-          if(res.body.messages.length > 0){
-            $scope.Messages[$scope.chatId] = res.body.messages;
-          }
-          $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
-        }
-      }).catch(function(error){
-        console.log(error.message);
-      })
-    }
-    /*Navigation Functions*/
-    $scope.privateMsgList = function(){
-      $mdSidenav('slide-out').toggle();
-      $location.path('/private-chat-list');
-    }
-    $scope.radiusView = function(){
-      $mdSidenav('slide-out').toggle();
-      $location.path('/radius-changer');
-    }
-    $scope.profileView = function(){
-      $mdSidenav('slide-out').toggle();
-      $location.path('/profile');
-    }
-    $scope.open_private_chat = function(privateId){$location.path('/private-chat/'+privateId);}
     $scope.searchFieldToggle = function(){
         $scope.searchField = !$scope.searchField;
         $scope.searchKeyword = '';
         if($scope.searchField == true){
             $mdSidenav('slide-out').toggle();
         }
-    }
-    $scope.registerDevice = function(){
-        var push = PushNotification.init({
-        android: {
-            senderID: "71450108131",
-             iconColor: '#28c8e2',
-             forceShow : "true",
-             sound : "true",
-             badge: 'true'
-        },
-        browser: {},
-        ios: {
-            senderID: "71450108131",
-            forceShow : "true",
-            iconColor: '#28c8e2',
-            alert: 'true',
-            sound: 'true',
-            badge: 'true'
-        },
-        windows: {}
-      });
-      push.on('registration', function(data) {
-          var params = '?action=registerDevice'+
-            '&user_id='+$scope.userData.ID+
-            '&device_token='+data.registrationId+
-            '&device_type='+device.platform;
-            var req = {
-             method: 'POST',
-             url: dbURL+params,
-             headers:{'Content-Type':'application/x-www-form-urlencoded'},
-            }
-          $http(req).then(function(response){
-
-          }).catch(function(error){
-
-          });
-      });
-      push.on('notification',function(data){
-          console.log('Notification Received'+data);
-      });
-      push.on('replyBtn',function(data){
-          console.log("Showing Notification Click " + data);
-      });
-      push.on('error', function(e) {
-          console.error("push error = " + e.message);
-      });
-    }
-    $scope.viewProfile = function(ev,userId){
-        $scope.ngLoaderShow();
-        profileData.userId = userId;
-        var params = '?action=get_user_data'+
-                  '&user_id='+userId;
-          var req = {
-           method: 'POST',
-           url: dbURL+params,
-           headers:{'Content-Type':'application/x-www-form-urlencoded'},
-          }
-        $http(req).then(function(response){
-            var res = response.data;
-            profileData.setData(res.body);
-            $scope.ngLoaderHide();
-            /*$mdDialog.show({
-              contentElement: '#viewData',
-              parent: angular.element(document.body),
-              targetEvent: ev,
-              clickOutsideToClose:true,
-            }).then(function() {}, function() {});*/
-            $mdBottomSheet.show({
-              templateUrl: 'profile-data.html',
-              controller: 'profileView',
-              clickOutsideToClose: true
-            }).then(function(clickedItem) {
-            }).catch(function(error) {
-            });
-        }).catch(function(){});
-    }
-    $scope.cancelBottomSheet = function(){
-        $mdBottomSheet.hide();
-        $scope.viewData = {};
-    }
-    $scope.deleteChats = [];
-    $scope.onLongPress = function(chatIndex){
-        $scope.private_chat_ist[chatIndex].deleteThis = true;
-        $scope.deleteChats[chatIndex] = $scope.private_chat_ist[chatIndex];
-        $scope.selectedChats = true;
-    }
-    $scope.$watch(function($scope) {
-        return $scope.private_chat_ist.
-        map(function(obj,key) {
-            return {"isDelete":obj.deleteThis,"isKey":key};
-        });
-      }, function (newVal) {
-            if(typeof(newVal[0]) !== "undefined" && newVal[0].isDelete == false){
-                console.log(newVal[0].isDelete);
-                $scope.deleteChats.splice(newVal[0].isKey,1);
-            }
-            if($scope.deleteChats.length < 1){$scope.selectedChats = false;}
-    }, true);
-    $scope.delete_selected_chat = function(){
-        if($scope.deleteChats.length  < 1){
-            return false;
-        }
-        $scope.selectedChats = false;
-        $scope.ngLoaderShow();
-        var req = {
-            method: 'POST',
-            url: dbURL+'?action=deletePrivateChat&chatId='+JSON.stringify($scope.deleteChats)+'&user_id='+$scope.userData.ID,
-            headers:{'Content-Type':'application/x-www-form-urlencoded'},
-          }
-        $http(req).then(function(response){
-            var res = response.data;
-            if(res.code == 404){
-                $scope.private_chat_ist = [];
-            }
-            else{
-                $scope.private_chat_ist = res.body.results;
-            }
-            $scope.privateChatCountFetch();
-            $scope.ngLoaderHide();
-         }).catch(function(error){
-            console.log(error);
-        });
-        console.log($scope.deleteChats);
-    }
-    $scope.Toast = function(msg){
-      window.plugins.toast.showWithOptions(
-        {
-          message: msg,
-          duration: "long", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
-          position: "bottom",
-          addPixelsY: -40  // added a negative value to move it up a bit (default 0)
-        }
-      );
     }
   }
 ]);

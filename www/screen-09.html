@@ -1,26 +1,6 @@
 <section class="screen-05">
   <div class="scr05-inner">
-    <div class="chating-menu">
-      <div class="cm-inner">
-        <div class="mobile-bar">
-          <a ng-click="sideNavOpen()" id="menu"><i  class="icon-menu"></i></a>
-        </div>
-        <!--/mobile-bar-->
-        <div class="logo">
-          <!--<md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>-->
-          <img src="assets/image/logo-white.png" />
-        </div>
-        <!--/logo-->
-        <div class="user-pic">
-          <img  ng-src="{{userData.user_pic_thumb}}" />
-        </div>
-        <!--/user-pic-->
-        <div class="clearfix"></div>
-        <!--/search-filed-->
-      </div>
-      <!--/cm-inner-->
-
-    </div>
+    <div ng-include="'menu.html'"></div>
     <!--/chating-menu-->
     <div class="chating-group">
       <h1><span> Private Messages</span></h1>
