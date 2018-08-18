@@ -126,7 +126,7 @@
             <li><a ng-click="goToCurrentLocationChat()"><i class="icon-location-pin"></i>Current Location</a></li>
             <li>
               <a ng-click="privateMsgList()">
-                <i class="icon-bubble"></i>Private Messages <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
+                <i class="icon-bubble"></i>Private Messages <md-chips ng-if="privateMsgsCount > 0"><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
               </a>
             </li>
             <li><a ng-click="logOut()"><i class="icon-logout"></i>Logout</a></li>

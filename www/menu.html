@@ -5,7 +5,7 @@
         </div>
         <!--/mobile-bar-->
         <div class="logo">
-            <md-chips><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
+            <md-chips ng-if="privateMsgsCount > 0"><md-chip>{{privateMsgsCount}}</md-chip></md-chips>
             <img src="assets/image/logo-white.png" />
         </div>
         <!--/logo-->
