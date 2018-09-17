@@ -1061,6 +1061,11 @@ top: 5px;
 }
 .chating-menu .cm-inner .logo md-chips .md-chips md-chip{
     margin: 8px 0 0 0;
+    height: 25px;
+    line-height: 25px;
+    padding: 0 8px;
+    background: rgb(255,255,255);
+    color: #ff6e41;
 }
 .chating-menu .cm-inner .logo img
 {
@@ -1357,11 +1362,13 @@ top: 5px;
     padding: 0 10px 0 0;
     font-size:20px;
     margin-left: -8px;
+    outline:none;
 }
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-name h5 span {
     font-family: 'josefin_sansregular';
     color: #8a8a8a;
     font-size: 16px;
+    font-weight:normal;
 }
 
 .screen-05 .scr05-inner .chating-body .cb-inner .cbi-user > .cbiuser-inner .cbiuseri-chat {
@@ -1639,7 +1646,9 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
     height: 26px;
     line-height: 28px;
     margin: -3px 0px 0 0;
-    padding: 0 10px;
+    padding: 0 9px;
+    background: rgb(255,255,255);
+        color: #ff6e41;
 }
 #sidenav-overlay {
     position: fixed;
@@ -1710,6 +1719,10 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
 .screen-05 .scr05-inner .userlist-pm ul li *{outline:none;}
 .screen-05 .scr05-inner .userlist-pm ul li.delete{
     border-bottom: 1px solid #ff6e41;
+}
+.screen-05 .scr05-inner .userlist-pm ul li.isNew{
+    font-weight: bold;
+    background-color: #F7F7F7;
 }
 .screen-05 .scr05-inner .userlist-pm ul li .chk-box {
     display: block;
@@ -1825,20 +1838,20 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
     height: auto;
     position: relative;
 }
-.screen-05 .scr05-inner .userlist-pm ul li a .ulpm-txtcon span
+.screen-05 .scr05-inner .userlist-pm ul li a .ulpm-txtcon span.send_on
 {
     position: absolute;
     top: 0;
     right: 0;
     color: #626262;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 27px;
 }
 .screen-05 .scr05-inner .userlist-pm ul li a .ulpm-txtcon h2{
     display: block;
     margin: 4px 0 3px;
     padding: 0 5px;
-    font-size: 20px;
+    font-size: 18px;
     color: #212121;
     text-align: left;
     white-space: nowrap;
@@ -1854,7 +1867,7 @@ md-backdrop.md-sidenav-backdrop{top: 60px;}
     display: block;
     margin: 0;
     padding: 0 5px;
-    font-size: 18px;
+    font-size: 16px;
     color: #696969;
     text-align: left;
     white-space: nowrap;

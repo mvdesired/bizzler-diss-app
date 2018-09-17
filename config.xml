@@ -109,9 +109,15 @@
     </platform>
     <engine name="browser" spec="^5.0.4" />
     <engine name="android" spec="^7.0.0" />
+<<<<<<< HEAD
     <plugin name="cordova-plugin-camera" spec="^4.0.3" />
     <plugin name="cordova-plugin-media-capture" spec="^3.0.2" />
     <plugin name="cordova-plugin-customurlscheme" spec="^4.3.0">
+=======
+    <plugin name="cordova-plugin-camera" spec="~4.0.3" />
+    <plugin name="cordova-plugin-media-capture" spec="~3.0.2" />
+    <plugin name="cordova-plugin-customurlscheme" spec="~4.3.0">
+>>>>>>> 798617d6bc3dc6d3341a37aa4be33d8c6dddf720
         <variable name="URL_SCHEME" value="bizzler" />
     </plugin>
     <plugin name="cordova-plugin-console" spec="^1.1.0" />
@@ -132,5 +138,9 @@
         <variable name="SENDER_ID" value="71450108131" />
     </plugin>
     <plugin name="cordova-support-google-services" spec="^1.2.1" />
+<<<<<<< HEAD
     <plugin name="cordova.plugins.diagnostic" spec="^4.0.10" />
+=======
+    <plugin name="cordova.plugins.diagnostic" spec="^4.0.8" />
+>>>>>>> 798617d6bc3dc6d3341a37aa4be33d8c6dddf720
 </widget>
