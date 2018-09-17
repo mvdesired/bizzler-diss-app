@@ -99,6 +99,7 @@
     <platform name="android">
         <resource-file src="google-services.json" target="app/google-services.json" />
         <config-file parent="/manifest" target="app/src/main/AndroidManifest.xml">
+            <edit-config file="AndroidManifest.xml" target="/manifest/application" mode="merge">
             <uses-permission android:name="android.permission.GET_ACCOUNTS" />
         </config-file>
         <allow-intent href="market:*" />
