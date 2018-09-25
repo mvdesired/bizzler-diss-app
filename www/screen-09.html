@@ -13,22 +13,22 @@
       </div>
       <!--/delete-chat-->
       <ul>
-        <li ng-repeat="pcl in private_chat_ist" ng-class="{delete:pcl.deleteThis == true,isNew:pcl.is_read==0}">
+        <li ng-repeat="pcl in private_chat_ist" ng-class="{delete:pcl.deleteThis == true}">
           <div class="chk-box" ng-if="pcl.deleteThis == true">
             <p ng-click="private_chat_ist[$index].deleteThis = !private_chat_ist[$index].deleteThis">
               <md-checkbox ng-model="private_chat_ist[$index].deleteThis" aria-label="delete-{{$index}}"></md-checkbox>
             </p>
           </div>
-          <a on-long-press="onLongPress($index)" on-touch-end="open_private_chat(pcl.chat_id,$index)">
+          <a on-long-press="onLongPress($index)" on-touch-end="open_private_chat(pcl.chat_id)">
             <div class="ulpm-imgcon">
               <img ng-src="{{pcl.user_pic}}"/>
               <em ng-class="{true:'online',false:'offline'}[pcl.is_online == 1]"></em>
             </div>
             <!--/ulpm-imgcon-->
             <div class="ulpm-txtcon">
-              <span class="send_on">{{pcl.send_on}}</span>
+              <span>{{pcl.send_on}}</span>
               <h2>{{pcl.name}}</h2>
-              <p><span ng-if="pcl.send_by==userData.ID">You: </span>{{pcl.msg_text}}</p>
+              <p>{{pcl.msg_text}}</p>
             </div>
             <!--/ulpm-txtcon-->
             <div class="clearfix"></div>

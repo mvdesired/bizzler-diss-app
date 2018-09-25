@@ -384,7 +384,7 @@ bizzlerApp.controller('bizzlerController',[
         $scope.lcl.isLoggedin = false;
         $mdSidenav('slide-out').toggle();
         $interval.cancel($scope.RMsgs);
-        $location.path('/sign-in');
+        $location.path('/');
     }
     /***********************************************************************************************
     ************************************************************************************************
@@ -726,7 +726,6 @@ bizzlerApp.controller('bizzlerController',[
             });*/
       }
         cordova.plugins.diagnostic.isLocationEnabled(function(enable){
-            console.log(enable);
             if(enable){
                 if (navigator.geolocation) {
                       $scope.plRetry = false;
@@ -806,7 +805,6 @@ bizzlerApp.controller('bizzlerController',[
             $scope.placesListLoaded.push({'lastMsg':cur.lastMsg,'groupId':cur.groupId,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
         }
       });
-      $scope.plloader = false;
     }
     $scope.pagination = function(){
       //$scope.placePage; // because pages logically start with 1, but technically with 0
@@ -819,19 +817,11 @@ bizzlerApp.controller('bizzlerController',[
         $http.get(placeNmaeUrl).then(function(response){
           var placePhotoUrl = '';
           var resRes = response.data.result;
-          console.log(response.data);
-          if(response.data.status == "OVER_QUERY_LIMIT"){
-            $scope.Toast("Limit Exceeded");
+          if(typeof resRes.photos !=="undefined"){
+            placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=150&photoreference="+resRes.photos[0].photo_reference+"&key="+globals.mapKey;
           }
-          else if(response.data.status == "OK"){
-            if(typeof(response.data.result) !== "undefined"){
-                if(typeof resRes.photos !=="undefined"){
-                    placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=150&photoreference="+resRes.photos[0].photo_reference+"&key="+globals.mapKey;
-                  }
-                  $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':resRes.name,'address':resRes.formatted_address,'lat':lat,'lng':lng});
-              }
-          }
-
+          $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':resRes.name,'address':resRes.formatted_address,'lat':lat,'lng':lng});
+          $scope.plloader = false;
         }).catch(function(error){
           console.log('Error occurred. ' + error.message);
         });
@@ -934,15 +924,7 @@ bizzlerApp.controller('bizzlerController',[
           $mdSidenav('slide-out').toggle();
           $location.path('/private-chat-list');
         }
-    $scope.open_private_chat = function(privateId,chatIndex){
-        console.log($scope.selectedChats);
-        if($scope.selectedChats){
-            $scope.private_chat_ist[chatIndex].deleteThis = true;
-            $scope.deleteChats[chatIndex] = $scope.private_chat_ist[chatIndex];
-            return false;
-        }
-        $location.path('/private-chat/'+privateId);
-    }
+    $scope.open_private_chat = function(privateId){$location.path('/private-chat/'+privateId);}
     $scope.checkEmailToken = function(){
       $scope.ngLoaderShow();
       var params = '?action=check-token&token='+$scope.emailToken;
@@ -978,22 +960,9 @@ bizzlerApp.controller('bizzlerController',[
             }
             $http(req).then(function(response){
                 $scope.privateMsgsCount = response.data.pcCount;
-                if($scope.privateMsgsCount > 0){
-                    angular.forEach($scope.private_chat_ist, function(value1, key1) {
-                        if ($scope.private_chat_ist[key1].timestamp === response.data.pML[key1].timestamp) {
-                            // here is where you grab the value2.color
-                        }
-                        else{
-                            $scope.private_chat_ist = response.data.pML;
-                        }
-                    });
-
-                }
-
             });
         }
     $scope.openPrivateChat = function(privateUserId){
-
       $scope.ngLoaderShow();
       var fd = new FormData();
       fd.append('action', 'startPrivateChat');

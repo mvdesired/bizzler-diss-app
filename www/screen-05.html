@@ -18,7 +18,7 @@
             </md-button>
             <!--/cbimei-imgcon-->
             <div ng-class="{true: 'cbimei-name',false:'cbiuseri-name' }[cgM.send_by == userData.ID]">
-              <h5 ng-if="cgM.send_by != userData.ID"  ng-click="viewProfile($event,cgM.send_by)">{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
+              <h5 ng-if="cgM.send_by != userData.ID">{{cgM.send_user_name}} - <span>{{cgM.send_on}}</span></h5>
               <h5 ng-if="cgM.send_by == userData.ID"><span>{{cgM.send_on}}</span></h5>
             </div>
             <!--/cbimei-name-->
