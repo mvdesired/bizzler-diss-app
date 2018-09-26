@@ -14,7 +14,7 @@ bizzlerApp.controller('bizzlerController',[
     $scope.jsonValue = {};
     $scope.linkedScopes = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', 'w_share'];
     $scope.placesTypes = 'airport,amusement_park,bank,bar,bus_station,cafe,casino,church,city_hall,embassy,gas_station,gym,hindu_temple,hospital,jewelry_store,library,mosque,movie_theater,museum,park,police,post_office,school,shopping_mall,stadium,supermarket,train_station,zoo,restaurant';
-    $scope.PlaceLimit = 5;
+    $scope.PlaceLimit = 20;
     $scope.placesList = [];
     $scope.placesListLoaded = [];
     $scope.plRetry = false;
@@ -34,6 +34,7 @@ bizzlerApp.controller('bizzlerController',[
     $scope.backLink = [];
     $scope.userEmailJson = "user_email.json";
     $scope.user_pic = '';
+    $scope.pagetoken = '';
     //$scope.search_radius = $scope.userData.search_radius;
     /***********************************************************************************************
     ************************************************************************************************
@@ -713,10 +714,9 @@ bizzlerApp.controller('bizzlerController',[
     $scope.gotTochat = function(){$scope.locationChatPreLoad();}
     $scope.locationChatPreLoad = function(){
         $scope.placesListLoaded = [];
-
         if(!$scope.plRetry){
-        $scope.placesList = [];
-        $location.path('/location-preload');
+          $scope.placesList = [];
+          $location.path('/location-preload');
             /*$mdDialog.show({
               contentElement: '#places-modal',
               parent: angular.element(document.body),
@@ -724,7 +724,7 @@ bizzlerApp.controller('bizzlerController',[
             }).catch(function (error){
               console.log(JSON.stringify(error));
             });*/
-      }
+          }
         cordova.plugins.diagnostic.isLocationEnabled(function(enable){
             if(enable){
                 if (navigator.geolocation) {
@@ -735,41 +735,7 @@ bizzlerApp.controller('bizzlerController',[
                           $scope.latitude = position.coords.latitude;
                           $scope.longitude = position.coords.longitude;
                           $scope.placePage = 1;
-                          var fd = new FormData();
-                          fd.append('action', 'search_location_db');
-                          fd.append('user_id', $scope.userData.ID);
-                          fd.append('radius', $scope.userData.search_radius);
-                          fd.append('lat', $scope.latitude);
-                          fd.append('lng', $scope.longitude);
-                          fd.append('types', $scope.placesTypes);
-                          fd.append('key', globals.mapKey);
-                          $http.post(dbURL,fd,{
-                            transformRequest: angular.identity,
-                            headers: {
-                              'Content-Type': undefined
-                            }}).then(function(r){
-                              if(r.data.code==200){
-                                  $scope.placesList = r.data.results;
-                                  for(var i=0;i<$scope.PlaceLimit;i++){
-                                      if(typeof($scope.placesList[i]) !== "undefined"){
-                                          if(typeof($scope.placesList[i].place_id) !== "undefined"){
-                                            var cur = $scope.placesList[i];
-                                            $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
-                                          }
-                                          else{
-                                              var cur = $scope.placesList[i];
-                                              $scope.placesListLoaded.push({'groupId':cur.groupId,'lastMsg':cur.lastMsg,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
-                                              $scope.plloader = false;
-                                          }
-                                      }
-                                  }
-                              }
-                          }).catch(function(error){
-                            console.log('Error: '+error.message);
-                            $scope.plRetry = true;
-                            $scope.plloader = false;
-                            $scope.plFinish = true;
-                          });
+                          $scope.fetchLocationList();
                       },function(error){
                         console.log(JSON.stringify(error));
                         console.log('Error occurred. ' + error.message);
@@ -792,7 +758,8 @@ bizzlerApp.controller('bizzlerController',[
     }
     $scope.plLoadMoreBtn = function(){
       $scope.plLoadMore = true;
-      var newLoaded = $scope.pagination();
+      $scope.fetchLocationList();
+      /*var newLoaded = $scope.pagination();
       if(newLoaded.length < 5){
         $scope.plFinish = true;
       }
@@ -804,14 +771,14 @@ bizzlerApp.controller('bizzlerController',[
         else{
             $scope.placesListLoaded.push({'lastMsg':cur.lastMsg,'groupId':cur.groupId,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
         }
-      });
+      });*/
     }
-    $scope.pagination = function(){
+    /*$scope.pagination = function(){
       //$scope.placePage; // because pages logically start with 1, but technically with 0
       $scope.plLoadMore = false;
       $scope.placePage++;
       return $scope.placesList.slice(($scope.placePage-1) * $scope.PlaceLimit, $scope.placePage * $scope.PlaceLimit);
-    }
+    }*/
     $scope.getPlaceDetailsFromPlaceId = function(placeId,lat,lng){
         var placeNmaeUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+placeId+"&fields=name,photo,formatted_address&key="+globals.mapKey;
         $http.get(placeNmaeUrl).then(function(response){
@@ -822,6 +789,7 @@ bizzlerApp.controller('bizzlerController',[
           }
           $scope.placesListLoaded.push({'photoUrl':placePhotoUrl,'name':resRes.name,'address':resRes.formatted_address,'lat':lat,'lng':lng});
           $scope.plloader = false;
+          $scope.plLoadMore = false;
         }).catch(function(error){
           console.log('Error occurred. ' + error.message);
         });
@@ -895,6 +863,52 @@ bizzlerApp.controller('bizzlerController',[
         }*/
         $scope.locationChatPreLoad();
         $mdSidenav('slide-out').toggle();
+    }
+    $scope.fetchLocationList = function(){
+      var fd = new FormData();
+      fd.append('action', 'search_location_db');
+      fd.append('user_id', $scope.userData.ID);
+      fd.append('radius', $scope.userData.search_radius);
+      fd.append('lat', $scope.latitude);
+      fd.append('lng', $scope.longitude);
+      fd.append('types', $scope.placesTypes);
+      fd.append('key', globals.mapKey);
+      fd.append('pagetoken',$scope.pagetoken);
+      $http.post(dbURL,fd,{
+        transformRequest: angular.identity,
+        headers: {
+          'Content-Type': undefined
+        }}).then(function(r){
+          if(r.data.code==200){
+              $scope.placesList = r.data.results;
+              $scope.pagetoken = r.data.pagetoken;
+              if($scope.placesList.length > 0){
+                for(var i=0;i<$scope.placesList.length;i++){
+                      if(typeof($scope.placesList[i]) !== "undefined"){
+                          if(typeof($scope.placesList[i].place_id) !== "undefined"){
+                            var cur = $scope.placesList[i];
+                            $scope.getPlaceDetailsFromPlaceId(cur.place_id,cur.geometry.location.lat,cur.geometry.location.lng);
+                          }
+                          else{
+                              var cur = $scope.placesList[i];
+                              $scope.placesListLoaded.push({'groupId':cur.groupId,'lastMsg':cur.lastMsg,'already':cur.already_added,'userOnline':cur.userOnline,'dateTime':cur.datetime,'photoUrl':cur.photoUrl,'name':cur.name,'address':cur.address,'lat':cur.lat,'lng':cur.lng});
+                              $scope.plloader = false;
+                              $scope.plLoadMore = false;
+                          }
+                      }
+                  }
+              }
+              else{
+                $scope.plLoadMore = false;
+              }
+          }
+      }).catch(function(error){
+        console.log('Error: '+error.message);
+        $scope.plRetry = true;
+        $scope.plloader = false;
+        $scope.plLoadMore = false;
+        $scope.plFinish = true;
+      });
     }
     /***********************************************************************************************
     ************************************************************************************************
