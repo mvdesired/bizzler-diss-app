@@ -713,6 +713,8 @@ bizzlerApp.controller('bizzlerController',[
     ***********************************************************************************************/
     $scope.gotTochat = function(){$scope.locationChatPreLoad();}
     $scope.locationChatPreLoad = function(){
+        $scope.pagetoken = '';
+        $scope.alreadyAddedGroup = [];
         $scope.placesListLoaded = [];
         if(!$scope.plRetry){
           $scope.placesList = [];
@@ -874,6 +876,7 @@ bizzlerApp.controller('bizzlerController',[
       fd.append('types', $scope.placesTypes);
       fd.append('key', globals.mapKey);
       fd.append('pagetoken',$scope.pagetoken);
+      fd.append('alreadyAddedGroup',$scope.alreadyAddedGroup);
       $http.post(dbURL,fd,{
         transformRequest: angular.identity,
         headers: {
@@ -882,6 +885,7 @@ bizzlerApp.controller('bizzlerController',[
           if(r.data.code==200){
               $scope.placesList = r.data.results;
               $scope.pagetoken = r.data.pagetoken;
+              $scope.alreadyAddedGroup = r.data.alreadyUsersGroup;
               if($scope.placesList.length > 0){
                 for(var i=0;i<$scope.placesList.length;i++){
                       if(typeof($scope.placesList[i]) !== "undefined"){
