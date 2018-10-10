@@ -1077,7 +1077,7 @@ bizzlerApp.controller('bizzlerController',[
           var msgReadUrl = dbURL+'?action=readMsg&chat_id='+$scope.chatId+'&isgrp='+$scope.isGrpMessage+'&userId='+$scope.userData.ID;
           $http.get(msgReadUrl).then(function(response){$scope.privateMsgsCount = response.data.pcCount;}).catch(function(error){console.log(error);});
           $scope.getPrivateChatDetails();
-          $timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
+          //$timeout(function(){$scope.RMsgs = $interval($scope.recieveMessage,1000);},3000);
           $interval.cancel($scope.pCCF);
           $scope.pCCF = null;
         }
