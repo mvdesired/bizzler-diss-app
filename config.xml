@@ -12,15 +12,14 @@
     <preference name="android-minSdkVersion" value="16" />
     <preference name="phonegap-version" value="cli-8.0.0" />
     <preference name="SplashScreenDelay" value="2000" />
-    <preference name="FadeSplashScreen" value="true" />
-    <preference name="FadeSplashScreenDuration" value="750" />
+    <!-- <preference name="FadeSplashScreen" value="true" />
+    <preference name="FadeSplashScreenDuration" value="750" /> -->
     <preference name="StatusBarBackgroundColor" value="#ff6e41" />
     <plugin name="cordova-plugin-camera" source="npm" spec="4.0.0" />
     <plugin name="cordova-plugin-media-capture" source="npm" spec="3.0.2" />
     <plugin name="cordova-plugin-customurlscheme" source="npm" spec="4.3.0">
         <variable name="URL_SCHEME" value="bizzler" />
     </plugin>
-    <!-- <plugin name="cordova-plugin-console" source="npm" spec="1.0.3" /> -->
     <plugin name="cordova-plugin-device" source="npm" spec="2.0.2" />
     <plugin name="cordova-plugin-dialogs" source="npm" spec="2.0.1" />
     <plugin name="cordova-plugin-file" source="npm" spec="6.0.1" />
@@ -129,4 +128,5 @@
     <plugin name="cordova-support-google-services" spec="1.2.1" />
     <plugin name="cordova.plugins.diagnostic" spec="4.0.8" />
     <engine name="android" spec="~7.0.0" />
+    <engine name="ios" spec="~4.5.5" />
 </widget>
