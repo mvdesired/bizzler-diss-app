@@ -920,6 +920,7 @@ bizzlerApp.controller('bizzlerController',[
     ************************************************************************************************
     ***********************************************************************************************/
     $scope.getPrivateChatDetails = function(){
+            $scope.Messages = [];
           var req = {
             method: 'POST',
             url: dbURL+'?action=getPrivateDetails&privateChatId='+$scope.chatId+'&user_id='+$scope.userData.ID,
